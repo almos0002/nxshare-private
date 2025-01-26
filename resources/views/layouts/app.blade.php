@@ -6,15 +6,16 @@
         <!-- CSRF Token -->
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
+        <link rel="icon" type="image/x-icon" href="https://i.postimg.cc/4dbDJLpG/favicon.png">
         <link href="{{asset('assets')}}/css/style.css" rel="stylesheet">
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>NxShare</title>
     </head>
     <body>
         <!-- start: Sidebar -->
         <div class="sidebar">
             <a href="#" class="sidebar-brand">
-                <img src="https://placehold.co/32x32" alt="" class="sidebar-brand-image" />
-                <span class="sidebar-brand-text">NxLeak</span>
+                <img src="https://i.postimg.cc/4dbDJLpG/favicon.png" alt="" class="sidebar-brand-image" />
+                <span class="sidebar-brand-text">NxShare</span>
             </a>
             <div class="sidebar-menu-wrapper">
                 <ul class="sidebar-menu">
