@@ -148,6 +148,30 @@ button {
 .btn-primary:hover {
     background-color: var(--primary-600);
 }
+
+.btn-danger {
+    background-color: var(--danger-500);
+    color: var(--white);
+}
+.btn-danger:hover {
+    background-color: var(--danger-600);
+}
+
+.btn-warning {
+    background-color: var(--warning-500);
+    color: var(--white);
+}
+.btn-warning:hover {
+    background-color: var(--warning-600);
+}
+
+.btn-success {
+    background-color: var(--success-500);
+    color: var(--white);
+}
+.btn-success:hover {
+    background-color: var(--success-600);
+}
 /* end: Button */
 
 /* start: Form */
@@ -165,6 +189,10 @@ button {
 .form-control:focus {
     box-shadow: 0 0 0 1px var(--primary-500);
     border-color: var(--primary-500);
+}
+.form-control-flex {
+    flex-grow: 1;
+    width: 150px !important;
 }
 /* end: Form */
 
@@ -722,6 +750,12 @@ body.sidebar-collapsed .main {
     color: var(--primary-500) !important;
 }
 
+.dflex {
+    display: flex;
+    gap: 5px;
+    margin: 10px 0px;
+}
+
 /* end: Custom CSS */
 
 /* start: CRUD CSS */
@@ -766,6 +800,9 @@ body.sidebar-collapsed .main {
 .table {
     width: 100%;
     border-collapse: collapse;
+    border-style: hidden;
+    border-radius: var(--rounded-md);
+    box-shadow: 0 0 0 1px var(--neutral-200);
 }
 .table th,
 .table td {

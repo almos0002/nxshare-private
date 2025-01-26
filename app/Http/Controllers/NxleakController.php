@@ -99,6 +99,7 @@ class NxLeakController extends Controller
        return redirect()->route('addnx')->withStatus("Post Deleted Successfully!");
     }
 
+    // Display the Nxleak Post
     public function display($slug, Request $request)
     {
         $ipAddress = $request->ip();

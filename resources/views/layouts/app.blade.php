@@ -14,7 +14,7 @@
         <div class="sidebar">
             <a href="#" class="sidebar-brand">
                 <img src="https://placehold.co/32x32" alt="" class="sidebar-brand-image" />
-                <span class="sidebar-brand-text">ADMIN</span>
+                <span class="sidebar-brand-text">NxLeak</span>
             </a>
             <div class="sidebar-menu-wrapper">
                 <ul class="sidebar-menu">
@@ -35,7 +35,25 @@
                             <span class="sidebar-menu-item-link-icon">
                                 <i class="ri-bubble-chart-line"></i>
                             </span>
-                            <span class="sidebar-menu-item-link-text">Nsfw</span>
+                            <span class="sidebar-menu-item-link-text">SFW</span>
+                            <span class="sidebar-menu-item-link-arrow">
+                                <i class="ri-arrow-right-s-line"></i>
+                            </span>
+                        </a>
+                        <ul class="sidebar-submenu" data-sidebar-menu-dropdown>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{route('addwp')}}" class="sidebar-submenu-item-link">
+                                    <span class="sidebar-submenu-item-link-text">Wallpaper</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="sidebar-menu-item" data-sidebar-menu-item>
+                        <a href="#" class="sidebar-menu-item-link" data-sidebar-menu-toggle>
+                            <span class="sidebar-menu-item-link-icon">
+                                <i class="ri-vip-line"></i>
+                            </span>
+                            <span class="sidebar-menu-item-link-text">NSF</span>
                             <span class="sidebar-menu-item-link-arrow">
                                 <i class="ri-arrow-right-s-line"></i>
                             </span>
