@@ -68,6 +68,16 @@ class NxLeakController extends Controller
         return redirect()->route('addnx')->withStatus("Post Created Successfully!");
 
     }
+    
+    // Fetch The Post Data
+    public function fetch($id)
+    {
+        $post = Nxleak::findOrFail($id);
+        return response()->json([
+            'title' => $post->title,
+            'content' => $post->content,
+        ]);
+    }
 
     // Update the Nxleak post
     public function update(Request $request)

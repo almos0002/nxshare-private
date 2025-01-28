@@ -60,6 +60,16 @@ class WallpaperController extends Controller
         return redirect()->route('addwp')->withStatus("Post Created Successfully!");
     }
 
+    // Fetch The Post Data
+    public function fetch($id)
+    {
+        $post = Wallpaper::findOrFail($id);
+        return response()->json([
+            'title' => $post->title,
+            'links' => json_decode($post->links, true)
+        ]);
+    }
+    
     // Update Wallpaper Post
     public function update(Request $request)
     {

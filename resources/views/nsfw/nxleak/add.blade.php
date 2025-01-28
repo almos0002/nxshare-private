@@ -83,8 +83,11 @@
             <a href="{{ route('displaynx', $post->slug) }}" class="dropdown-notification-item-icon primary-soft" style="text-decoration:none;">
               <i class="ri-eye-fill"></i>
             </a>
-            <button class="dropdown-notification-item-icon success-soft" style="border: none; cursor: pointer;" data-id="{{ $post->id }}" data-title="{{ $post->title }}" data-content="{{ $post->content }}" onclick="populateUpdateModal(this)">
-              <i class="ri-pencil-fill"></i>
+            <button class="dropdown-notification-item-icon success-soft" 
+                     style="border: none; cursor: pointer;" 
+                     data-id="{{ $post->id }}" 
+                     onclick="populateUpdateModal(this)">
+                  <i class="ri-pencil-fill"></i>
             </button>
             <a href="{{ route('deletenx', $post->slug) }}" class="dropdown-notification-item-icon danger-soft" style="text-decoration:none; margin-right:0px !important;" onclick="return confirm('Are you sure you want to delete this post?')">
               <i class="ri-delete-bin-fill"></i>
@@ -111,31 +114,33 @@
   }
 
   function populateUpdateModal(button) {
+    const postId = button.getAttribute("data-id");
     const modal = document.getElementById("updatemodal");
     const titleField = document.getElementById("oldtitle");
     const contentField = document.getElementById("oldcontent");
     const idField = document.getElementById("postId");
-    // Get data from the button's attributes
-    const id = button.getAttribute("data-id");
-    const title = button.getAttribute("data-title");
-    const content = button.getAttribute("data-content");
-    // Set values in the form fields
-    titleField.value = title;
-    contentField.value = content;
-    // Add or update the hidden ID field
-    if (!idField) {
-      const hiddenIdField = document.createElement("input");
-      hiddenIdField.type = "hidden";
-      hiddenIdField.name = "id";
-      hiddenIdField.id = "postId";
-      hiddenIdField.value = id;
-      document.querySelector("#postForm").appendChild(hiddenIdField);
-    } else {
-      idField.value = id;
-    }
-    // Show the update modal
-    modal.classList.toggle("hidden");
-  }
+
+    // Clear existing content (if needed)
+    titleField.value = "";
+    contentField.value = "";
+
+    // Fetch post data from server
+    fetch(`/nxleak/fetch/${postId}`)
+        .then(response => response.json())
+        .then(data => {
+            // Populate title, content, and ID
+            titleField.value = data.title;
+            contentField.value = data.content;
+            idField.value = postId;
+
+            // Show the modal
+            modal.classList.toggle("hidden");
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error loading post data');
+        });
+}
   // Autofocus search input if there's a search query
   document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("searchInput");
