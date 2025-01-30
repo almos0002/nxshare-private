@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NxLeakController;
 use App\Http\Controllers\WallpaperController;
+use App\Http\Controllers\AccessTokenController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -11,6 +12,12 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard');
+
+
+// Token generation
+Route::post('/generate-token', [AccessTokenController::class, 'generate'])
+     ->middleware('throttle:5,1')
+     ->name('generate.token');
 
 // NxLeak Routes
 Route::get('/nxleak', [NxLeakController::class, 'add'])->name('addnx');
