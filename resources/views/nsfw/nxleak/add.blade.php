@@ -28,7 +28,11 @@
         </div>
         <div class="form-group">
           <label for="content" class="auth-label">Content</label>
-          <textarea id="content" name="content" class="form-control" style="width: 100%; height: 200px; resize:none; padding:10px;" placeholder="Enter content" required></textarea>
+          <textarea id="content" name="content" class="form-control" style="width: 100%; height: 200px; resize:none; padding:10px;" placeholder="Enter content" required>LINK
+
+<- OR->
+            
+{MEGA.NZ_}[LINK]</textarea>
         </div>
         <div class="form-actions">
           <button type="submit" class="btn btn-primary">Save</button>

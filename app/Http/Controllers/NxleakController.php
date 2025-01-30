@@ -125,33 +125,32 @@ class NxLeakController extends Controller
     }
 
     // Check valid token
-    if ($request->has('token') && AccessToken::isValid(
-        $request->token,
-        $accessType,
-        $post->id,
-        $ip
-    )) {
-        // Original content display logic
-        $parsedown = new CustomParsedown();
-        $postContent = $parsedown->text($post->content);
-        
-        NxleakView::where('created_at', '<', now()->subDay())->delete();
-    
-        $viewed = NxleakView::where('post_id', $post->id)
-                          ->where('ip_address', $ip)
-                          ->where('created_at', '>=', now()->subDay())
-                          ->exists();
-    
-        if (!$viewed) {
-            NxleakView::create([
-                'post_id' => $post->id,
-                'ip_address' => $ip
-            ]);
-    
-            $post->increment('views');
+    if ($request->has('token')) {
+        if (AccessToken::isValid($request->token, $accessType, $post->id, $ip)) {
+            // Original content display logic
+            $parsedown = new CustomParsedown();
+            $postContent = $parsedown->text($post->content);
+
+            NxleakView::where('created_at', '<', now()->subDay())->delete();
+
+            $viewed = NxleakView::where('post_id', $post->id)
+                ->where('ip_address', $ip)
+                ->where('created_at', '>=', now()->subDay())
+                ->exists();
+
+            if (!$viewed) {
+                NxleakView::create([
+                    'post_id' => $post->id,
+                    'ip_address' => $ip
+                ]);
+
+                $post->increment('views');
+            }
+
+            return view('nsfw.nxleak.display', compact('post', 'postContent'));
         }
 
-        return view('nsfw.nxleak.display', compact('post', 'postContent'));
+        return redirect()->to(url("/$accessType/{$slug}"));
     }
 
     return view('access.pre-access', [
@@ -160,6 +159,7 @@ class NxLeakController extends Controller
         'postId' => $post->id,
     ]);
 }
+
 
 
 }

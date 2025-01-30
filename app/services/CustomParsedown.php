@@ -37,6 +37,7 @@ class CustomParsedown extends Parsedown {
                         'attributes' => [
                             'href' => $link,
                             'class' => 'custom-button',
+                            'target' => '__blank',
                         ],
                     ],
                 ];
