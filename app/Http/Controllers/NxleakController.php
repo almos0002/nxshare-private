@@ -6,9 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\Nxleak;
 use App\Models\NxleakView;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
-use Parsedown;
 use App\Services\CustomParsedown;
 use App\Models\AccessToken;
 

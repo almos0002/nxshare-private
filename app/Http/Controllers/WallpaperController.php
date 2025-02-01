@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Wallpaper;
 use App\Models\WallpaperView;
+use App\Models\AccessToken;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
 
 class WallpaperController extends Controller
 {
@@ -103,27 +103,47 @@ class WallpaperController extends Controller
     // Display Wallpaper Post
     public function display($slug, Request $request)
     {
-        $ipAddress = $request->ip();
+        $ip = $request->ip();
         $post = Wallpaper::where('slug', $slug)->firstOrFail();
+        $accessType = 'w';  // Changed to 'w' for wallpaper access type
 
-        WallpaperView::where('created_at', '<', now()->subDay())->delete();
-
-        $viewed = WallpaperView::where('post_id', $post->id)
-            ->where('ip_address', $ipAddress)
-            ->where('created_at', '>=', now()->subDay())
-            ->exists();
-
-        if (!$viewed) {
-            WallpaperView::create([
-                'post_id' => $post->id,
-                'ip_address' => $ipAddress,
-            ]);
-
-            $post->increment('views');
+        // Store access time in session
+        $accessKey = "access_{$accessType}_{$post->id}";
+        if (!$request->session()->has($accessKey)) {
+            $request->session()->put($accessKey, now()->timestamp);
         }
 
-        $postLinks = json_decode($post->links, true);
+        // Check valid token
+        if ($request->has('token')) {
+            if (AccessToken::isValid($request->token, $accessType, $post->id, $ip)) {
+                WallpaperView::where('created_at', '<', now()->subDay())->delete();
 
-        return view('sfw.wallpaper.display', compact('post', 'postLinks'));
+                $viewed = WallpaperView::where('post_id', $post->id)
+                    ->where('ip_address', $ip)
+                    ->where('created_at', '>=', now()->subDay())
+                    ->exists();
+
+                if (!$viewed) {
+                    WallpaperView::create([
+                        'post_id' => $post->id,
+                        'ip_address' => $ip,
+                    ]);
+
+                    $post->increment('views');
+                }
+
+                $postLinks = json_decode($post->links, true);
+
+                return view('sfw.wallpaper.display', compact('post', 'postLinks'));
+            }
+
+            return redirect()->to(url("/$accessType/{$slug}"));
+        }
+
+        return view('access.pre-access', [
+            'accessType' => $accessType,
+            'postSlug' => $slug,
+            'postId' => $post->id,
+        ]);
     }
 }
