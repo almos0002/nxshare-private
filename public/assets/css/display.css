@@ -1,105 +1,107 @@
-@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
+
 html,
 body {
-    height: 100%;
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
     font-family: "Barlow Condensed", sans-serif;
+    background: radial-gradient(ellipse at bottom, #ffffff 0%, #f3f4f6 100%);
 }
+
 .top-bar {
     background-color: #f5f5f5;
     color: #212529;
     text-align: center;
     padding: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
+
 .top-bar h1 {
     font-size: 2rem;
 }
+
 .main-content {
     flex: 1;
     padding: 20px;
     text-align: center;
+    background: radial-gradient(
+            circle at 20% 20%,
+            #fde68a55 0%,
+            transparent 40%
+        ),
+        radial-gradient(circle at 80% 80%, #93c5fd55 0%, transparent 40%);
 }
+
 .flex-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 20px;
 }
+
 .flex-item {
-    flex: 1 1 calc(250px - 20px);
+    flex: 1 1 230px;
     max-width: 220px;
     text-align: center;
 }
+
 .flex-item img {
     width: 100%;
     height: auto;
     border-radius: 8px;
 }
-.download-btn {
-    background-color: #000;
-    font-family: "Barlow Condensed", sans-serif;
-    font-size: 18px;
-    font-weight: 600;
-    color: white;
-    padding: 10px 25px;
-    border: none;
-    cursor: pointer;
-    margin-top: 10px;
-}
-.download-btn:hover {
-    background-color: #000;
-}
-.social-btn {
-    background-color: #fff;
-    font-family: "Barlow Condensed", sans-serif;
-    font-size: 18px;
-    font-weight: 600;
-    color: #212529;
-    padding: 10px 25px;
-    border: none;
-    cursor: pointer;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-.bottom-bar {
-    background-color: #000;
-    color: white;
-    text-align: center;
-    padding: 10px;
-    width: 100%;
-    bottom: 0;
-}
-.bottom-bar p {
-    font-size: 1rem;
-}
 
-/* Start Custom Parsedown Css */
-
-a {
-    color: rgba(13, 110, 253);
-    font-size: 19px;
-    font-weight: 600;
-}
-
+.download-btn,
+.social-btn,
 .custom-button {
-    display: inline-block;
-    background-color: red;
     font-family: "Barlow Condensed", sans-serif;
     font-size: 18px;
     font-weight: 600;
-    color: white;
     padding: 10px 25px;
     border: none;
     cursor: pointer;
     text-decoration: none;
+    display: inline-block;
     margin-top: 10px;
 }
+
+.download-btn {
+    background-color: #000;
+    color: white;
+}
+
+.download-btn:hover {
+    background-color: #222;
+}
+
+.social-btn {
+    background-color: #fff;
+    color: #212529;
+    margin-bottom: 10px;
+}
+
+.custom-button {
+    background: linear-gradient(to right, #fbbf24, #fb923c);
+    padding: 10px 25px;
+    color: #000;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+}
+
+.custom-button:hover {
+    color: #000;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(to right, #facc15, #fdba74);
+}
+
 .custom-button::before {
     content: "\EEAF";
     font-family: "remixicon";
@@ -115,4 +117,20 @@ a {
     margin-top: 10px;
 }
 
-/* End Custom Parsedown Css */
+.bottom-bar {
+    background-color: #000;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    width: 100%;
+}
+
+.bottom-bar p {
+    font-size: 1rem;
+}
+
+a {
+    color: #0d6efd;
+    font-size: 19px;
+    font-weight: 600;
+}
