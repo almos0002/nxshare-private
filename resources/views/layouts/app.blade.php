@@ -330,7 +330,7 @@
                     </div>
                     <div class="dropdown">
                         <button type="button" class="btn btn-icon btn-light topbar-right-item" data-toggle="dropdown">
-                            <img src="https://placehold.co/100x100" alt="" class="topbar-right-item-user-image" />
+                            <img src="https://i.postimg.cc/JhnVsqv9/fire.png" alt="" class="topbar-right-item-user-image" />
                         </button>
                         <div class="dropdown-menu-wrapper">
                             <ul class="dropdown-menu">
