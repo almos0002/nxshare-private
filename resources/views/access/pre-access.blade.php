@@ -159,7 +159,7 @@
             setTimeout(() => burst.remove(), 1000);
 
             try {
-                const response = await fetch('/generate-token', {
+                const response = await fetch('{{ route("generate.token") }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
