@@ -5,20 +5,25 @@ use App\Http\Controllers\NxLeakController;
 use App\Http\Controllers\WallpaperController;
 use App\Http\Controllers\AccessTokenController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\SettingController;
 
 // Public routes
 Route::get('/', function () {
     return view('auth.login');
 });
 
-Route::get('/n/{slug}', [NxLeakController::class, 'display'])->name('displaynx');
-Route::get('/w/{slug}', [WallpaperController::class, 'display'])->name('displaywp');
+// Display System With Middleware
+Route::group(['middleware' => 'domain.redirect'], function () {
 
-// Token generation
-Route::post('/generate-token', [AccessTokenController::class, 'generate'])
-     ->middleware('throttle:5,1')
-     ->name('generate.token');
+    Route::get('/n/{slug}', [NxLeakController::class, 'display'])->name('displaynx');
+    Route::get('/w/{slug}', [WallpaperController::class, 'display'])->name('displaywp');
 
+    // Token generation
+    Route::post('/generate-token', [AccessTokenController::class, 'generate'])
+        ->middleware('throttle:5,1')
+        ->name('generate.token');
+    });
+    
 // Authentication
 Auth::routes();
 
@@ -40,4 +45,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/wallpaper/fetch/{id}', [WallpaperController::class, 'fetch'])->name('fetchwp');
     Route::post('/wallpaper/update', [WallpaperController::class, 'update'])->name('updatewp');
     Route::get('/wallpaper/delete/{slug}', [WallpaperController::class, 'delete'])->name('deletewp');
+
+    // Settings Routes
+    Route::get('/settings', [SettingController::class, 'edit'])->name('settings.edit');
+    Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
 });
