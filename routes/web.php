@@ -47,6 +47,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/wallpaper/delete/{slug}', [WallpaperController::class, 'delete'])->name('deletewp');
 
     // Settings Routes
-    Route::get('/settings', [SettingController::class, 'edit'])->name('settings.edit');
-    Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+    Route::get('/settings', [SettingController::class, 'editSettings'])->name('settings.edit');
+    Route::post('/settings', [SettingController::class, 'updateSettings'])->name('settings.update');
+    Route::get('/profile', [SettingController::class, 'editProfile'])->name('profile.edit');
+    Route::post('/profile', [SettingController::class, 'updateProfile'])->name('profile.update');
+
 });

@@ -335,13 +335,13 @@
                         <div class="dropdown-menu-wrapper">
                             <ul class="dropdown-menu">
                                 <li class="dropdown-menu-item">
-                                    <a href="#" class="dropdown-menu-item-link">
+                                    <a href="{{route('profile.update')}}" class="dropdown-menu-item-link">
                                         <span class="dropdown-menu-item-link-icon"><i class="ri-user-line"></i></span>
                                         <span class="dropdown-menu-item-link-text">Profile</span>
                                     </a>
                                 </li>
                                 <li class="dropdown-menu-item">
-                                    <a href="#" class="dropdown-menu-item-link">
+                                    <a href="{{route('settings.update')}}" class="dropdown-menu-item-link">
                                         <span class="dropdown-menu-item-link-icon"><i class="ri-settings-line"></i></span>
                                         <span class="dropdown-menu-item-link-text">Settings</span>
                                     </a>

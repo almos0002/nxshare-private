@@ -18,7 +18,7 @@ class DomainRedirect
             // Only redirect if not already on target domain
             if (!str_contains($currentUrl, $targetDomain)) {
                 $newUrl = $targetDomain.'/'.$request->path();
-                return redirect()->away($newUrl, 301);
+                return redirect()->away($newUrl, 302);
             }
         }
 

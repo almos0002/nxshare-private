@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('active_domain')->nullable();
             $table->boolean('redirect_enabled')->default(false);
+            $table->text('ad1')->nullable();
+            $table->text('ad2')->nullable();
             $table->timestamps();
         });
     }
