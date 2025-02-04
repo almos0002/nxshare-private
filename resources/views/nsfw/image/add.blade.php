@@ -1,4 +1,56 @@
 @extends('layouts.app') @section('title', 'Images') @section('content')
+
+<!-- Wallpaper Stats -->
+<div class="stats-container">
+   <div class="stat-card">
+       <div class="stat-header">
+           <div class="stat-icon">
+               <i class="ri-file-text-line"></i>
+           </div>
+           <div class="stat-content">
+               <h3>Total Posts</h3>
+               <p>{{ number_format($totalPosts) }}</p>
+           </div>
+       </div>
+   </div>
+
+   <div class="stat-card">
+       <div class="stat-header">
+           <div class="stat-icon" style="background: var(--secondary)">
+               <i class="ri-eye-line"></i>
+           </div>
+           <div class="stat-content">
+               <h3>Total Views</h3>
+               <p>{{ number_format($totalViews) }}</p>
+           </div>
+       </div>
+   </div>
+
+   <div class="stat-card">
+       <div class="stat-header">
+           <div class="stat-icon" style="background: #10B981">
+               <i class="ri-user-3-line"></i>
+           </div>
+           <div class="stat-content">
+               <h3>Logged In User</h3>
+               <p>{{ $userName }}</p>
+           </div>
+       </div>
+   </div>
+
+   <div class="stat-card">
+       <div class="stat-header">
+           <div class="stat-icon" style="background: #F59E0B">
+               <i class="ri-shield-check-line"></i>
+           </div>
+           <div class="stat-content">
+               <h3>Redirect Status</h3>
+               <p>{{ $redirectEnabled }}</p>
+           </div>
+       </div>
+   </div>
+</div>
+
 <!-- Add Post Button and Search -->
 <div style="display:flex; justify-content:space-between;gap:8px;">
    <div>

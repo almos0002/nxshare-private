@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Nxleak;
 use App\Models\NxleakView;
+use App\Models\Settings;
 use Illuminate\Support\Str;
 use App\Models\AccessToken;
 use App\Utilities\CustomParsedown;
@@ -41,7 +42,14 @@ class NxleakController extends Controller
             ->orderBy($sortColumn, $sortDirection)
             ->paginate(10); // Pagination
     
-        return view('nsfw.nxleak.add', compact('posts', 'sortColumn', 'sortDirection', 'search'));
+        // Stats
+        $totalPosts = Nxleak::count();
+        $totalViews = Nxleak::sum('views');
+        $userName = auth()->user()->name;
+        $redirectStatus = Settings::value('redirect_enabled') ?? false;
+        $redirectEnabled = $redirectStatus ? 'Enabled' : 'Disabled';
+
+        return view('nsfw.nxleak.add', compact('posts', 'sortColumn', 'sortDirection', 'search', 'totalPosts', 'totalViews', 'userName', 'redirectEnabled'));
     }    
 
     // Create the Nxleak post

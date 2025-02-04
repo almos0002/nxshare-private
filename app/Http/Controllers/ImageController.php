@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Image;
 use App\Models\ImageView;
+use App\Models\Settings;
 use App\Models\AccessToken;
 use Illuminate\Support\Str;
 
@@ -33,7 +34,14 @@ class ImageController extends Controller
             ->orderBy($sortColumn, $sortDirection)
             ->paginate(10);
 
-        return view('nsfw.image.add', compact('posts', 'sortColumn', 'sortDirection', 'search'));
+        // Stats
+        $totalPosts = Image::count();
+        $totalViews = Image::sum('views');
+        $userName = auth()->user()->name;
+        $redirectStatus = Settings::value('redirect_enabled') ?? false;
+        $redirectEnabled = $redirectStatus ? 'Enabled' : 'Disabled';
+
+        return view('nsfw.image.add', compact('posts', 'sortColumn', 'sortDirection', 'search', 'totalPosts', 'totalViews', 'userName', 'redirectEnabled'));
     }
 
     // Create image Post

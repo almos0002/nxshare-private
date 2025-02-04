@@ -7,6 +7,7 @@ use App\Models\Wallpaper;
 use App\Models\WallpaperView;
 use App\Models\AccessToken;
 use Illuminate\Support\Str;
+use App\Models\Settings;
 
 class WallpaperController extends Controller
 {
@@ -33,7 +34,14 @@ class WallpaperController extends Controller
             ->orderBy($sortColumn, $sortDirection)
             ->paginate(10);
 
-        return view('sfw.wallpaper.add', compact('posts', 'sortColumn', 'sortDirection', 'search'));
+        // Stats
+        $totalPosts = Wallpaper::count();
+        $totalViews = Wallpaper::sum('views');
+        $userName = auth()->user()->name;
+        $redirectStatus = Settings::value('redirect_enabled') ?? false;
+        $redirectEnabled = $redirectStatus ? 'Enabled' : 'Disabled';
+
+        return view('sfw.wallpaper.add', compact('posts', 'sortColumn', 'sortDirection', 'search', 'totalPosts', 'totalViews', 'userName', 'redirectEnabled'));
     }
 
     // Create Wallpaper Post
