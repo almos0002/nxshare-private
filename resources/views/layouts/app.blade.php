@@ -66,7 +66,7 @@
                                 </a>
                             </li>
                             <li class="sidebar-submenu-item">
-                                <a href="#" class="sidebar-submenu-item-link">
+                                <a href="{{route('addimg')}}" class="sidebar-submenu-item-link">
                                     <span class="sidebar-submenu-item-link-text">Images</span>
                                 </a>
                             </li>

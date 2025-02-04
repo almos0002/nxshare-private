@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NxleakController;
 use App\Http\Controllers\WallpaperController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\AccessTokenController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\SettingController;
@@ -17,6 +18,7 @@ Route::group(['middleware' => 'domain.redirect'], function () {
 
     Route::get('/n/{slug}', [NxLeakController::class, 'display'])->name('displaynx');
     Route::get('/w/{slug}', [WallpaperController::class, 'display'])->name('displaywp');
+    Route::get('/i/{slug}', [ImageController::class, 'display'])->name('displayimg');
 
     // Token generation
     Route::post('/generate-token', [AccessTokenController::class, 'generate'])
@@ -40,11 +42,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/nxleak/delete/{slug}', [NxLeakController::class, 'delete'])->name('deletenx');
 
     // Wallpapers Routes
-    Route::get('/wallpaper', [WallpaperController::class, 'add'])->name('addwp');
-    Route::post('/wallpaper/create', [WallpaperController::class, 'create'])->name('createwp');
-    Route::get('/wallpaper/fetch/{id}', [WallpaperController::class, 'fetch'])->name('fetchwp');
-    Route::post('/wallpaper/update', [WallpaperController::class, 'update'])->name('updatewp');
-    Route::get('/wallpaper/delete/{slug}', [WallpaperController::class, 'delete'])->name('deletewp');
+    Route::get('/wallpapers', [WallpaperController::class, 'add'])->name('addwp');
+    Route::post('/wallpapers/create', [WallpaperController::class, 'create'])->name('createwp');
+    Route::get('/wallpapers/fetch/{id}', [WallpaperController::class, 'fetch'])->name('fetchwp');
+    Route::post('/wallpapers/update', [WallpaperController::class, 'update'])->name('updatewp');
+    Route::get('/wallpapers/delete/{slug}', [WallpaperController::class, 'delete'])->name('deletewp');
+
+    // Wallpapers Routes
+    Route::get('/images', [ImageController::class, 'add'])->name('addimg');
+    Route::post('/images/create', [ImageController::class, 'create'])->name('createimg');
+    Route::get('/images/fetch/{id}', [ImageController::class, 'fetch'])->name('fetchimg');
+    Route::post('/images/update', [ImageController::class, 'update'])->name('updateimg');
+    Route::get('/images/delete/{slug}', [ImageController::class, 'delete'])->name('deleteimg');
 
     // Settings Routes
     Route::get('/settings', [SettingController::class, 'editSettings'])->name('settings.edit');
