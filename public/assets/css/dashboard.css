@@ -196,4 +196,7 @@
     .dash-post-title {
         max-width: 60%;
     }
+    .modal {
+        width: 90%;
+    }
 }
