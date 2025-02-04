@@ -62,10 +62,6 @@
                     <h2>Top Viewed Posts</h2>
                 </div>
                 <ul class="dash-post-list">
-                    <li class="dash-post-link">
-                        <h4 class="dash-post-head">Title</h4>
-                        <h4 class="dash-post-head">Views</h4>
-                    </li>
                     @foreach($mostViewed as $post)
                     <li class="dash-post-item">
                         <a href="/{{ $post->type }}/{{ $post->slug }}" class="dash-post-link">
@@ -86,10 +82,6 @@
                     <h2>Recent Posts</h2>
                 </div>
                 <ul class="dash-post-list">
-                    <li class="dash-post-link">
-                        <h4 class="dash-post-head">Title</h4>
-                        <h4 class="dash-post-head">Date</h4>
-                    </li>
                     @foreach($recentPosts as $post)
                     <li class="dash-post-item">
                         <a href="/{{ $post->type }}/{{ $post->slug }}" class="dash-post-link">
