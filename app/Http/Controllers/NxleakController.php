@@ -7,7 +7,7 @@ use App\Models\Nxleak;
 use App\Models\NxleakView;
 use Illuminate\Support\Str;
 use App\Models\AccessToken;
-use App\Services\CustomParsedown;
+use App\Utilities\CustomParsedown;
 
 class NxleakController extends Controller
 {
