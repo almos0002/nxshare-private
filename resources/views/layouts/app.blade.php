@@ -8,6 +8,7 @@
         <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
         <link rel="icon" type="image/x-icon" href="https://i.postimg.cc/4dbDJLpG/favicon.png">
         <link href="{{asset('assets')}}/css/style.css" rel="stylesheet">
+        <link href="{{asset('assets')}}/css/dashboard.css" rel="stylesheet">
         <title>@yield('title', 'Private Blog') - NxShare</title>
     </head>
     <body>
@@ -210,7 +211,10 @@
                     <button type="button" class="btn btn-icon btn-light topbar-right-item-search" data-toggle="topbar-search">
                         <i class="ri-search-line"></i>
                     </button>
-                    <div class="dropdown">
+
+                <!-- Top Bar Disabled -->
+                
+                    {{-- <div class="dropdown">
                         <button type="button" class="btn btn-icon btn-light topbar-right-item" data-toggle="dropdown">
                             <img src="https://flagsapi.com/US/shiny/64.png" class="topbar-right-item-image" />
                         </button>
@@ -327,7 +331,10 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
+
+
+
                     <div class="dropdown">
                         <button type="button" class="btn btn-icon btn-light topbar-right-item" data-toggle="dropdown">
                             <img src="https://i.postimg.cc/JhnVsqv9/fire.png" alt="" class="topbar-right-item-user-image" />

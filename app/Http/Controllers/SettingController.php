@@ -51,8 +51,7 @@ class SettingController extends Controller
         $user = auth()->user();
         $user->update(['name' => $userValidated['name'], 'email' => $userValidated['email'], 'password' => isset($userValidated['password']) ? Hash::make($userValidated['password']) : $user->password, ]);
 
-        return back()
-            ->with('status', 'Profile updated successfully!');
+        return back()->with('status', 'Profile updated successfully!');
     }
 
 }
