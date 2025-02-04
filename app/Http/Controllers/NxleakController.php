@@ -134,6 +134,7 @@ class NxleakController extends Controller
         if (AccessToken::isValid($request->token, $accessType, $post->id, $ip)) {
             // Original content display logic
             $parsedown = new CustomParsedown();
+            $parsedown->setBreaksEnabled(true);
             $postContent = $parsedown->text($post->content);
 
             NxleakView::where('created_at', '<', now()->subDay())->delete();

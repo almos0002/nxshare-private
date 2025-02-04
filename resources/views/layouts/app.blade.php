@@ -81,7 +81,7 @@
                 </ul>
                 <ul class="sidebar-menu">
                     <li class="sidebar-menu-title">
-                        <span class="sidebar-menu-title-expanded">MENU</span>
+                        <span class="sidebar-menu-title-expanded">OTHRES</span>
                         <span class="sidebar-menu-title-collapsed"><i class="ri-more-fill"></i></span>
                     </li>
                     <li class="sidebar-menu-item" data-sidebar-menu-item>
