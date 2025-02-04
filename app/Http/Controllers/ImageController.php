@@ -110,45 +110,48 @@ class ImageController extends Controller
 
     // Display image Post
     public function display($slug, Request $request)
-{
-    $ip = $request->ip();
-    $post = Image::where('slug', $slug)->firstOrFail();
-    $accessType = 'i'; // Consider using a constant
+    {
+        $ip = $request->ip();
+        $post = Image::where('slug', $slug)->firstOrFail();
+        $accessType = 'i';  // Changed to 'i' for wallpaper access type
 
-    // Remove unused session logic unless required elsewhere
-
-    if ($request->has('token')) {
-        if (AccessToken::isValid($request->token, $accessType, $post->id, $ip)) {
-            // Delegate cleanup to a scheduled job instead of running here
-
-            $lastDay = now()->subDay();
-            $viewed = ImageView::where('post_id', $post->id)
-                ->where('ip_address', $ip)
-                ->where('created_at', '>=', $lastDay)
-                ->exists();
-
-            if (!$viewed) {
-                ImageView::create([
-                    'post_id' => $post->id,
-                    'ip_address' => $ip,
-                ]);
-
-                $post->increment('views');
-            }
-
-            $postLinks = json_decode($post->links, true) ?? [];
-
-            return view('nsfw.image.display', compact('post', 'postLinks'));
+        // Store access time in session
+        $accessKey = "access_{$accessType}_{$post->id}";
+        if (!$request->session()->has($accessKey)) {
+            $request->session()->put($accessKey, now()->timestamp);
         }
 
-        return redirect()->route('image.display', ['slug' => $slug])
-            ->with('error', 'Invalid or expired token.');
-    }
+        // Check valid token
+        if ($request->has('token')) {
+            if (AccessToken::isValid($request->token, $accessType, $post->id, $ip)) {
+                ImageView::where('created_at', '<', now()->subDay())->delete();
 
-    return view('access.pre-access', [
-        'accessType' => $accessType,
-        'postSlug' => $slug,
-        'postId' => $post->id,
-    ]);
-}
+                $viewed = ImageView::where('post_id', $post->id)
+                    ->where('ip_address', $ip)
+                    ->where('created_at', '>=', now()->subDay())
+                    ->exists();
+
+                if (!$viewed) {
+                    ImageView::create([
+                        'post_id' => $post->id,
+                        'ip_address' => $ip,
+                    ]);
+
+                    $post->increment('views');
+                }
+
+                $postLinks = json_decode($post->links, true);
+
+                return view('nsfw.image.display', compact('post', 'postLinks'));
+            }
+
+            return redirect()->to(url("/$accessType/{$slug}"));
+        }
+
+        return view('access.pre-access', [
+            'accessType' => $accessType,
+            'postSlug' => $slug,
+            'postId' => $post->id,
+        ]);
+    }
 }
