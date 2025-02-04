@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 use App\Services\CustomParsedown;
 use App\Models\AccessToken;
 
-class NxLeakController extends Controller
+class NxleakController extends Controller
 {
     /**
      * Create a new controller instance.

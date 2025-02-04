@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\NxLeakController;
+use App\Http\Controllers\NxleakController;
 use App\Http\Controllers\WallpaperController;
 use App\Http\Controllers\AccessTokenController;
 use Illuminate\Support\Facades\Auth;
