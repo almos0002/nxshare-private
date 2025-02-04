@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solar Access Portal</title>
+    <title>Nxshare Access Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/x-icon" href="https://i.postimg.cc/4dbDJLpG/favicon.png">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <style>
+        @import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@100;200;300;400;500;600;700;800;900&display=swap");
         @keyframes orbit {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -17,7 +18,9 @@
             0% { transform: scale(0); opacity: 1; }
             100% { transform: scale(8); opacity: 0; }
         }
-
+        html, body{
+            font-family: "Barlow Condensed", sans-serif;
+        }
         .solar-bg {
             background: radial-gradient(ellipse at bottom, #FFFFFF 0%, #F3F4F6 100%);
         }
