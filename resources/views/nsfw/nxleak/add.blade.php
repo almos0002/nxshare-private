@@ -1,18 +1,18 @@
 @extends('layouts.app') @section('content')
 <!-- Add Post Button and Search -->
-<div style="display:flex; justify-content:space-between;">
+<div style="display:flex; justify-content:space-between;gap:8px;">
   <div>
-    <form class="topbar-search" style="display: flex; gap: 5px;" action="{{ route('addnx') }}" method="GET">
-      <input type="text" id="searchInput" class="form-control" placeholder="Search posts..." name="search" value="{{ request('search') }}">
-      <span class="topbar-search-icon">
+     <form class="topbar-search" style="display: flex; gap: 5px;" action="{{ route('addnx') }}" method="GET">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search posts..." name="search" value="{{ request('search') }}">
+        <span class="topbar-search-icon">
         <i class="ri-search-line"></i>
-      </span>
-      <button type="submit" class="btn btn-primary"> Search </button>
-    </form>
+        </span>
+        <button type="submit" class="btn btn-primary"><i class="ri-search-line"></i></button>
+     </form>
   </div>
-  <div>
-    <button class="btn btn-primary" onClick="window.location.href = window.location.pathname;">Dashboard</button>
-    <button class="btn btn-success" onclick="createModal()"><i class="ri-add-circle-fill"></i>&#160;Add Post</button>
+  <div style="display: flex;gap:4px">
+     <button class="btn btn-primary" onClick="window.location.href = window.location.pathname;">Dashboard</button>
+     <button class="btn btn-success" onclick="createModal()"><i class="ri-add-circle-fill"></i>&#160;Add</button>
   </div>
 </div>
 <!-- Create Post Modal -->

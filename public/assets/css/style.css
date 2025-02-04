@@ -943,5 +943,8 @@ body.sidebar-collapsed .main {
     .topbar-right-item-search {
         display: flex;
     }
+    .modal {
+        width: 90%;
+    }
 }
 /* end: Breakpoints */
