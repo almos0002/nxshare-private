@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Update Settings')
 @section('content')
     <style>
         .form-row {

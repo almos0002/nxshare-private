@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Update Profile')
 @section('content')
     <style>
         .form-row {

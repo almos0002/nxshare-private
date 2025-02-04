@@ -1,4 +1,4 @@
-@extends('layouts.app') @section('content')
+@extends('layouts.app') @section('title', 'Wallpapers') @section('content')
 <!-- Add Post Button and Search -->
 <div style="display:flex; justify-content:space-between;gap:8px;">
    <div>

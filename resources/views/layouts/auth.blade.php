@@ -7,7 +7,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
         <link href="{{asset('assets')}}/css/style.css" rel="stylesheet">
-        <title>{{'Log In'}}</title>
+        <title>@yield('title', 'Private Blog') - NxShare</title>
     </head>
     <body style="background-color: var(--neutral-50); display: flex; justify-content: center; align-items: center; height: 100vh;">
         @yield('content')

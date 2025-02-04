@@ -8,7 +8,7 @@
         <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
         <link rel="icon" type="image/x-icon" href="https://i.postimg.cc/4dbDJLpG/favicon.png">
         <link href="{{asset('assets')}}/css/style.css" rel="stylesheet">
-        <title>NxShare</title>
+        <title>@yield('title', 'Private Blog') - NxShare</title>
     </head>
     <body>
         <!-- start: Sidebar -->
