@@ -1,4 +1,4 @@
-@extends('layouts.app') @section('title', 'Images') @section('content')
+@extends('layouts.app') @section('title', 'Videos') @section('content')
 
 <!-- Wallpaper Stats -->
 <div class="stats-container">
@@ -8,7 +8,7 @@
                <i class="ri-file-text-line"></i>
            </div>
            <div class="stat-content">
-               <h3>Total Posts</h3>
+               <h3>Total Videos</h3>
                <p>{{ number_format($totalPosts) }}</p>
            </div>
        </div>
