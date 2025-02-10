@@ -41,7 +41,7 @@ class VideoController extends Controller
         $redirectStatus = Settings::value('redirect_enabled') ?? false;
         $redirectEnabled = $redirectStatus ? 'Enabled' : 'Disabled';
 
-        return view('nsfw.Video.add', compact('posts', 'sortColumn', 'sortDirection', 'search', 'totalPosts', 'totalViews', 'userName', 'redirectEnabled'));
+        return view('nsfw.video.add', compact('posts', 'sortColumn', 'sortDirection', 'search', 'totalPosts', 'totalViews', 'userName', 'redirectEnabled'));
     }
 
     // Create Video Post
@@ -148,7 +148,7 @@ class VideoController extends Controller
                 $postThumbnail = $post->thumbnail;
                 $postLinks = $post->links;
 
-                return view('nsfw.Video.display', compact('post', 'postLinks', 'postThumbnail'));
+                return view('nsfw.video.display', compact('post', 'postLinks', 'postThumbnail'));
             }
 
             return redirect()->to(url("/$accessType/{$slug}"));
