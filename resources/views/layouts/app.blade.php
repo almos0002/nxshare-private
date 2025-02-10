@@ -72,7 +72,7 @@
                                 </a>
                             </li>
                             <li class="sidebar-submenu-item">
-                                <a href="#" class="sidebar-submenu-item-link">
+                                <a href="{{route('addvd')}}" class="sidebar-submenu-item-link">
                                     <span class="sidebar-submenu-item-link-text">Videos</span>
                                 </a>
                             </li>

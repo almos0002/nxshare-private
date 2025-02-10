@@ -13,5 +13,9 @@ return [
         'table' => 'images',
         'model' => \App\Models\Image::class,
     ],
+    'v' => [
+        'table' => 'videos',
+        'model' => \App\Models\Video::class,
+    ],
     // Add new access types here
 ];

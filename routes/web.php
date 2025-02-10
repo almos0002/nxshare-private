@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NxleakController;
 use App\Http\Controllers\WallpaperController;
+use App\Http\Controllers\VideoController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\AccessTokenController;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +20,7 @@ Route::group(['middleware' => 'domain.redirect'], function () {
     Route::get('/n/{slug}', [NxLeakController::class, 'display'])->name('displaynx');
     Route::get('/w/{slug}', [WallpaperController::class, 'display'])->name('displaywp');
     Route::get('/i/{slug}', [ImageController::class, 'display'])->name('displayimg');
+    Route::get('/v/{slug}', [VideoController::class, 'display'])->name('displayvd');
 
     // Token generation
     Route::post('/generate-token', [AccessTokenController::class, 'generate'])
@@ -54,6 +56,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/images/fetch/{id}', [ImageController::class, 'fetch'])->name('fetchimg');
     Route::post('/images/update', [ImageController::class, 'update'])->name('updateimg');
     Route::get('/images/delete/{slug}', [ImageController::class, 'delete'])->name('deleteimg');
+
+    // Videos Routes
+    Route::get('/videos', [VideoController::class, 'add'])->name('addvd');
+    Route::post('/videos/create', [VideoController::class, 'create'])->name('createvd');
+    Route::get('/videos/fetch/{id}', [VideoController::class, 'fetch'])->name('fetchvd');
+    Route::post('/videos/update', [VideoController::class, 'update'])->name('updatevd');
+    Route::get('/videos/delete/{slug}', [VideoController::class, 'delete'])->name('deletevd');
 
     // Settings Routes
     Route::get('/settings', [SettingController::class, 'editSettings'])->name('settings.edit');
