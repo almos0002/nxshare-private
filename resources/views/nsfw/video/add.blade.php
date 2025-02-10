@@ -130,8 +130,9 @@
    <table class="table">
       <thead>
          <tr>
-            <th style="width:10%; text-align:center;">SN</th>
-            <th style="width:55%;">Title</th>
+            <th style="width:5%; text-align:center;">SN</th>
+            <th style="width:15%; text-align:center;">Thumbnail</th>
+            <th style="width:45%;">Title</th>
             <th style="width:10%; text-align:center;">Views</th>
             <th style="width:10%; text-align:center;">Slug</th>
             <th style="width:15%; text-align:center;">Actions</th>
@@ -142,6 +143,9 @@
          @foreach($posts as $index => $post) 
          <tr class="post-item">
             <td style="text-align:center;">{{ $index + 1 }}</td>
+            <td class="post-thumbnail" style="text-align:center;padding:2px">
+               <img src="{{ $post->thumbnail }}" alt="thumbnail" style="width:100%; height:90px; object-fit:cover; display:block; margin:auto;">
+            </td>
             <td class="post-title">{{ $post->title }}</td>
             <td style="text-align:center;">{{ $post->views }}</td>
             <td style="text-align:center;">{{ $post->slug }}</td>
@@ -166,10 +170,11 @@
       </tbody>
       @else 
       <tr>
-         <td colspan="5" style="text-align:center;">No posts available.</td>
+         <td colspan="6" style="text-align:center;">No posts available.</td>
       </tr>
       @endif
    </table>
+   
    <!-- Pagination -->
    <div class="pagination">
       {{ $posts->appends(request()->except('page'))->links('pagination::default') }}
