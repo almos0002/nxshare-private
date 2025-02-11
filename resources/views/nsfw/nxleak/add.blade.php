@@ -130,7 +130,7 @@
         <th style="width:15%; text-align:center;">Actions</th>
       </tr>
     </thead> @if(count($posts)) <tbody id="postTableBody"> @foreach($posts as $index => $post) <tr class="post-item">
-        <td style="text-align:center;">{{ $index + 1 }}</td>
+        <td style="text-align:center;">{{ $posts->firstItem() + $index }}</td>
         <td class="post-title">{{ $post->title }}</td>
         <td style="text-align:center;">{{ $post->views }}</td>
         <td style="text-align:center;">{{ $post->slug }}</td>

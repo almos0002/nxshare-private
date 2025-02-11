@@ -142,7 +142,7 @@
       <tbody id="postTableBody">
          @foreach($posts as $index => $post) 
          <tr class="post-item">
-            <td style="text-align:center;">{{ $index + 1 }}</td>
+            <td style="text-align:center;">{{ $posts->firstItem() + $index }}</td>
             <td class="post-thumbnail" style="text-align:center;padding:2px">
                <img src="{{ $post->thumbnail }}" alt="thumbnail" style="width:100%; height:90px; object-fit:cover; display:block; margin:auto;">
             </td>
