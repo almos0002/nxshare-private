@@ -49,7 +49,7 @@ class VideoController extends Controller
     {
         // dd($request->all());
         $request->validate([
-            'title' => 'required|max:50',
+            'title' => 'required|max:500',
             'thumbnail' => 'required',
             'links' => 'required',
             'links.*' => 'url|max:255',
@@ -85,7 +85,7 @@ class VideoController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'title' => 'required|max:50',
+            'title' => 'required|max:500',
             'thumbnail' => 'required',
             'links' => 'required',
             'links.*' => 'url|max:255',
