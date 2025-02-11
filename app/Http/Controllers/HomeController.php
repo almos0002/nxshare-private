@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Image;
 use App\Models\Nxleak;
 use App\Models\Wallpaper;
-use App\Models\Videos;
+use App\Models\Video;
 use App\Models\Settings;
 use Illuminate\Support\Facades\DB;
 
@@ -26,10 +26,10 @@ class HomeController extends Controller
     public function index()
     {
         // Calculate total posts
-        $totalPosts = Image::count() + Nxleak::count() + Wallpaper::count() + Videos::count();;
+        $totalPosts = Image::count() + Nxleak::count() + Wallpaper::count() + Video::count();;
         
         // Calculate total views
-        $totalViews = Image::sum('views') + Nxleak::sum('views') + Wallpaper::sum('views') + Videos::sum('views');;
+        $totalViews = Image::sum('views') + Nxleak::sum('views') + Wallpaper::sum('views') + Video::sum('views');;
         
         // Get logged in user name
         $userName = auth()->user()->name;
@@ -47,7 +47,7 @@ class HomeController extends Controller
                 Wallpaper::select('title', 'slug', 'views', 'created_at', DB::raw("'w' as type"))
             )
             ->unionAll(
-                Videos::select('title', 'slug', 'views', 'created_at', DB::raw("'v' as type"))
+                Video::select('title', 'slug', 'views', 'created_at', DB::raw("'v' as type"))
             )
             ->orderBy('views', 'desc')
             ->take(5)
@@ -62,7 +62,7 @@ class HomeController extends Controller
                 Wallpaper::select('title', 'slug', 'created_at', DB::raw("'w' as type"))
             )
             ->unionAll(
-                Videos::select('title', 'slug', 'created_at', DB::raw("'v' as type"))
+                Video::select('title', 'slug', 'created_at', DB::raw("'v' as type"))
             )
             ->orderBy('created_at', 'desc')
             ->take(5)
