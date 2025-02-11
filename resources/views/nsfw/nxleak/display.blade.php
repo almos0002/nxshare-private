@@ -20,7 +20,7 @@
       <!-- Main Content -->
       <main class="main-content">
         <h3>🗃️ Backup Files before it expires ️</h3><br>
-        <h1>👇 Enjoy Your Mega Links Now  👇</h1><br>
+        <h1>👇 Enjoy {{ $post->title }} Onlyfans Links Now  👇</h1><br>
         {!! $postContent !!}<br>
         <span style="font-size:17px; font-weight:600">Hey You 🫵, Yes you!! Don't Fap 💦 a lot buddy 😉</span><br><br>
         <i style="font-size:18px;">⚠️ Don't forget to join our telegram channel to get notified about new contents instantly!</i>
