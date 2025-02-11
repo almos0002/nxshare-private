@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('post_id');
             $table->string('ip_address');
             $table->timestamps();
-            $table->foreign('post_id')->references('id')->on('images')->onDelete('cascade');
+            $table->foreign('post_id')->references('id')->on('videos')->onDelete('cascade');
         });
     }
 
