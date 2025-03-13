@@ -16,7 +16,7 @@
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
     <div class="text-center space-y-4">
-        {{ $settings->ad1 }}
+        {!! $settings->ad1 !!}
         <!-- Timer Display -->
         <div class="flex justify-center">
             <div id="timer" class="text-6xl font-bold text-amber-600">10</div>
@@ -38,7 +38,7 @@
                 <i class="ri-loader-4-line animate-spin"></i>
             </span>
         </button>
-            {{ $settings->ad1 }}
+        {!! $settings->ad1 !!}
     </div>
 
     <script>
@@ -111,6 +111,6 @@
             }
         });
     </script>
-    {{ $settings->ad2 }}
+    {!! $settings->ad2 !!}
 </body>
 </html>

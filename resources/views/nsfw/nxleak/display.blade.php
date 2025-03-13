@@ -19,6 +19,7 @@
       </header>
       <!-- Main Content -->
       <main class="main-content">
+         {!! $settings->ad1 !!}
         <h3>🗃️ Backup Files before it expires ️</h3><br>
         <h1>👇 Enjoy Your Mega Links Now  👇</h1><br>
         {!! $postContent !!}<br>
@@ -29,6 +30,7 @@
         <button class="download-btn" onclick="window.location.href='https://t.me/nxleak'">💦TELEGRAM NEW_</button>
         <button class="download-btn" onclick="window.location.href='https://t.me/nxleak'">🌐VISIT WEBSITE_</button>
         </div>
+        {!! $settings->ad1 !!}
       </main>
       <!-- Bottom Bar -->
       <footer class="bottom-bar">
@@ -42,5 +44,6 @@
             If any link is not working then please report us we will try to fix that link within 2-3 days. Thank You!!
          </p>
       </footer>
+      {!! $settings->ad2 !!}
    </body>
 </html>

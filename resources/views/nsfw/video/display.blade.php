@@ -38,6 +38,7 @@
       </header>
       <!-- Main Content -->
       <main class="main-content">
+         {!! $settings->ad1 !!}
          <div class="flex-container">
             @php
                $emojis = ['♨️', '💢', '🪱'];
@@ -50,11 +51,13 @@
                <button class="download-btn" onclick="window.location.href='{{ $postLinks }}'">{{ $emojis[0] }} DOWNLOAD_</button>
             </div>
          </div>
+         {!! $settings->ad1 !!}
       </main>
       <!-- Bottom Bar -->
       <footer class="bottom-bar">
          <button class="social-btn" onclick="window.location.href='https://t.me/NxWall'">🔥 Join Our Telegram Channel 🔥</button><br/>
          <p>Join Our Wallpaper Community in Telegram from the above button. Thank You!!</p>
       </footer>
+      {!! $settings->ad2 !!}
    </body>
 </html>
