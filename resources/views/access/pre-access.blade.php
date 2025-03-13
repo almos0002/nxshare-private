@@ -19,7 +19,7 @@
         {!! $settings->ad1 !!}
         <!-- Timer Display -->
         <div class="flex justify-center">
-            <div id="timer" class="text-6xl font-bold text-amber-600">10</div>
+            <div id="timer" class="text-6xl font-bold text-amber-500">10</div>
         </div>
 
         <!-- Status Text -->
@@ -46,7 +46,7 @@
         const button = document.getElementById('getAccessBtn');
         const statusText = document.getElementById('statusText');
         const statusSubtext = document.getElementById('statusSubtext');
-        let timeLeft = 10;
+        let timeLeft = 6;
 
         // Timer countdown
         const countdown = setInterval(() => {
