@@ -19,7 +19,7 @@
         {!! $settings->ad1 !!}
         <!-- Timer Display -->
         <div class="flex justify-center">
-            <div id="timer" class="text-6xl font-bold text-amber-500">10</div>
+            <div id="timer" class="text-6xl font-bold text-amber-500">6</div>
         </div>
 
         <!-- Status Text -->
