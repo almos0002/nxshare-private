@@ -11,10 +11,20 @@
         @import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@100;200;300;400;500;600;700;800;900&display=swap");
         html, body{
             font-family: "Barlow Condensed", sans-serif;
+            background: radial-gradient(ellipse at bottom, #ffffff 0%, #f3f4f6 100%);
+        }
+        .gradient{
+            background: radial-gradient(
+            circle at 20% 20%,
+            #fde68a55 0%,
+            transparent 40%
+        ),
+        radial-gradient(circle at 80% 80%, #93c5fd55 0%, transparent 40%);
+}
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body class="min-h-screen gradient flex items-center justify-center p-4">
     <div class="text-center space-y-4">
         {!! $settings->ad1 !!}
         <!-- Timer Display -->
