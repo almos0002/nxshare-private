@@ -46,7 +46,7 @@
             @endphp
             <div class="cntr">
                <div class="videoplayer">
-                  <iframe title="video" src="{{ $postLinks }}" allowfullscreen></iframe>
+                  <iframe title="video" src="{{ $postLinks }}" allowfullscreen scrolling="no"></iframe>
                </div>
                <button class="download-btn" onclick="window.location.href='{{ $postLinks }}'">{{ $emojis[0] }} DOWNLOAD_</button>
             </div>
