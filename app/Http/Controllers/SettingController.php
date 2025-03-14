@@ -115,30 +115,34 @@ class SettingController extends Controller
         $dashboardData = [];
         if ($request->input('on_dashboard') === 'true') {
             // Calculate total posts
-            $totalPosts = \App\Models\Wallpaper::count();
+            $totalPosts = \App\Models\Wallpaper::count() + \App\Models\Pfp::count();
             if ($status === 'enabled') {
                 $totalPosts += \App\Models\Image::count() + \App\Models\Nxleak::count() + \App\Models\Video::count();
             }
             
             // Calculate total views
-            $totalViews = \App\Models\Wallpaper::sum('views');
+            $totalViews = \App\Models\Wallpaper::sum('views') + \App\Models\Pfp::sum('views');
             if ($status === 'enabled') {
                 $totalViews += \App\Models\Image::sum('views') + \App\Models\Nxleak::sum('views') + \App\Models\Video::sum('views');
             }
 
-            // Start with SFW content query
-            $mostViewedQuery = \App\Models\Wallpaper::select('title', 'slug', 'views', 'created_at', \Illuminate\Support\Facades\DB::raw("'w' as type"));
+            // Define SFW query first (Wallpapers and PFP)
+            $wallpaperQuery = \App\Models\Wallpaper::select('title', 'slug', 'views', 'created_at', \Illuminate\Support\Facades\DB::raw("'w' as type"));
+            $pfpQuery = \App\Models\Pfp::select('title', 'slug', 'views', 'created_at', \Illuminate\Support\Facades\DB::raw("'p' as type"));
+            
+            // Define NSFW queries
+            $imageQuery = \App\Models\Image::select('title', 'slug', 'views', 'created_at', \Illuminate\Support\Facades\DB::raw("'i' as type"));
+            $nxleakQuery = \App\Models\Nxleak::select('title', 'slug', 'views', 'created_at', \Illuminate\Support\Facades\DB::raw("'n' as type"));
+            $videoQuery = \App\Models\Video::select('title', 'slug', 'views', 'created_at', \Illuminate\Support\Facades\DB::raw("'v' as type"));
+
+            // Start with SFW content query (always include PFP)
+            $mostViewedQuery = $wallpaperQuery->unionAll($pfpQuery);
             
             // Add NSFW content if enabled
             if ($status === 'enabled') {
-                $mostViewedQuery = \App\Models\Image::select('title', 'slug', 'views', 'created_at', \Illuminate\Support\Facades\DB::raw("'i' as type"))
-                    ->unionAll(
-                        \App\Models\Nxleak::select('title', 'slug', 'views', 'created_at', \Illuminate\Support\Facades\DB::raw("'n' as type"))
-                    )
-                    ->unionAll($mostViewedQuery)
-                    ->unionAll(
-                        \App\Models\Video::select('title', 'slug', 'views', 'created_at', \Illuminate\Support\Facades\DB::raw("'v' as type"))
-                    );
+                $mostViewedQuery = $mostViewedQuery->unionAll($imageQuery)
+                                               ->unionAll($nxleakQuery)
+                                               ->unionAll($videoQuery);
             }
             
             // Get most viewed posts
@@ -147,19 +151,14 @@ class SettingController extends Controller
                 ->take(5)
                 ->get();
 
-            // Start with SFW content query for recent posts
-            $recentPostsQuery = \App\Models\Wallpaper::select('title', 'slug', 'created_at', \Illuminate\Support\Facades\DB::raw("'w' as type"));
+            // For recent posts, same approach (always include PFP)
+            $recentPostsQuery = $wallpaperQuery->unionAll($pfpQuery);
             
             // Add NSFW content if enabled
             if ($status === 'enabled') {
-                $recentPostsQuery = \App\Models\Image::select('title', 'slug', 'created_at', \Illuminate\Support\Facades\DB::raw("'i' as type"))
-                    ->unionAll(
-                        \App\Models\Nxleak::select('title', 'slug', 'created_at', \Illuminate\Support\Facades\DB::raw("'n' as type"))
-                    )
-                    ->unionAll($recentPostsQuery)
-                    ->unionAll(
-                        \App\Models\Video::select('title', 'slug', 'created_at', \Illuminate\Support\Facades\DB::raw("'v' as type"))
-                    );
+                $recentPostsQuery = $recentPostsQuery->unionAll($imageQuery)
+                                                 ->unionAll($nxleakQuery)
+                                                 ->unionAll($videoQuery);
             }
             
             // Get recent posts

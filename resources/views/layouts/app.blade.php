@@ -639,19 +639,23 @@
                         
                         switch(post.type) {
                             case 'i': 
-                                url = '/images/view/' + post.slug;
+                                url = '/i/' + post.slug;
                                 iconClass = 'ri-image-line';
                                 break;
                             case 'n': 
-                                url = '/nxleak/view/' + post.slug;
+                                url = '/n/' + post.slug;
                                 iconClass = 'ri-file-list-line';
                                 break;
                             case 'w': 
-                                url = '/wallpapers/view/' + post.slug;
+                                url = '/w/' + post.slug;
                                 iconClass = 'ri-image-2-line';
                                 break;
+                            case 'p': 
+                                url = '/p/' + post.slug;
+                                iconClass = 'ri-user-5-line';
+                                break;
                             case 'v': 
-                                url = '/videos/view/' + post.slug;
+                                url = '/v/' + post.slug;
                                 iconClass = 'ri-video-line';
                                 break;
                         }

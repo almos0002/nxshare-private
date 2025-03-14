@@ -17,5 +17,9 @@ return [
         'table' => 'videos',
         'model' => \App\Models\Video::class,
     ],
+    'p' => [
+        'table' => 'pfp',
+        'model' => \App\Models\Pfp::class,
+    ],
     // Add new access types here
 ];
