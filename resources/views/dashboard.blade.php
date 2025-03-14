@@ -12,7 +12,7 @@
                     </div>
                     <div class="stat-content">
                         <h3>Total Posts</h3>
-                        <p>{{ number_format($totalPosts) }}</p>
+                        <p id="total-posts">{{ number_format($totalPosts) }}</p>
                     </div>
                 </div>
             </div>
@@ -24,7 +24,7 @@
                     </div>
                     <div class="stat-content">
                         <h3>Total Views</h3>
-                        <p>{{ number_format($totalViews) }}</p>
+                        <p id="total-views">{{ number_format($totalViews) }}</p>
                     </div>
                 </div>
             </div>
@@ -61,10 +61,10 @@
                     <i class="ri-fire-line"></i>
                     <h2>Top Viewed Posts</h2>
                 </div>
-                <ul class="dash-post-list">
+                <ul class="dash-post-list" id="most-viewed-list">
                     @foreach($mostViewed as $post)
                     <li class="dash-post-item">
-                        <a href="/{{ $post->type }}/{{ $post->slug }}" class="dash-post-link">
+                        <a href="/{{ $post->type == 'i' ? 'images/view' : ($post->type == 'n' ? 'nxleak/view' : ($post->type == 'w' ? 'wallpapers/view' : 'videos/view')) }}/{{ $post->slug }}" class="dash-post-link">
                             <span class="dash-post-title">{{ $post->title }}</span>
                             <span class="dash-post-meta">
                                 <i class="ri-eye-line"></i>
@@ -81,10 +81,10 @@
                     <i class="ri-time-line"></i>
                     <h2>Recent Posts</h2>
                 </div>
-                <ul class="dash-post-list">
+                <ul class="dash-post-list" id="recent-posts-list">
                     @foreach($recentPosts as $post)
                     <li class="dash-post-item">
-                        <a href="/{{ $post->type }}/{{ $post->slug }}" class="dash-post-link">
+                        <a href="/{{ $post->type == 'i' ? 'images/view' : ($post->type == 'n' ? 'nxleak/view' : ($post->type == 'w' ? 'wallpapers/view' : 'videos/view')) }}/{{ $post->slug }}" class="dash-post-link">
                             <span class="dash-post-title">{{ $post->title }}</span>
                             <span class="dash-post-meta">
                                 <i class="ri-calendar-line"></i>

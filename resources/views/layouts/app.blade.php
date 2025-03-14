@@ -85,7 +85,7 @@
                         </ul>
                     </li>
                     @if(Auth::check() && Auth::user()->settings && Auth::user()->settings->nsfw === 'enabled')
-                    <li class="sidebar-menu-item" data-sidebar-menu-item>
+                    <li class="sidebar-menu-item" data-sidebar-menu-item id="nsfw-menu-item">
                         <a href="#" class="sidebar-menu-item-link" data-sidebar-menu-toggle>
                             <span class="sidebar-menu-item-link-icon">
                                 <i class="ri-vip-line"></i>
@@ -423,7 +423,26 @@
         <script src="{{asset('assets')}}/js/script.js"></script>
         
         <script>
-            // Add CSRF token to all AJAX requests
+            // Initialize NSFW elements on page load
+            $(document).ready(function() {
+                console.log('Document ready - initializing NSFW elements');
+                
+                const button = $('#nsfw-toggle-btn');
+                if (button.length > 0) {
+                    const currentStatus = button.attr('data-status');
+                    console.log('Initial NSFW status:', currentStatus);
+                    
+                    if (currentStatus === 'disabled') {
+                        // Ensure NSFW menu is hidden on page load
+                        $('#nsfw-menu-item').hide();
+                    } else {
+                        // Ensure NSFW menu is visible on page load
+                        $('#nsfw-menu-item').show();
+                    }
+                }
+            });
+            
+            // Set CSRF token for all AJAX requests
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -434,31 +453,143 @@
             function toggleNsfw() {
                 const button = $('#nsfw-toggle-btn');
                 const icon = $('#nsfw-toggle-icon');
-                const currentStatus = button.data('status');
+                const currentStatus = button.attr('data-status');
                 const newStatus = currentStatus === 'enabled' ? 'disabled' : 'enabled';
+                const onDashboard = window.location.pathname === '/dashboard';
+                
+                // Log for debugging
+                console.log('Current status:', currentStatus);
+                console.log('New status:', newStatus);
+                console.log('On dashboard page:', onDashboard);
                 
                 $.ajax({
                     url: '/settings/nsfw/ajax',
                     type: 'POST',
                     data: {
-                        status: newStatus
+                        status: newStatus,
+                        on_dashboard: onDashboard
                     },
                     success: function(response) {
+                        console.log('AJAX response:', response);
+                        
                         if (response.success) {
-                            // Update button status
-                            button.data('status', newStatus);
+                            // Update button status attribute
+                            button.attr('data-status', newStatus);
                             
                             // Update button appearance
                             if (newStatus === 'enabled') {
                                 button.removeClass('nsfw-disabled').addClass('nsfw-enabled');
                                 icon.removeClass('ri-shield-flash-line').addClass('ri-shield-check-fill');
+                                
+                                // Show NSFW menu items
+                                $('#nsfw-menu-item').show();
                             } else {
                                 button.removeClass('nsfw-enabled').addClass('nsfw-disabled');
                                 icon.removeClass('ri-shield-check-fill').addClass('ri-shield-flash-line');
+                                
+                                // Hide NSFW menu items
+                                $('#nsfw-menu-item').hide();
+                            }
+                            
+                            // Update dashboard if on dashboard page and we have dashboard data
+                            if (onDashboard && response.totalPosts !== undefined) {
+                                // Update dashboard statistics
+                                $('#total-posts').text(response.totalPosts.toLocaleString());
+                                $('#total-views').text(response.totalViews.toLocaleString());
+                                
+                                // Update most viewed posts
+                                updatePostsList('#most-viewed-list', response.mostViewed);
+                                
+                                // Update recent posts
+                                updatePostsList('#recent-posts-list', response.recentPosts);
                             }
                         }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error:', error);
                     }
                 });
+            }
+            
+            // Function to refresh dashboard content
+            function refreshDashboardContent(nsfwEnabled) {
+                console.log('Refreshing dashboard content, NSFW enabled:', nsfwEnabled);
+                
+                $.ajax({
+                    url: '/dashboard/ajax',
+                    type: 'GET',
+                    data: {
+                        nsfw_enabled: nsfwEnabled
+                    },
+                    success: function(response) {
+                        console.log('Dashboard AJAX response:', response);
+                        
+                        if (response.success) {
+                            // Update dashboard statistics
+                            $('#total-posts').text(response.totalPosts.toLocaleString());
+                            $('#total-views').text(response.totalViews.toLocaleString());
+                            
+                            // Update most viewed posts
+                            updatePostsList('#most-viewed-list', response.mostViewed);
+                            
+                            // Update recent posts
+                            updatePostsList('#recent-posts-list', response.recentPosts);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Dashboard AJAX Error:', error);
+                    }
+                });
+            }
+            
+            // Helper function to update posts lists
+            function updatePostsList(listSelector, posts) {
+                console.log('Updating posts list:', listSelector, posts);
+                
+                const list = $(listSelector);
+                list.empty();
+                
+                if (posts.length === 0) {
+                    list.append('<li class="dash-post-item">No posts available</li>');
+                } else {
+                    posts.forEach(post => {
+                        let url = '#';
+                        let iconClass = '';
+                        
+                        switch(post.type) {
+                            case 'i': 
+                                url = '/images/view/' + post.slug;
+                                iconClass = 'ri-image-line';
+                                break;
+                            case 'n': 
+                                url = '/nxleak/view/' + post.slug;
+                                iconClass = 'ri-file-list-line';
+                                break;
+                            case 'w': 
+                                url = '/wallpapers/view/' + post.slug;
+                                iconClass = 'ri-image-2-line';
+                                break;
+                            case 'v': 
+                                url = '/videos/view/' + post.slug;
+                                iconClass = 'ri-video-line';
+                                break;
+                        }
+                        
+                        const itemHtml = `
+                            <li class="dash-post-item">
+                                <a href="${url}" class="dash-post-link">
+                                    <span class="dash-post-title">${post.title}</span>
+                                    <span class="dash-post-meta">
+                                        <i class="${post.views ? 'ri-eye-line' : 'ri-calendar-line'}"></i>
+                                        ${post.views ? post.views.toLocaleString() : new Date(post.created_at).toLocaleDateString()}
+                                    </span>
+                                </a>
+                            </li>
+                        `;
+                        
+                        list.append(itemHtml);
+                    });
+                }
             }
         </script>
         @yield('updatescript')

@@ -110,10 +110,75 @@ class SettingController extends Controller
             ['user_id' => $user->id],
             ['nsfw' => $status]
         );
+        
+        // Prepare dashboard data if we're on the dashboard page
+        $dashboardData = [];
+        if ($request->input('on_dashboard') === 'true') {
+            // Calculate total posts
+            $totalPosts = \App\Models\Wallpaper::count();
+            if ($status === 'enabled') {
+                $totalPosts += \App\Models\Image::count() + \App\Models\Nxleak::count() + \App\Models\Video::count();
+            }
+            
+            // Calculate total views
+            $totalViews = \App\Models\Wallpaper::sum('views');
+            if ($status === 'enabled') {
+                $totalViews += \App\Models\Image::sum('views') + \App\Models\Nxleak::sum('views') + \App\Models\Video::sum('views');
+            }
 
-        return response()->json([
+            // Start with SFW content query
+            $mostViewedQuery = \App\Models\Wallpaper::select('title', 'slug', 'views', 'created_at', \Illuminate\Support\Facades\DB::raw("'w' as type"));
+            
+            // Add NSFW content if enabled
+            if ($status === 'enabled') {
+                $mostViewedQuery = \App\Models\Image::select('title', 'slug', 'views', 'created_at', \Illuminate\Support\Facades\DB::raw("'i' as type"))
+                    ->unionAll(
+                        \App\Models\Nxleak::select('title', 'slug', 'views', 'created_at', \Illuminate\Support\Facades\DB::raw("'n' as type"))
+                    )
+                    ->unionAll($mostViewedQuery)
+                    ->unionAll(
+                        \App\Models\Video::select('title', 'slug', 'views', 'created_at', \Illuminate\Support\Facades\DB::raw("'v' as type"))
+                    );
+            }
+            
+            // Get most viewed posts
+            $mostViewed = $mostViewedQuery
+                ->orderBy('views', 'desc')
+                ->take(5)
+                ->get();
+
+            // Start with SFW content query for recent posts
+            $recentPostsQuery = \App\Models\Wallpaper::select('title', 'slug', 'created_at', \Illuminate\Support\Facades\DB::raw("'w' as type"));
+            
+            // Add NSFW content if enabled
+            if ($status === 'enabled') {
+                $recentPostsQuery = \App\Models\Image::select('title', 'slug', 'created_at', \Illuminate\Support\Facades\DB::raw("'i' as type"))
+                    ->unionAll(
+                        \App\Models\Nxleak::select('title', 'slug', 'created_at', \Illuminate\Support\Facades\DB::raw("'n' as type"))
+                    )
+                    ->unionAll($recentPostsQuery)
+                    ->unionAll(
+                        \App\Models\Video::select('title', 'slug', 'created_at', \Illuminate\Support\Facades\DB::raw("'v' as type"))
+                    );
+            }
+            
+            // Get recent posts
+            $recentPosts = $recentPostsQuery
+                ->orderBy('created_at', 'desc')
+                ->take(5)
+                ->get();
+            
+            $dashboardData = [
+                'totalPosts' => $totalPosts,
+                'totalViews' => $totalViews,
+                'mostViewed' => $mostViewed,
+                'recentPosts' => $recentPosts
+            ];
+        }
+
+        return response()->json(array_merge([
             'success' => true, 
             'message' => $status == 'enabled' ? 'NSFW content enabled' : 'NSFW content disabled'
-        ]);
+        ], $dashboardData));
     }
 }

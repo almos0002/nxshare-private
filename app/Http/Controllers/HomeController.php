@@ -106,4 +106,72 @@ class HomeController extends Controller
             'nsfwEnabled'
         ));
     }
+
+    public function dashboardAjax(Request $request)
+    {
+        // Check NSFW status from request
+        $nsfwEnabled = $request->input('nsfw_enabled') === 'true' || $request->input('nsfw_enabled') === true;
+        
+        // Calculate total posts
+        $totalPosts = Wallpaper::count();
+        if ($nsfwEnabled) {
+            $totalPosts += Image::count() + Nxleak::count() + Video::count();
+        }
+        
+        // Calculate total views
+        $totalViews = Wallpaper::sum('views');
+        if ($nsfwEnabled) {
+            $totalViews += Image::sum('views') + Nxleak::sum('views') + Video::sum('views');
+        }
+
+        // Start with SFW content query
+        $mostViewedQuery = Wallpaper::select('title', 'slug', 'views', 'created_at', DB::raw("'w' as type"));
+        
+        // Add NSFW content if enabled
+        if ($nsfwEnabled) {
+            $mostViewedQuery = Image::select('title', 'slug', 'views', 'created_at', DB::raw("'i' as type"))
+                ->unionAll(
+                    Nxleak::select('title', 'slug', 'views', 'created_at', DB::raw("'n' as type"))
+                )
+                ->unionAll($mostViewedQuery)
+                ->unionAll(
+                    Video::select('title', 'slug', 'views', 'created_at', DB::raw("'v' as type"))
+                );
+        }
+        
+        // Get most viewed posts
+        $mostViewed = $mostViewedQuery
+            ->orderBy('views', 'desc')
+            ->take(5)
+            ->get();
+
+        // Start with SFW content query for recent posts
+        $recentPostsQuery = Wallpaper::select('title', 'slug', 'created_at', DB::raw("'w' as type"));
+        
+        // Add NSFW content if enabled
+        if ($nsfwEnabled) {
+            $recentPostsQuery = Image::select('title', 'slug', 'created_at', DB::raw("'i' as type"))
+                ->unionAll(
+                    Nxleak::select('title', 'slug', 'created_at', DB::raw("'n' as type"))
+                )
+                ->unionAll($recentPostsQuery)
+                ->unionAll(
+                    Video::select('title', 'slug', 'created_at', DB::raw("'v' as type"))
+                );
+        }
+        
+        // Get recent posts
+        $recentPosts = $recentPostsQuery
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'totalPosts' => $totalPosts,
+            'totalViews' => $totalViews,
+            'mostViewed' => $mostViewed,
+            'recentPosts' => $recentPosts
+        ]);
+    }
 }
