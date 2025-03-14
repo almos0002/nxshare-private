@@ -84,6 +84,7 @@
                             </li>
                         </ul>
                     </li>
+                    @if(Auth::check() && Auth::user()->settings && Auth::user()->settings->nsfw === 'enabled')
                     <li class="sidebar-menu-item" data-sidebar-menu-item>
                         <a href="#" class="sidebar-menu-item-link" data-sidebar-menu-toggle>
                             <span class="sidebar-menu-item-link-icon">
@@ -112,6 +113,7 @@
                             </li>
                         </ul>
                     </li>
+                    @endif
                 </ul>
                 <ul class="sidebar-menu">
                     <li class="sidebar-menu-title">
