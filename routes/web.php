@@ -69,5 +69,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/settings', [SettingController::class, 'updateSettings'])->name('settings.update');
     Route::get('/profile', [SettingController::class, 'editProfile'])->name('profile.edit');
     Route::post('/profile', [SettingController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/settings/nsfw/{status}', [SettingController::class, 'toggleNsfw'])->name('settings.nsfw');
 
 });

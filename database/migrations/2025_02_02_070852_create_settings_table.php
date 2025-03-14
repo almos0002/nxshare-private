@@ -17,6 +17,7 @@ return new class extends Migration
             $table->boolean('redirect_enabled')->default(false);
             $table->text('ad1')->nullable();
             $table->text('ad2')->nullable();
+            $table->enum('nsfw', ['enabled', 'disabled'])->default('disabled');
             $table->timestamps();
         });
     }

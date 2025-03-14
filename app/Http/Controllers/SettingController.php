@@ -5,6 +5,7 @@ use App\Models\Settings;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SettingController extends Controller
 {
@@ -16,16 +17,20 @@ class SettingController extends Controller
     // Edit Settings
     public function editSettings()
     {
-        $settings = Settings::firstOrNew();
+        $settings = Settings::first() ?: new Settings();
         return view('settings.settings', compact('settings'));
     }
 
     // Update Settings
     public function updateSettings(Request $request)
     {
-
         // Settings Validation
-        $settingsValidated = $request->validate(['active_domain' => 'nullable|url', 'redirect_enabled' => 'boolean', 'ad1' => 'nullable|string', 'ad2' => 'nullable|string', ]);
+        $settingsValidated = $request->validate([
+            'active_domain' => 'nullable|url', 
+            'redirect_enabled' => 'boolean', 
+            'ad1' => 'nullable|string', 
+            'ad2' => 'nullable|string',
+        ]);
 
         // Update Settings
         Settings::updateOrCreate(['id' => 1], $settingsValidated);
@@ -36,7 +41,7 @@ class SettingController extends Controller
     // Edit Profile
     public function editProfile()
     {
-        $user = auth()->user();
+        $user = Auth::user();
         return view('settings.profile', compact('user'));
     }
 
@@ -44,15 +49,45 @@ class SettingController extends Controller
     public function updateProfile(Request $request)
     {
         // User Validation
-        $userValidated = $request->validate(['name' => 'required|string|max:255', 'email' => 'required|email|unique:users,email,' . auth()
-            ->id() , 'password' => 'nullable|min:8|confirmed', ]);
+        $userValidated = $request->validate([
+            'name' => 'required|string|max:255', 
+            'email' => 'required|email|unique:users,email,' . Auth::id(), 
+            'password' => 'nullable|min:8|confirmed', 
+        ]);
+
+        // Prepare update data
+        $userData = [
+            'name' => $userValidated['name'],
+            'email' => $userValidated['email'],
+        ];
+        
+        // Add password only if provided
+        if (!empty($userValidated['password'])) {
+            $userData['password'] = Hash::make($userValidated['password']);
+        }
 
         // Update User
-        $user = auth()->user();
-        $user->update(['name' => $userValidated['name'], 'email' => $userValidated['email'], 'password' => isset($userValidated['password']) ? Hash::make($userValidated['password']) : $user->password, ]);
+        User::where('id', Auth::id())->update($userData);
 
         return back()->with('status', 'Profile updated successfully!');
     }
 
-}
+    // Toggle NSFW Setting
+    public function toggleNsfw(string $status)
+    {
+        // Validate status
+        if (!in_array($status, ['enabled', 'disabled'])) {
+            return back()->with('error', 'Invalid NSFW status');
+        }
 
+        // Update or create settings with the new NSFW status
+        Settings::updateOrCreate(
+            ['id' => 1],
+            ['nsfw' => $status]
+        );
+
+        $statusMessage = $status == 'enabled' ? 'NSFW content enabled' : 'NSFW content disabled';
+        return back()->with('status', $statusMessage);
+    }
+
+}

@@ -9,5 +9,5 @@ class Settings extends Model
     protected $table = "settings";
 
     // Fillable Columns
-    protected $fillable = ['active_domain', 'redirect_enabled','ad1', 'ad2'];
+    protected $fillable = ['active_domain', 'redirect_enabled','ad1', 'ad2', 'nsfw'];
 }

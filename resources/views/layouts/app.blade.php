@@ -341,6 +341,21 @@
                         </button>
                         <div class="dropdown-menu-wrapper">
                             <ul class="dropdown-menu">
+                                @if(Auth::check() && Auth::user()->settings && Auth::user()->settings->nsfw == 'enabled')
+                                    <li class="dropdown-menu-item">
+                                        <a href="{{ route('settings.nsfw', ['status' => 'disabled']) }}" class="dropdown-menu-item-link">
+                                            <span class="dropdown-menu-item-link-icon"><i class="ri-shield-check-line"></i></span>
+                                            <span class="dropdown-menu-item-link-text">Disable NSFW</span>
+                                        </a>
+                                    </li>
+                                @else
+                                    <li class="dropdown-menu-item">
+                                        <a href="{{ route('settings.nsfw', ['status' => 'enabled']) }}" class="dropdown-menu-item-link">
+                                            <span class="dropdown-menu-item-link-icon"><i class="ri-shield-flash-line"></i></span>
+                                            <span class="dropdown-menu-item-link-text">Enable NSFW</span>
+                                        </a>
+                                    </li>
+                                @endif
                                 <li class="dropdown-menu-item">
                                     <a href="{{route('profile.update')}}" class="dropdown-menu-item-link">
                                         <span class="dropdown-menu-item-link-icon"><i class="ri-user-line"></i></span>
