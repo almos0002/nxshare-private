@@ -9,6 +9,7 @@
         <link rel="icon" type="image/x-icon" href="https://i.postimg.cc/4dbDJLpG/favicon.png">
         <link href="{{asset('assets')}}/css/style.css" rel="stylesheet">
         <link href="{{asset('assets')}}/css/dashboard.css" rel="stylesheet">
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
         <title>@yield('title', 'Private Blog') - NxShare</title>
     </head>
     <body>
@@ -333,7 +334,14 @@
                         </div>
                     </div> --}}
 
-
+                    @if(Auth::check())
+                        <button id="nsfw-toggle-btn" type="button" 
+                            class="btn btn-icon {{ Auth::user()->settings && Auth::user()->settings->nsfw == 'enabled' ? 'btn-success' : 'btn-light' }} topbar-right-item"
+                            data-status="{{ Auth::user()->settings && Auth::user()->settings->nsfw == 'enabled' ? 'enabled' : 'disabled' }}"
+                            onclick="toggleNsfw()">
+                            <i id="nsfw-toggle-icon" class="{{ Auth::user()->settings && Auth::user()->settings->nsfw == 'enabled' ? 'ri-shield-check-fill' : 'ri-shield-flash-line' }}"></i>
+                        </button>
+                    @endif
 
                     <div class="dropdown">
                         <button type="button" class="btn btn-icon btn-light topbar-right-item" data-toggle="dropdown">
@@ -341,21 +349,6 @@
                         </button>
                         <div class="dropdown-menu-wrapper">
                             <ul class="dropdown-menu">
-                                @if(Auth::check() && Auth::user()->settings && Auth::user()->settings->nsfw == 'enabled')
-                                    <li class="dropdown-menu-item">
-                                        <a href="{{ route('settings.nsfw', ['status' => 'disabled']) }}" class="dropdown-menu-item-link">
-                                            <span class="dropdown-menu-item-link-icon"><i class="ri-shield-check-line"></i></span>
-                                            <span class="dropdown-menu-item-link-text">Disable NSFW</span>
-                                        </a>
-                                    </li>
-                                @else
-                                    <li class="dropdown-menu-item">
-                                        <a href="{{ route('settings.nsfw', ['status' => 'enabled']) }}" class="dropdown-menu-item-link">
-                                            <span class="dropdown-menu-item-link-icon"><i class="ri-shield-flash-line"></i></span>
-                                            <span class="dropdown-menu-item-link-text">Enable NSFW</span>
-                                        </a>
-                                    </li>
-                                @endif
                                 <li class="dropdown-menu-item">
                                     <a href="{{route('profile.update')}}" class="dropdown-menu-item-link">
                                         <span class="dropdown-menu-item-link-icon"><i class="ri-user-line"></i></span>
@@ -393,6 +386,46 @@
         <script src="https://cdn.jsdelivr.net/npm/@floating-ui/core@1.6.8"></script>
         <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.12"></script>
         <script src="{{asset('assets')}}/js/script.js"></script>
+        
+        <script>
+            // Add CSRF token to all AJAX requests
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            
+            // Toggle NSFW function
+            function toggleNsfw() {
+                const button = $('#nsfw-toggle-btn');
+                const icon = $('#nsfw-toggle-icon');
+                const currentStatus = button.data('status');
+                const newStatus = currentStatus === 'enabled' ? 'disabled' : 'enabled';
+                
+                $.ajax({
+                    url: '/settings/nsfw/ajax',
+                    type: 'POST',
+                    data: {
+                        status: newStatus
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Update button status
+                            button.data('status', newStatus);
+                            
+                            // Update button appearance
+                            if (newStatus === 'enabled') {
+                                button.removeClass('btn-light').addClass('btn-success');
+                                icon.removeClass('ri-shield-flash-line').addClass('ri-shield-check-fill');
+                            } else {
+                                button.removeClass('btn-success').addClass('btn-light');
+                                icon.removeClass('ri-shield-check-fill').addClass('ri-shield-flash-line');
+                            }
+                        }
+                    }
+                });
+            }
+        </script>
         @yield('updatescript')
     </body>
 </html>

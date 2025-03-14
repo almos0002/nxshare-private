@@ -80,9 +80,12 @@ class SettingController extends Controller
             return back()->with('error', 'Invalid NSFW status');
         }
 
+        // Get the authenticated user
+        $user = Auth::user();
+
         // Update or create settings with the new NSFW status
         Settings::updateOrCreate(
-            ['id' => 1],
+            ['user_id' => $user->id],
             ['nsfw' => $status]
         );
 
@@ -90,4 +93,27 @@ class SettingController extends Controller
         return back()->with('status', $statusMessage);
     }
 
+    // Toggle NSFW Setting via AJAX
+    public function toggleNsfwAjax(Request $request)
+    {
+        // Validate status
+        $status = $request->input('status');
+        if (!in_array($status, ['enabled', 'disabled'])) {
+            return response()->json(['success' => false, 'message' => 'Invalid NSFW status']);
+        }
+
+        // Get the authenticated user
+        $user = Auth::user();
+
+        // Update or create settings with the new NSFW status
+        Settings::updateOrCreate(
+            ['user_id' => $user->id],
+            ['nsfw' => $status]
+        );
+
+        return response()->json([
+            'success' => true, 
+            'message' => $status == 'enabled' ? 'NSFW content enabled' : 'NSFW content disabled'
+        ]);
+    }
 }
