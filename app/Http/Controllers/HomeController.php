@@ -9,6 +9,7 @@ use App\Models\Wallpaper;
 use App\Models\Video;
 use App\Models\Settings;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -25,45 +26,72 @@ class HomeController extends Controller
 
     public function index()
     {
+        // Get current user
+        $user = Auth::user();
+        
+        // Check NSFW status
+        $nsfwEnabled = false;
+        if ($user->settings && $user->settings->nsfw === 'enabled') {
+            $nsfwEnabled = true;
+        }
+
         // Calculate total posts
-        $totalPosts = Image::count() + Nxleak::count() + Wallpaper::count() + Video::count();;
+        $totalPosts = Wallpaper::count();
+        if ($nsfwEnabled) {
+            $totalPosts += Image::count() + Nxleak::count() + Video::count();
+        }
         
         // Calculate total views
-        $totalViews = Image::sum('views') + Nxleak::sum('views') + Wallpaper::sum('views') + Video::sum('views');;
+        $totalViews = Wallpaper::sum('views');
+        if ($nsfwEnabled) {
+            $totalViews += Image::sum('views') + Nxleak::sum('views') + Video::sum('views');
+        }
         
         // Get logged in user name
-        $userName = auth()->user()->name;
+        $userName = $user->name;
         
         // Get redirect status
         $redirectStatus = Settings::value('redirect_enabled') ?? false;
         $redirectEnabled = $redirectStatus ? 'Enabled' : 'Disabled';
 
+        // Start with SFW content query
+        $mostViewedQuery = Wallpaper::select('title', 'slug', 'views', 'created_at', DB::raw("'w' as type"));
+        
+        // Add NSFW content if enabled
+        if ($nsfwEnabled) {
+            $mostViewedQuery = Image::select('title', 'slug', 'views', 'created_at', DB::raw("'i' as type"))
+                ->unionAll(
+                    Nxleak::select('title', 'slug', 'views', 'created_at', DB::raw("'n' as type"))
+                )
+                ->unionAll($mostViewedQuery)
+                ->unionAll(
+                    Video::select('title', 'slug', 'views', 'created_at', DB::raw("'v' as type"))
+                );
+        }
+        
         // Get most viewed posts
-        $mostViewed = Image::select('title', 'slug', 'views', 'created_at', DB::raw("'i' as type"))
-            ->unionAll(
-                Nxleak::select('title', 'slug', 'views', 'created_at', DB::raw("'n' as type"))
-            )
-            ->unionAll(
-                Wallpaper::select('title', 'slug', 'views', 'created_at', DB::raw("'w' as type"))
-            )
-            ->unionAll(
-                Video::select('title', 'slug', 'views', 'created_at', DB::raw("'v' as type"))
-            )
+        $mostViewed = $mostViewedQuery
             ->orderBy('views', 'desc')
             ->take(5)
             ->get();
 
+        // Start with SFW content query for recent posts
+        $recentPostsQuery = Wallpaper::select('title', 'slug', 'created_at', DB::raw("'w' as type"));
+        
+        // Add NSFW content if enabled
+        if ($nsfwEnabled) {
+            $recentPostsQuery = Image::select('title', 'slug', 'created_at', DB::raw("'i' as type"))
+                ->unionAll(
+                    Nxleak::select('title', 'slug', 'created_at', DB::raw("'n' as type"))
+                )
+                ->unionAll($recentPostsQuery)
+                ->unionAll(
+                    Video::select('title', 'slug', 'created_at', DB::raw("'v' as type"))
+                );
+        }
+        
         // Get recent posts
-        $recentPosts = Image::select('title', 'slug', 'created_at', DB::raw("'i' as type"))
-            ->unionAll(
-                Nxleak::select('title', 'slug', 'created_at', DB::raw("'n' as type"))
-            )
-            ->unionAll(
-                Wallpaper::select('title', 'slug', 'created_at', DB::raw("'w' as type"))
-            )
-            ->unionAll(
-                Video::select('title', 'slug', 'created_at', DB::raw("'v' as type"))
-            )
+        $recentPosts = $recentPostsQuery
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
@@ -74,7 +102,8 @@ class HomeController extends Controller
             'userName',
             'redirectEnabled',
             'mostViewed',
-            'recentPosts'
+            'recentPosts',
+            'nsfwEnabled'
         ));
     }
 }
