@@ -64,7 +64,7 @@
                 <ul class="dash-post-list" id="most-viewed-list">
                     @foreach($mostViewed as $post)
                     <li class="dash-post-item">
-                        <a href="/{{ $post->type == 'i' ? 'images/view' : ($post->type == 'n' ? 'nxleak/view' : ($post->type == 'w' ? 'wallpapers/view' : 'videos/view')) }}/{{ $post->slug }}" class="dash-post-link">
+                        <a href="/{{ $post->type == 'i' ? 'i' : ($post->type == 'n' ? 'n' : ($post->type == 'w' ? 'w' : 'v')) }}/{{ $post->slug }}" class="dash-post-link">
                             <span class="dash-post-title">{{ $post->title }}</span>
                             <span class="dash-post-meta">
                                 <i class="ri-eye-line"></i>
@@ -84,7 +84,7 @@
                 <ul class="dash-post-list" id="recent-posts-list">
                     @foreach($recentPosts as $post)
                     <li class="dash-post-item">
-                        <a href="/{{ $post->type == 'i' ? 'images/view' : ($post->type == 'n' ? 'nxleak/view' : ($post->type == 'w' ? 'wallpapers/view' : 'videos/view')) }}/{{ $post->slug }}" class="dash-post-link">
+                        <a href="/{{ $post->type == 'i' ? 'i' : ($post->type == 'n' ? 'n' : ($post->type == 'w' ? 'w' : 'v')) }}/{{ $post->slug }}" class="dash-post-link">
                             <span class="dash-post-title">{{ $post->title }}</span>
                             <span class="dash-post-meta">
                                 <i class="ri-calendar-line"></i>
