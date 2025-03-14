@@ -84,8 +84,7 @@
                             </li>
                         </ul>
                     </li>
-                    @if(Auth::check() && Auth::user()->settings && Auth::user()->settings->nsfw === 'enabled')
-                    <li class="sidebar-menu-item" data-sidebar-menu-item id="nsfw-menu-item">
+                    <li class="sidebar-menu-item" data-sidebar-menu-item id="nsfw-menu-item" style="display: {{ Auth::check() && Auth::user()->settings && Auth::user()->settings->nsfw === 'enabled' ? 'list-item' : 'none' }};">
                         <a href="#" class="sidebar-menu-item-link" data-sidebar-menu-toggle>
                             <span class="sidebar-menu-item-link-icon">
                                 <i class="ri-vip-line"></i>
@@ -113,7 +112,6 @@
                             </li>
                         </ul>
                     </li>
-                    @endif
                 </ul>
                 <ul class="sidebar-menu">
                     <li class="sidebar-menu-title">
@@ -423,21 +421,57 @@
         <script src="{{asset('assets')}}/js/script.js"></script>
         
         <script>
+            // Immediate execution on page load - before document ready
+            (function() {
+                console.log('Immediate script execution - checking NSFW menu');
+                const nsfw_menu = document.getElementById('nsfw-menu-item');
+                const toggle_btn = document.getElementById('nsfw-toggle-btn');
+                
+                if (nsfw_menu && toggle_btn) {
+                    console.log('Found both menu and button elements');
+                    const status = toggle_btn.getAttribute('data-status');
+                    console.log('Initial NSFW status (direct DOM):', status);
+                    
+                    // Force correct initial state
+                    if (status === 'disabled') {
+                        nsfw_menu.style.display = 'none';
+                        console.log('Force setting menu to hidden');
+                    } else {
+                        nsfw_menu.style.display = 'list-item';
+                        console.log('Force setting menu to visible');
+                    }
+                } else {
+                    console.error('Elements not found - Menu:', nsfw_menu, 'Button:', toggle_btn);
+                }
+            })();
+            
             // Initialize NSFW elements on page load
             $(document).ready(function() {
                 console.log('Document ready - initializing NSFW elements');
                 
                 const button = $('#nsfw-toggle-btn');
                 if (button.length > 0) {
+                    // Force read from attribute, not from jQuery cache
                     const currentStatus = button.attr('data-status');
                     console.log('Initial NSFW status:', currentStatus);
                     
-                    if (currentStatus === 'disabled') {
-                        // Ensure NSFW menu is hidden on page load
-                        $('#nsfw-menu-item').hide();
+                    // Explicitly set data attribute to match rendered HTML
+                    button.data('status', currentStatus);
+                    
+                    // Set menu visibility based on NSFW status - use native DOM for consistency
+                    const nsfw_menu = document.getElementById('nsfw-menu-item');
+                    if (nsfw_menu) {
+                        console.log('Found NSFW menu element on init:', nsfw_menu);
+                        
+                        if (currentStatus === 'disabled') {
+                            nsfw_menu.style.display = 'none';
+                            console.log('Setting NSFW menu to hidden on init');
+                        } else {
+                            nsfw_menu.style.display = 'list-item';
+                            console.log('Setting NSFW menu to visible on init');
+                        }
                     } else {
-                        // Ensure NSFW menu is visible on page load
-                        $('#nsfw-menu-item').show();
+                        console.error('NSFW menu element not found on init!');
                     }
                 }
             });
@@ -449,66 +483,108 @@
                 }
             });
             
-            // Toggle NSFW function
+            // Toggle NSFW function with complete rewrite
             function toggleNsfw() {
-                const button = $('#nsfw-toggle-btn');
-                const icon = $('#nsfw-toggle-icon');
-                const currentStatus = button.attr('data-status');
+                // Get elements using vanilla JavaScript for consistency
+                const button = document.getElementById('nsfw-toggle-btn');
+                const icon = document.getElementById('nsfw-toggle-icon');
+                const nsfw_menu = document.getElementById('nsfw-menu-item');
+                
+                if (!button || !icon || !nsfw_menu) {
+                    console.error('Required elements not found:', {button, icon, nsfw_menu});
+                    return;
+                }
+                
+                // Get current status from the button attribute
+                const currentStatus = button.getAttribute('data-status');
                 const newStatus = currentStatus === 'enabled' ? 'disabled' : 'enabled';
                 const onDashboard = window.location.pathname === '/dashboard';
                 
-                // Log for debugging
-                console.log('Current status:', currentStatus);
+                console.log('Toggle clicked - Current status:', currentStatus);
                 console.log('New status:', newStatus);
-                console.log('On dashboard page:', onDashboard);
+                console.log('NSFW menu element:', nsfw_menu);
                 
-                $.ajax({
-                    url: '/settings/nsfw/ajax',
-                    type: 'POST',
-                    data: {
-                        status: newStatus,
-                        on_dashboard: onDashboard
+                // Update the button and icon immediately for better UX
+                if (newStatus === 'enabled') {
+                    button.classList.remove('nsfw-disabled');
+                    button.classList.add('nsfw-enabled');
+                    icon.classList.remove('ri-shield-flash-line');
+                    icon.classList.add('ri-shield-check-fill');
+                    
+                    // Show NSFW menu - try different approaches
+                    nsfw_menu.style.removeProperty('display');
+                    nsfw_menu.style.display = 'list-item';
+                    
+                    // Force repaint
+                    void nsfw_menu.offsetWidth;
+                    console.log('Menu should be visible now:', nsfw_menu.style.display);
+                } else {
+                    button.classList.remove('nsfw-enabled');
+                    button.classList.add('nsfw-disabled');
+                    icon.classList.remove('ri-shield-check-fill');
+                    icon.classList.add('ri-shield-flash-line');
+                    
+                    // Hide NSFW menu
+                    nsfw_menu.style.display = 'none';
+                    
+                    // Force repaint
+                    void nsfw_menu.offsetWidth;
+                    console.log('Menu should be hidden now:', nsfw_menu.style.display);
+                }
+                
+                // Update the button's data attribute
+                button.setAttribute('data-status', newStatus);
+                
+                // Send the AJAX request to update server-side state
+                fetch('/settings/nsfw/ajax', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     },
-                    success: function(response) {
-                        console.log('AJAX response:', response);
-                        
-                        if (response.success) {
-                            // Update button status attribute
-                            button.attr('data-status', newStatus);
+                    body: 'status=' + encodeURIComponent(newStatus) + '&on_dashboard=' + encodeURIComponent(onDashboard)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('AJAX response:', data);
+                    
+                    if (data.success) {
+                        // If we're on the dashboard and we have dashboard data, update it
+                        if (onDashboard && data.totalPosts !== undefined) {
+                            document.getElementById('total-posts').textContent = data.totalPosts.toLocaleString();
+                            document.getElementById('total-views').textContent = data.totalViews.toLocaleString();
                             
-                            // Update button appearance
-                            if (newStatus === 'enabled') {
-                                button.removeClass('nsfw-disabled').addClass('nsfw-enabled');
-                                icon.removeClass('ri-shield-flash-line').addClass('ri-shield-check-fill');
-                                
-                                // Show NSFW menu items
-                                $('#nsfw-menu-item').show();
-                            } else {
-                                button.removeClass('nsfw-enabled').addClass('nsfw-disabled');
-                                icon.removeClass('ri-shield-check-fill').addClass('ri-shield-flash-line');
-                                
-                                // Hide NSFW menu items
-                                $('#nsfw-menu-item').hide();
-                            }
-                            
-                            // Update dashboard if on dashboard page and we have dashboard data
-                            if (onDashboard && response.totalPosts !== undefined) {
-                                // Update dashboard statistics
-                                $('#total-posts').text(response.totalPosts.toLocaleString());
-                                $('#total-views').text(response.totalViews.toLocaleString());
-                                
-                                // Update most viewed posts
-                                updatePostsList('#most-viewed-list', response.mostViewed);
-                                
-                                // Update recent posts
-                                updatePostsList('#recent-posts-list', response.recentPosts);
-                            }
+                            // Update the posts lists
+                            updatePostsList('#most-viewed-list', data.mostViewed);
+                            updatePostsList('#recent-posts-list', data.recentPosts);
                         }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('AJAX Error:', error);
+                    } else {
+                        console.error('Server returned error:', data.message);
+                        revertToggleState(currentStatus, button, icon, nsfw_menu);
                     }
+                })
+                .catch(error => {
+                    console.error('AJAX Error:', error);
+                    revertToggleState(currentStatus, button, icon, nsfw_menu);
                 });
+            }
+            
+            // Helper function to revert toggle state if the AJAX request fails
+            function revertToggleState(originalStatus, button, icon, nsfw_menu) {
+                if (originalStatus === 'enabled') {
+                    button.classList.remove('nsfw-disabled');
+                    button.classList.add('nsfw-enabled');
+                    icon.classList.remove('ri-shield-flash-line');
+                    icon.classList.add('ri-shield-check-fill');
+                    nsfw_menu.style.display = 'list-item';
+                } else {
+                    button.classList.remove('nsfw-enabled');
+                    button.classList.add('nsfw-disabled');
+                    icon.classList.remove('ri-shield-check-fill');
+                    icon.classList.add('ri-shield-flash-line');
+                    nsfw_menu.style.display = 'none';
+                }
+                button.setAttribute('data-status', originalStatus);
             }
             
             // Function to refresh dashboard content
