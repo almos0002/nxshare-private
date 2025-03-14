@@ -11,6 +11,39 @@
         <link href="{{asset('assets')}}/css/dashboard.css" rel="stylesheet">
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
         <title>@yield('title', 'Private Blog') - NxShare</title>
+        <style>
+            /* Custom styling for NSFW toggle button */
+            #nsfw-toggle-btn {
+                width: 32px !important;
+                height: 32px !important;
+                padding: 0 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                border-radius: 50% !important; /* Make button perfectly circular */
+                vertical-align: middle !important;
+                margin-top: 0 !important;
+                margin-bottom: 0 !important;
+            }
+            #nsfw-toggle-btn.nsfw-enabled {
+                background-color: #198754 !important;
+                color: white !important;
+            }
+            #nsfw-toggle-btn.nsfw-disabled {
+                background-color: #000000 !important;
+                color: white !important;
+            }
+            #nsfw-toggle-icon {
+                font-size: 18px !important;
+            }
+            
+            /* Fix vertical alignment of topbar buttons */
+            .topbar-right-item {
+                vertical-align: middle !important;
+                margin-top: auto !important;
+                margin-bottom: auto !important;
+            }
+        </style>
     </head>
     <body>
         <!-- start: Sidebar -->
@@ -336,7 +369,7 @@
 
                     @if(Auth::check())
                         <button id="nsfw-toggle-btn" type="button" 
-                            class="btn btn-icon {{ Auth::user()->settings && Auth::user()->settings->nsfw == 'enabled' ? 'btn-success' : 'btn-light' }} topbar-right-item"
+                            class="btn btn-icon topbar-right-item {{ Auth::user()->settings && Auth::user()->settings->nsfw == 'enabled' ? 'nsfw-enabled' : 'nsfw-disabled' }}"
                             data-status="{{ Auth::user()->settings && Auth::user()->settings->nsfw == 'enabled' ? 'enabled' : 'disabled' }}"
                             onclick="toggleNsfw()">
                             <i id="nsfw-toggle-icon" class="{{ Auth::user()->settings && Auth::user()->settings->nsfw == 'enabled' ? 'ri-shield-check-fill' : 'ri-shield-flash-line' }}"></i>
@@ -415,10 +448,10 @@
                             
                             // Update button appearance
                             if (newStatus === 'enabled') {
-                                button.removeClass('btn-light').addClass('btn-success');
+                                button.removeClass('nsfw-disabled').addClass('nsfw-enabled');
                                 icon.removeClass('ri-shield-flash-line').addClass('ri-shield-check-fill');
                             } else {
-                                button.removeClass('btn-success').addClass('btn-light');
+                                button.removeClass('nsfw-enabled').addClass('nsfw-disabled');
                                 icon.removeClass('ri-shield-check-fill').addClass('ri-shield-flash-line');
                             }
                         }
