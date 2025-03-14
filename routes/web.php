@@ -26,8 +26,8 @@ Route::group(['middleware' => 'domain.redirect'], function () {
     Route::post('/generate-token', [AccessTokenController::class, 'generate'])
         ->middleware('throttle:5,1')
         ->name('generate.token');
-    });
-    
+});
+
 // Authentication
 Auth::routes();
 
@@ -53,19 +53,23 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/wallpapers/update', [WallpaperController::class, 'update'])->name('updatewp');
     Route::get('/wallpapers/delete/{slug}', [WallpaperController::class, 'delete'])->name('deletewp');
 
-    // Wallpapers Routes
-    Route::get('/images', [ImageController::class, 'add'])->name('addimg');
-    Route::post('/images/create', [ImageController::class, 'create'])->name('createimg');
-    Route::get('/images/fetch/{id}', [ImageController::class, 'fetch'])->name('fetchimg');
-    Route::post('/images/update', [ImageController::class, 'update'])->name('updateimg');
-    Route::get('/images/delete/{slug}', [ImageController::class, 'delete'])->name('deleteimg');
+    // Images Routes
+    Route::middleware(['nsfw.check'])->group(function () {
+        Route::get('/images', [ImageController::class, 'add'])->name('addimg');
+        Route::post('/images/create', [ImageController::class, 'create'])->name('createimg');
+        Route::get('/images/fetch/{id}', [ImageController::class, 'fetch'])->name('fetchimg');
+        Route::post('/images/update', [ImageController::class, 'update'])->name('updateimg');
+        Route::get('/images/delete/{slug}', [ImageController::class, 'delete'])->name('deleteimg');
+    });
 
     // Videos Routes
-    Route::get('/videos', [VideoController::class, 'add'])->name('addvd');
-    Route::post('/videos/create', [VideoController::class, 'create'])->name('createvd');
-    Route::get('/videos/fetch/{id}', [VideoController::class, 'fetch'])->name('fetchvd');
-    Route::post('/videos/update', [VideoController::class, 'update'])->name('updatevd');
-    Route::get('/videos/delete/{slug}', [VideoController::class, 'delete'])->name('deletevd');
+    Route::middleware(['nsfw.check'])->group(function () {
+        Route::get('/videos', [VideoController::class, 'add'])->name('addvd');
+        Route::post('/videos/create', [VideoController::class, 'create'])->name('createvd');
+        Route::get('/videos/fetch/{id}', [VideoController::class, 'fetch'])->name('fetchvd');
+        Route::post('/videos/update', [VideoController::class, 'update'])->name('updatevd');
+        Route::get('/videos/delete/{slug}', [VideoController::class, 'delete'])->name('deletevd');
+    });
 
     // Settings Routes
     Route::get('/settings', [SettingController::class, 'editSettings'])->name('settings.edit');
@@ -74,5 +78,4 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/profile', [SettingController::class, 'updateProfile'])->name('profile.update');
     Route::get('/settings/nsfw/{status}', [SettingController::class, 'toggleNsfw'])->name('settings.nsfw');
     Route::post('/settings/nsfw/ajax', [SettingController::class, 'toggleNsfwAjax'])->name('settings.nsfw.ajax');
-
 });
