@@ -82,6 +82,11 @@
                                     <span class="sidebar-submenu-item-link-text">Wallpaper</span>
                                 </a>
                             </li>
+                            <li class="sidebar-submenu-item">
+                                <a href="{{route('addpfp')}}" class="sidebar-submenu-item-link">
+                                    <span class="sidebar-submenu-item-link-text">Profile Pictures</span>
+                                </a>
+                            </li>
                         </ul>
                     </li>
                     <li class="sidebar-menu-item" data-sidebar-menu-item id="nsfw-menu-item" style="display: {{ Auth::check() && Auth::user()->settings && Auth::user()->settings->nsfw === 'enabled' ? 'list-item' : 'none' }};">

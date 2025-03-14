@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NxleakController;
 use App\Http\Controllers\WallpaperController;
+use App\Http\Controllers\PfpController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\AccessTokenController;
@@ -21,6 +22,7 @@ Route::group(['middleware' => 'domain.redirect'], function () {
     Route::get('/w/{slug}', [WallpaperController::class, 'display'])->name('displaywp');
     Route::get('/i/{slug}', [ImageController::class, 'display'])->name('displayimg');
     Route::get('/v/{slug}', [VideoController::class, 'display'])->name('displayvd');
+    Route::get('/p/{slug}', [PfpController::class, 'display'])->name('displaypfp');
 
     // Token generation
     Route::post('/generate-token', [AccessTokenController::class, 'generate'])
@@ -52,6 +54,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/wallpapers/fetch/{id}', [WallpaperController::class, 'fetch'])->name('fetchwp');
     Route::post('/wallpapers/update', [WallpaperController::class, 'update'])->name('updatewp');
     Route::get('/wallpapers/delete/{slug}', [WallpaperController::class, 'delete'])->name('deletewp');
+
+    // PFP Routes
+    Route::get('/pfp', [PfpController::class, 'add'])->name('addpfp');
+    Route::post('/pfp/create', [PfpController::class, 'create'])->name('createpfp');
+    Route::get('/pfp/fetch/{id}', [PfpController::class, 'fetch'])->name('fetchpfp');
+    Route::post('/pfp/update', [PfpController::class, 'update'])->name('updatepfp');
+    Route::get('/pfp/delete/{slug}', [PfpController::class, 'delete'])->name('deletepfp');
 
     // Images Routes
     Route::middleware(['nsfw.check'])->group(function () {
