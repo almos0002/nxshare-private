@@ -37,7 +37,9 @@ class AccessTokenController extends Controller
         // Verify 10-second delay
         $accessKey = "access_{$accessType}_{$postId}";
         if (!$request->session()->has($accessKey)) {
-            return response()->json(['message' => 'Invalid request'], 400);
+            // Instead of rejecting the request, set the session key with a timestamp 
+            // from 10 seconds ago to allow immediate access on first attempt
+            $request->session()->put($accessKey, now()->timestamp - 10);
         }
 
         if (now()->timestamp - $request->session()->get($accessKey) < 10) {
