@@ -75,7 +75,6 @@
                     <i class="ri-arrow-right-line"></i>
                 </span>
             `;
-
             }
         }, 1000);
 
@@ -90,14 +89,8 @@
             `;
 
             try {
-                // Add a small delay to ensure all events are processed
-                await new Promise(resolve => setTimeout(resolve, 500));
-                
-                // Show detailed request info in console for debugging
-                console.log('Sending request to', '{{ route("generate.token") }}', 'with data:', {
-                    accessType: '{{ $accessType }}',
-                    postId: {{ $postId }}
-                });
+                // Reduced delay from 500ms to 100ms for faster response
+                await new Promise(resolve => setTimeout(resolve, 100));
                 
                 const response = await fetch('{{ route("generate.token") }}', {
                     method: 'POST',
@@ -109,22 +102,18 @@
                         accessType: '{{ $accessType }}',
                         postId: {{ $postId }}
                     }),
-                    // Add these to prevent caching issues
                     cache: 'no-cache',
                     credentials: 'same-origin'
                 });
-
-                // Log the raw response for debugging
-                console.log('Response status:', response.status);
                 
                 const data = await response.json();
-                console.log('Response data:', data);
                 
                 if (response.ok || (data && data.token)) {
                     button.innerHTML = `<span>Entering Secure Link...</span>`;
+                    // Reduced redirect delay from 2000ms to 500ms
                     setTimeout(() => {
                         window.location.href = `{{ url("/{$accessType}/{$postSlug}") }}?token=${data.token}`;
-                    }, 2000);
+                    }, 500);
                 } else {
                     console.error('Error response:', response.status, data);
                     throw new Error(data.message || 'Error Detected');
@@ -132,10 +121,11 @@
             } catch (error) {
                 console.error('Fetch error:', error);
                 button.innerHTML = `<span class="text-red-600">Failed - Retry</span>`;
+                // Reduced retry delay from 2000ms to 1000ms
                 setTimeout(() => {
                     button.disabled = false;
                     button.innerHTML = `<span>Try Again</span>`;
-                }, 2000);
+                }, 1000);
             }
         });
     </script>
