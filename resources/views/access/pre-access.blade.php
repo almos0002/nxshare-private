@@ -90,6 +90,15 @@
             `;
 
             try {
+                // Add a small delay to ensure all events are processed
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Show detailed request info in console for debugging
+                console.log('Sending request to', '{{ route("generate.token") }}', 'with data:', {
+                    accessType: '{{ $accessType }}',
+                    postId: {{ $postId }}
+                });
+                
                 const response = await fetch('{{ route("generate.token") }}', {
                     method: 'POST',
                     headers: {
@@ -99,20 +108,29 @@
                     body: JSON.stringify({
                         accessType: '{{ $accessType }}',
                         postId: {{ $postId }}
-                    })
+                    }),
+                    // Add these to prevent caching issues
+                    cache: 'no-cache',
+                    credentials: 'same-origin'
                 });
 
-                const data = await response.json();
+                // Log the raw response for debugging
+                console.log('Response status:', response.status);
                 
-                if (response.ok) {
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                if (response.ok || (data && data.token)) {
                     button.innerHTML = `<span>Entering Secure Link...</span>`;
                     setTimeout(() => {
                         window.location.href = `{{ url("/{$accessType}/{$postSlug}") }}?token=${data.token}`;
                     }, 2000);
                 } else {
+                    console.error('Error response:', response.status, data);
                     throw new Error(data.message || 'Error Detected');
                 }
             } catch (error) {
+                console.error('Fetch error:', error);
                 button.innerHTML = `<span class="text-red-600">Failed - Retry</span>`;
                 setTimeout(() => {
                     button.disabled = false;

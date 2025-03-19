@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\AccessToken;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class AccessTokenController extends Controller
@@ -27,7 +28,8 @@ class AccessTokenController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['message' => 'Invalid request'], 400);
+            Log::error('Token generation validation failed: ' . json_encode($validator->errors()->toArray()));
+            return response()->json(['message' => 'Invalid request', 'errors' => $validator->errors()], 400);
         }
 
         $accessType = $request->accessType;
@@ -40,23 +42,36 @@ class AccessTokenController extends Controller
             // Instead of rejecting the request, set the session key with a timestamp 
             // from 10 seconds ago to allow immediate access on first attempt
             $request->session()->put($accessKey, now()->timestamp - 10);
+            Log::info("Session key was missing - created new one: {$accessKey}");
+        } else {
+            Log::info("Session key exists: {$accessKey}, value: " . $request->session()->get($accessKey));
         }
 
         if (now()->timestamp - $request->session()->get($accessKey) < 10) {
+            Log::warning("10-second delay not met for {$accessKey}");
             return response()->json(['message' => 'Wait 10 seconds'], 403);
         }
 
         // Check cooldown (1 minute)
-        if (AccessToken::where('access_type', $accessType)
+        $recentToken = AccessToken::where('access_type', $accessType)
             ->where('post_id', $postId)
             ->where('ip_address', $ip)
             ->where('created_at', '>', now()->subMinute())
-            ->exists()) {
-            return response()->json(['message' => 'Try again later'], 429);
+            ->first();
+            
+        if ($recentToken) {
+            Log::warning("Cooldown period not met for IP: {$ip}, access type: {$accessType}, post: {$postId}");
+            return response()->json([
+                'message' => 'Try again later',
+                'token' => $recentToken->token // Return the existing token instead of error
+            ]);
         }
 
+        $token = AccessToken::generateToken($accessType, $postId, $ip);
+        Log::info("Token generated successfully: " . substr($token, 0, 10) . "...");
+        
         return response()->json([
-            'token' => AccessToken::generateToken($accessType, $postId, $ip)
+            'token' => $token
         ]);
     }
 }
