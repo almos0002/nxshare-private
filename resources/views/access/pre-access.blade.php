@@ -58,6 +58,36 @@
         const statusSubtext = document.getElementById('statusSubtext');
         let timeLeft = 6;
 
+        // Enhanced fetch with retry logic
+        async function fetchWithRetry(url, options, maxRetries = 3, baseDelay = 300) {
+            let attempt = 0;
+            
+            while (attempt < maxRetries) {
+                try {
+                    const response = await fetch(url, options);
+                    
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    
+                    const data = await response.json();
+                    
+                    if (!data.token) throw new Error('Invalid response structure');
+                    
+                    return data;
+                } catch (error) {
+                    console.error(`Attempt ${attempt + 1} failed:`, error);
+                    attempt++;
+                    
+                    if (attempt >= maxRetries) {
+                        throw new Error(`Max retries reached: ${error.message}`);
+                    }
+                    
+                    // Exponential backoff with jitter
+                    const delay = baseDelay * Math.pow(2, attempt) + Math.random() * 100;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+
         // Timer countdown
         const countdown = setInterval(() => {
             timeLeft--;
@@ -70,29 +100,24 @@
                 statusText.innerHTML = 'Secure Link Generated Completely';
                 statusSubtext.innerHTML = 'You can now proceed to link';
                 button.innerHTML = `
-                <span class="relative z-10 flex items-center justify-center space-x-2">
-                    <span>Access Now</span>
-                    <i class="ri-arrow-right-line"></i>
-                </span>
-            `;
+                    <span class="relative z-10 flex items-center justify-center space-x-2">
+                        <span>Access Now</span>
+                        <i class="ri-arrow-right-line"></i>
+                    </span>`;
             }
         }, 1000);
 
-        // Activation handler
+        // Click handler with improved error handling
         button.addEventListener('click', async () => {
             button.disabled = true;
             button.innerHTML = `
                 <span class="relative z-10 flex items-center justify-center space-x-2">
                     <span>Initializing Link...</span>
                     <i class="ri-loader-4-line animate-spin"></i>
-                </span>
-            `;
+                </span>`;
 
             try {
-                // Reduced delay from 500ms to 100ms for faster response
-                await new Promise(resolve => setTimeout(resolve, 100));
-                
-                const response = await fetch('{{ route("generate.token") }}', {
+                const data = await fetchWithRetry('{{ route("generate.token") }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -101,31 +126,24 @@
                     body: JSON.stringify({
                         accessType: '{{ $accessType }}',
                         postId: {{ $postId }}
-                    }),
-                    cache: 'no-cache',
-                    credentials: 'same-origin'
+                    })
                 });
+
+                // Immediate redirect upon success
+                window.location.href = `{{ url("/{$accessType}/{$postSlug}") }}?token=${data.token}`;
                 
-                const data = await response.json();
-                
-                if (response.ok || (data && data.token)) {
-                    button.innerHTML = `<span>Entering Secure Link...</span>`;
-                    // Reduced redirect delay from 2000ms to 500ms
-                    setTimeout(() => {
-                        window.location.href = `{{ url("/{$accessType}/{$postSlug}") }}?token=${data.token}`;
-                    }, 500);
-                } else {
-                    console.error('Error response:', response.status, data);
-                    throw new Error(data.message || 'Error Detected');
-                }
             } catch (error) {
-                console.error('Fetch error:', error);
-                button.innerHTML = `<span class="text-red-600">Failed - Retry</span>`;
-                // Reduced retry delay from 2000ms to 1000ms
-                setTimeout(() => {
-                    button.disabled = false;
-                    button.innerHTML = `<span>Try Again</span>`;
-                }, 1000);
+                console.error('Final attempt failed:', error);
+                button.innerHTML = `
+                    <span class="relative z-10 flex items-center justify-center space-x-2 text-red-600">
+                        <span>Connection Error - Click to Retry</span>
+                        <i class="ri-refresh-line"></i>
+                    </span>`;
+                button.disabled = false;
+                
+                // Update status messages
+                statusText.innerHTML = 'Connection Interrupted';
+                statusSubtext.innerHTML = 'Please check your network and try again';
             }
         });
     </script>
