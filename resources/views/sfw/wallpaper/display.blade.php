@@ -18,7 +18,7 @@
       </header>
       <!-- Main Content -->
       <main class="main-content">
-         {!! $settings->ad1 !!}
+         <div style="text-align:center">{!! $settings->ad1 !!}</div>
          <div class="flex-container">
             @php
             $emojis = ['♨️', '💢', '🪱'];
@@ -31,7 +31,7 @@
             </div>
             @endforeach
          </div>
-         {!! $settings->ad1 !!}
+         <div style="text-align:center">{!! $settings->ad1 !!}</div>
       </main>
       <!-- Bottom Bar -->
       <footer class="bottom-bar">
