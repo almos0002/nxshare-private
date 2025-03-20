@@ -58,37 +58,7 @@
         const statusSubtext = document.getElementById('statusSubtext');
         let timeLeft = 6;
 
-        // Enhanced fetch with retry logic
-        async function fetchWithRetry(url, options, maxRetries = 3, baseDelay = 300) {
-            let attempt = 0;
-            
-            while (attempt < maxRetries) {
-                try {
-                    const response = await fetch(url, options);
-                    
-                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                    
-                    const data = await response.json();
-                    
-                    if (!data.token) throw new Error('Invalid response structure');
-                    
-                    return data;
-                } catch (error) {
-                    console.error(`Attempt ${attempt + 1} failed:`, error);
-                    attempt++;
-                    
-                    if (attempt >= maxRetries) {
-                        throw new Error(`Max retries reached: ${error.message}`);
-                    }
-                    
-                    // Exponential backoff with jitter
-                    const delay = baseDelay * Math.pow(2, attempt) + Math.random() * 100;
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                }
-            }
-        }
-
-        // Timer countdown
+        // Moon orbit timer
         const countdown = setInterval(() => {
             timeLeft--;
             timerElement.textContent = timeLeft;
@@ -96,28 +66,37 @@
             if (timeLeft <= 0) {
                 clearInterval(countdown);
                 button.disabled = false;
-                timerElement.textContent = "✓";
+                timerElement.innerHTML = '✓';
                 statusText.innerHTML = 'Secure Link Generated Completely';
                 statusSubtext.innerHTML = 'You can now proceed to link';
                 button.innerHTML = `
-                    <span class="relative z-10 flex items-center justify-center space-x-2">
-                        <span>Access Now</span>
-                        <i class="ri-arrow-right-line"></i>
-                    </span>`;
+                <span class="relative z-10 flex items-center justify-center space-x-2">
+                    <span>Access Now</span>
+                    <i class="ri-arrow-right-line"></i>
+                </span>
+            `;
+
             }
         }, 1000);
 
-        // Click handler with improved error handling
+        // Activation handler
         button.addEventListener('click', async () => {
             button.disabled = true;
             button.innerHTML = `
                 <span class="relative z-10 flex items-center justify-center space-x-2">
                     <span>Initializing Link...</span>
                     <i class="ri-loader-4-line animate-spin"></i>
-                </span>`;
+                </span>
+            `;
+
+            // Create burst effect
+            const burst = document.createElement('div');
+            burst.className = 'absolute inset-0 bg-gradient-to-r from-amber-300 to-orange-300 rounded-xl animate-starburst';
+            button.appendChild(burst);
+            setTimeout(() => burst.remove(), 1000);
 
             try {
-                const data = await fetchWithRetry('{{ route("generate.token") }}', {
+                const response = await fetch('{{ route("generate.token") }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -129,23 +108,32 @@
                     })
                 });
 
-                // Immediate redirect upon success
-                window.location.href = `{{ url("/{$accessType}/{$postSlug}") }}?token=${data.token}`;
+                const data = await response.json();
                 
+                if (response.ok) {
+                    button.innerHTML = `<span>Entering Secure Link...</span>`;
+                    document.body.style.animation = 'warp 2s linear infinite';
+                    setTimeout(() => {
+                        window.location.href = `{{ url("/{$accessType}/{$postSlug}") }}?token=${data.token}`;
+                    }, 2000);
+                } else {
+                    throw new Error(data.message || 'Photon Overload Detected');
+                }
             } catch (error) {
-                console.error('Final attempt failed:', error);
-                button.innerHTML = `
-                    <span class="relative z-10 flex items-center justify-center space-x-2 text-red-600">
-                        <span>Connection Error - Click to Retry</span>
-                        <i class="ri-refresh-line"></i>
-                    </span>`;
-                button.disabled = false;
-                
-                // Update status messages
-                statusText.innerHTML = 'Connection Interrupted';
-                statusSubtext.innerHTML = 'Please check your network and try again';
+                // Create energy surge effect
+                const explosion = document.createElement('div');
+                explosion.className = 'absolute inset-0 bg-red-400/20 rounded-xl animate-starburst';
+                button.appendChild(explosion);
+                setTimeout(() => explosion.remove(), 1000);
+
+                button.innerHTML = `<span class="text-red-600">Alignment Failed - Retry</span>`;
+                setTimeout(() => {
+                    button.disabled = false;
+                    button.innerHTML = `<span>Activate Photon Drive</span>`;
+                }, 2000);
             }
         });
+
     </script>
     {!! $settings->ad2 !!}
 </body>
