@@ -19,7 +19,7 @@
       </header>
       <!-- Main Content -->
       <main class="main-content">
-         <div style="text-align:center">{!! $settings->ad1 !!}</div>
+         <div style="display:flex;justify-content:center">{!! $settings->ad1 !!}</div>
         <h3>🗃️ Backup Files before it expires ️</h3><br>
         <h1>👇 Enjoy Your Mega Links Now  👇</h1><br>
         {!! $postContent !!}<br>
@@ -30,7 +30,7 @@
         <button class="download-btn" onclick="window.location.href='https://t.me/nxleak'">💦TELEGRAM NEW_</button>
         <button class="download-btn" onclick="window.location.href='https://t.me/nxleak'">🌐VISIT WEBSITE_</button>
         </div>
-        <div style="text-align:center">{!! $settings->ad1 !!}</div>
+        <div style="display:flex;justify-content:center;margin-top:5px;">{!! $settings->ad1 !!}</div>
       </main>
       <!-- Bottom Bar -->
       <footer class="bottom-bar">

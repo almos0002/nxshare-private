@@ -38,7 +38,7 @@
       </header>
       <!-- Main Content -->
       <main class="main-content">
-         <div style="text-align:center">{!! $settings->ad1 !!}</div>
+         <div style="display:flex;justify-content:center">{!! $settings->ad1 !!}</div>
          <div class="flex-container">
             @php
                $emojis = ['♨️', '💢', '🪱'];
@@ -51,7 +51,7 @@
                <button class="download-btn" onclick="window.location.href='{{ $postLinks }}'">{{ $emojis[0] }} DOWNLOAD_</button>
             </div>
          </div>
-         <div style="text-align:center">{!! $settings->ad1 !!}</div>
+         <div style="display:flex;justify-content:center;margin-top:5px;">{!! $settings->ad1 !!}</div>
       </main>
       <!-- Bottom Bar -->
       <footer class="bottom-bar">
