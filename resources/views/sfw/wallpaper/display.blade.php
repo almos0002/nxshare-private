@@ -26,7 +26,7 @@
             @endphp
             @foreach ($postLinks as $index => $link)
             <div class="flex-item">
-               <img src="{{ $link }}" alt="Wallpaper {{ $index + 1 }}">
+               <img src="{{ preg_replace('/(\.[^.]+)$/', '.md$1', $link) }}" alt="Wallpaper {{ $index + 1 }}">
                <button class="download-btn" onclick="window.location.href='{{ $link }}'">{{ $emojis[$index % count($emojis)] }} DOWNLOAD_</button>
             </div>
             @endforeach
