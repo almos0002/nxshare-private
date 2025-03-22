@@ -8,6 +8,7 @@ use App\Models\WallpaperView;
 use App\Models\AccessToken;
 use Illuminate\Support\Str;
 use App\Models\Settings;
+use Illuminate\Support\Facades\Auth;
 
 class WallpaperController extends Controller
 {
@@ -37,7 +38,7 @@ class WallpaperController extends Controller
         // Stats
         $totalPosts = Wallpaper::count();
         $totalViews = Wallpaper::sum('views');
-        $userName = auth()->user()->name;
+        $userName = Auth::check() ? Auth::user()->name : 'Guest';
         $redirectStatus = Settings::value('redirect_enabled') ?? false;
         $redirectEnabled = $redirectStatus ? 'Enabled' : 'Disabled';
 
