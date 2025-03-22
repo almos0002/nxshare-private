@@ -123,108 +123,12 @@
                         <span class="sidebar-menu-title-expanded">OTHRES</span>
                         <span class="sidebar-menu-title-collapsed"><i class="ri-more-fill"></i></span>
                     </li>
-                    <li class="sidebar-menu-item" data-sidebar-menu-item>
-                        <a href="#" class="sidebar-menu-item-link" data-sidebar-menu-toggle>
-                            <span class="sidebar-menu-item-link-icon">
-                                <i class="ri-dashboard-3-line"></i>
-                            </span>
-                            <span class="sidebar-menu-item-link-text">Dashboard</span>
-                            <span class="sidebar-menu-item-link-arrow">
-                                <i class="ri-arrow-right-s-line"></i>
-                            </span>
-                        </a>
-                        <ul class="sidebar-submenu" data-sidebar-menu-dropdown>
-                            <li class="sidebar-submenu-item" data-sidebar-submenu-item>
-                                <a href="#" class="sidebar-submenu-item-link" data-sidebar-submenu-toggle>
-                                    <span class="sidebar-submenu-item-link-text">Analytics</span>
-                                    <span class="sidebar-submenu-item-link-arrow">
-                                        <i class="ri-arrow-right-s-line"></i>
-                                    </span>
-                                </a>
-                                <ul class="sidebar-submenu" data-sidebar-submenu-dropdown>
-                                    <li class="sidebar-submenu-item">
-                                        <a href="#" class="sidebar-submenu-item-link">
-                                            <span class="sidebar-submenu-item-link-text">Test</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="sidebar-submenu-item">
-                                <a href="#" class="sidebar-submenu-item-link">
-                                    <span class="sidebar-submenu-item-link-text">Ecommerce</span>
-                                </a>
-                            </li>
-                            <li class="sidebar-submenu-item">
-                                <a href="#" class="sidebar-submenu-item-link">
-                                    <span class="sidebar-submenu-item-link-text">LMS</span>
-                                </a>
-                            </li>
-                            <li class="sidebar-submenu-item">
-                                <a href="#" class="sidebar-submenu-item-link">
-                                    <span class="sidebar-submenu-item-link-text">Crypto</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="sidebar-menu-item" data-sidebar-menu-item>
-                        <a href="#" class="sidebar-menu-item-link" data-sidebar-menu-toggle>
-                            <span class="sidebar-menu-item-link-icon">
-                                <i class="ri-apps-2-line"></i>
-                            </span>
-                            <span class="sidebar-menu-item-link-text">Apps</span>
-                            <span class="sidebar-menu-item-link-arrow">
-                                <i class="ri-arrow-right-s-line"></i>
-                            </span>
-                        </a>
-                        <ul class="sidebar-submenu" data-sidebar-menu-dropdown>
-                            <li class="sidebar-submenu-item" data-sidebar-submenu-item>
-                                <a href="#" class="sidebar-submenu-item-link" data-sidebar-submenu-toggle>
-                                    <span class="sidebar-submenu-item-link-text">Analytics</span>
-                                    <span class="sidebar-submenu-item-link-arrow">
-                                        <i class="ri-arrow-right-s-line"></i>
-                                    </span>
-                                </a>
-                                <ul class="sidebar-submenu" data-sidebar-submenu-dropdown>
-                                    <li class="sidebar-submenu-item" data-sidebar-submenu-item>
-                                        <a href="#" class="sidebar-submenu-item-link" data-sidebar-submenu-toggle>
-                                            <span class="sidebar-submenu-item-link-text">Test</span>
-                                            <span class="sidebar-submenu-item-link-arrow">
-                                                <i class="ri-arrow-right-s-line"></i>
-                                            </span>
-                                        </a>
-                                        <ul class="sidebar-submenu" data-sidebar-submenu-dropdown>
-                                            <li class="sidebar-submenu-item">
-                                                <a href="#" class="sidebar-submenu-item-link">
-                                                    <span class="sidebar-submenu-item-link-text">Test</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="sidebar-submenu-item">
-                                <a href="#" class="sidebar-submenu-item-link">
-                                    <span class="sidebar-submenu-item-link-text">Ecommerce</span>
-                                </a>
-                            </li>
-                            <li class="sidebar-submenu-item">
-                                <a href="#" class="sidebar-submenu-item-link">
-                                    <span class="sidebar-submenu-item-link-text">LMS</span>
-                                </a>
-                            </li>
-                            <li class="sidebar-submenu-item">
-                                <a href="#" class="sidebar-submenu-item-link">
-                                    <span class="sidebar-submenu-item-link-text">Crypto</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
                     <li class="sidebar-menu-item">
                         <a href="#" class="sidebar-menu-item-link">
                             <span class="sidebar-menu-item-link-icon">
                                 <i class="ri-dashboard-3-line"></i>
                             </span>
-                            <span class="sidebar-menu-item-link-text">Link</span>
+                            <span class="sidebar-menu-item-link-text">Coming Soon</span>
                         </a>
                     </li>
                 </ul>
