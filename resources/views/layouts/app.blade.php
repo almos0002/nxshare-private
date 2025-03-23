@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8" />
@@ -11,29 +11,120 @@
 
     <!-- Prevent dark mode flash -->
     <style>
-        :root {
-            color-scheme: light dark;
+        /* Smooth theme transition */
+        html {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        html.dark {
+            color-scheme: dark;
+            background-color: rgb(3, 7, 18);
+        }
+        
+        /* Apply transitions to all elements that change with theme */
+        body, div, header, footer, aside, nav, main, section, 
+        .bg-white, .bg-surface-50, .bg-surface-100, .bg-surface-200, 
+        .bg-surface-800, .bg-surface-900, .bg-surface-950,
+        .dark\:bg-surface-700, .dark\:bg-surface-800, .dark\:bg-surface-900, .dark\:bg-surface-950,
+        .text-surface-500, .text-surface-700, .text-surface-900,
+        .dark\:text-surface-100, .dark\:text-surface-300, .dark\:text-surface-400, .dark\:text-white,
+        .border-surface-200, .dark\:border-surface-800 {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        /* Specific sidebar styles to prevent flash */
+        .sidebar {
+            will-change: background-color;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        html.dark .sidebar {
+            background-color: rgb(24, 24, 27) !important; /* surface-900 */
+        }
+        
+        html:not(.dark) .sidebar {
+            background-color: white !important;
+        }
+        
+        /* Header styles to prevent flash */
+        .app-header {
+            will-change: background-color;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        html.dark .app-header {
+            background-color: rgb(24, 24, 27) !important; /* surface-900 */
+        }
+        
+        html:not(.dark) .app-header {
+            background-color: white !important;
+        }
+        
+        /* This ensures no white flash during page load */
+        html.transition,
+        html.transition *,
+        html.transition *:before,
+        html.transition *:after {
+            transition: none !important;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
         }
 
-        html.dark {
-            background-color: rgb(3, 7, 18);
-            color-scheme: dark;
+        ::-webkit-scrollbar-track {
+            background: transparent;
         }
 
-        html.dark {
-            background-color: rgb(3, 7, 18);
-            color-scheme: dark;
+        ::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.5);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(156, 163, 175, 0.8);
+        }
+
+        /* Smooth transitions */
+        .page-transition {
+            transition: all 0.3s ease;
+        }
+        
+        [x-cloak] {
+            display: none !important;
         }
     </style>
+    
+    <!-- Theme initialization script - runs before page load -->
     <script>
-        // Immediately set dark mode before any content loads
+        // Prevent flash by adding dark class before page renders
         (function() {
-            if (localStorage.getItem('darkMode') === null) {
-                localStorage.setItem('darkMode', 'true');
-            }
-            if (localStorage.getItem('darkMode') === 'true') {
+            // Add transition blocker class
+            document.documentElement.classList.add('transition');
+            
+            // Check localStorage or use system preference
+            const darkModeStored = localStorage.getItem('darkMode');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            // Set initial theme
+            if (darkModeStored === null) {
+                // If no preference saved, use system preference
+                localStorage.setItem('darkMode', systemPrefersDark ? 'true' : 'false');
+                if (systemPrefersDark) {
+                    document.documentElement.classList.add('dark');
+                }
+            } else if (darkModeStored === 'true') {
                 document.documentElement.classList.add('dark');
             }
+            
+            // Remove transition blocker after a short delay
+            window.addEventListener('load', () => {
+                setTimeout(() => {
+                    document.documentElement.classList.remove('transition');
+                }, 10);
+            });
         })();
     </script>
 
@@ -90,43 +181,6 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
     <title>@yield('title', 'Private Blog') - NxShare</title>
-    <style>
-        [x-cloak] {
-            display: none !important;
-        }
-
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: rgba(156, 163, 175, 0.5);
-            border-radius: 3px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(156, 163, 175, 0.8);
-        }
-
-        /* Smooth transitions */
-        .page-transition {
-            transition: all 0.3s ease;
-        }
-    </style>
-    <script>
-        // Only set default if darkMode has never been set
-        if (localStorage.getItem('darkMode') === null) {
-            localStorage.setItem('darkMode', 'true');
-        }
-        // Apply the stored preference
-        document.documentElement.classList.toggle('dark', localStorage.getItem('darkMode') === 'true');
-    </script>
 </head>
 
 <body class="bg-surface-50 text-surface-900 dark:bg-surface-950 dark:text-surface-100 antialiased"
@@ -140,9 +194,20 @@
         tooltipY: 0,
         tooltipVisible: false,
         toggleDarkMode() {
-            this.darkMode = !this.darkMode;
-            localStorage.setItem('darkMode', this.darkMode);
-            document.documentElement.classList.toggle('dark', this.darkMode);
+            // Add transition blocker to prevent flash
+            document.documentElement.classList.add('transition');
+            
+            // Toggle dark mode with a slight delay to ensure transition blocker takes effect
+            setTimeout(() => {
+                this.darkMode = !this.darkMode;
+                localStorage.setItem('darkMode', this.darkMode);
+                document.documentElement.classList.toggle('dark', this.darkMode);
+                
+                // Remove transition blocker after the change is applied
+                setTimeout(() => {
+                    document.documentElement.classList.remove('transition');
+                }, 20);
+            }, 5);
         }
     }" x-init="document.documentElement.classList.toggle('dark', darkMode);
     $watch('sidebarCollapsed', val => localStorage.setItem('sidebarCollapsed', val));
@@ -189,18 +254,18 @@
             x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0"
             x-transition:leave="transition ease-in duration-200" x-transition:leave-start="translate-x-0"
             x-transition:leave-end="-translate-x-full" :class="sidebarCollapsed ? 'w-20' : 'w-72'"
-            class="fixed inset-y-0 left-0 z-30 flex flex-col bg-white dark:bg-surface-900 shadow-xl lg:shadow-none lg:relative lg:translate-x-0 transition-all duration-300">
-
-            <!-- Logo -->
-            <div
-                class="flex h-16 items-center justify-between px-4 border-b border-surface-200 dark:border-surface-800">
-                <a href="#" class="flex items-center space-x-3"
-                    :class="{ 'justify-center': sidebarCollapsed, 'w-full': sidebarCollapsed }">
-                    <img src="https://i.postimg.cc/4dbDJLpG/favicon.png" alt="NxShare" class="h-8 w-8">
-                    <span
-                        class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-brand-400"
-                        x-show="!sidebarCollapsed">NxShare</span>
-                </a>
+            class="fixed inset-y-0 left-0 z-30 flex flex-col bg-white dark:bg-surface-900 shadow-xl lg:shadow-none lg:relative lg:translate-x-0 transition-all duration-300 sidebar">
+            <!-- Logo section with exact height to match header -->
+            <div class="h-16 border-b border-surface-200 dark:border-surface-800">
+                <div class="flex h-16 items-center justify-between px-4">
+                    <a href="#" class="flex items-center space-x-3"
+                        :class="{ 'justify-center': sidebarCollapsed, 'w-full': sidebarCollapsed }">
+                        <img src="https://i.postimg.cc/4dbDJLpG/favicon.png" alt="NxShare" class="h-8 w-8">
+                        <span
+                            class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-brand-400"
+                            x-show="!sidebarCollapsed">NxShare</span>
+                    </a>
+                </div>
             </div>
 
             <!-- User profile -->
@@ -426,7 +491,7 @@
         <!-- Main content -->
         <div class="flex-1 flex flex-col overflow-hidden">
             <!-- Top header -->
-            <header class="bg-white dark:bg-surface-900 border-b border-surface-200 dark:border-surface-800 shadow-sm">
+            <header class="app-header h-16 bg-white dark:bg-surface-900 border-b border-surface-200 dark:border-surface-800 shadow-sm">
                 <div class="flex items-center justify-between h-16 px-4 md:px-6">
                     <div class="flex items-center">
                         <button @click="mobileMenuOpen = true"
@@ -498,7 +563,7 @@
 
                                 <div class="max-h-96 overflow-y-auto">
                                     <a href="#"
-                                        class="block px-4 py-3 hover:bg-surface-50 dark:hover:bg-surface-800">
+                                        class="block px-4 py-3 hover:bg-surface-50 dark:hover:bg-surface-700/50">
                                         <div class="flex items-start">
                                             <div class="flex-shrink-0 mr-3">
                                                 <div
@@ -516,7 +581,7 @@
                                     </a>
 
                                     <a href="#"
-                                        class="block px-4 py-3 hover:bg-surface-50 dark:hover:bg-surface-800">
+                                        class="block px-4 py-3 hover:bg-surface-50 dark:hover:bg-surface-700/50">
                                         <div class="flex items-start">
                                             <div class="flex-shrink-0 mr-3">
                                                 <div
