@@ -378,77 +378,77 @@
                 <div class="border-b border-surface-200 px-6 py-4 dark:border-surface-700">
                     <h2 class="text-lg font-semibold text-surface-900 dark:text-white">Latest Views by IP</h2>
                 </div>
-                <div id="latest-views-container">
+                <div id="latest-views-container" class="p-4">
                     <div class="overflow-hidden">
-                        <table class="min-w-full">
-                            <thead class="border-b">
+                        <table class="w-full table-fixed divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead>
                                 <tr>
                                     <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        class="w-[15%] px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         IP Address</th>
                                     <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        class="w-[15%] px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         Country</th>
                                     <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        class="w-[50%] px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         Post</th>
                                     <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        class="w-[20%] px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         Time</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                            <tbody id="latest-views" class="divide-y divide-gray-200 dark:divide-gray-700">
                                 @forelse ($latestViews as $view)
-                                    <tr>
+                                    <tr class="hover:bg-surface-50 dark:hover:bg-surface-700/50">
                                         <td
-                                            class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                                            class="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
                                             {{ $view->ip_address }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                             <span class="inline-flex items-center">
                                                 {{ $view->country }}
                                                 <span
                                                     class="ml-1 text-xs text-gray-400 dark:text-gray-500">({{ $view->country_code }})</span>
                                             </span>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        <td class="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">
                                             <div class="flex items-center">
                                                 @if ($view->type == 'w')
                                                     <span
-                                                        class="inline-flex items-center justify-center text-center align-middle rounded-full px-2.5 py-1.5 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 min-w-[80px]">
+                                                        class="inline-flex items-center justify-center text-center align-middle rounded-full px-2 py-0.5 text-[10px] font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 min-w-[65px]">
                                                         Wallpaper
                                                     </span>
                                                 @elseif ($view->type == 'p')
                                                     <span
-                                                        class="inline-flex items-center justify-center text-center align-middle rounded-full px-2.5 py-1.5 text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 min-w-[80px]">
+                                                        class="inline-flex items-center justify-center text-center align-middle rounded-full px-2 py-0.5 text-[10px] font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 min-w-[65px]">
                                                         PFP
                                                     </span>
                                                 @elseif ($view->type == 'i')
                                                     <span
-                                                        class="inline-flex items-center justify-center text-center align-middle rounded-full px-2.5 py-1.5 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 min-w-[80px]">
+                                                        class="inline-flex items-center justify-center text-center align-middle rounded-full px-2 py-0.5 text-[10px] font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 min-w-[65px]">
                                                         Image
                                                     </span>
                                                 @elseif ($view->type == 'n')
                                                     <span
-                                                        class="inline-flex items-center justify-center text-center align-middle rounded-full px-2.5 py-1.5 text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 min-w-[80px]">
+                                                        class="inline-flex items-center justify-center text-center align-middle rounded-full px-2 py-0.5 text-[10px] font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 min-w-[65px]">
                                                         Nxleak
                                                     </span>
                                                 @elseif ($view->type == 'v')
                                                     <span
-                                                        class="inline-flex items-center justify-center text-center align-middle rounded-full px-2.5 py-1.5 text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 min-w-[80px]">
+                                                        class="inline-flex items-center justify-center text-center align-middle rounded-full px-2 py-0.5 text-[10px] font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 min-w-[65px]">
                                                         Video
                                                     </span>
                                                 @endif
-                                                <span class="ml-2">{{ $view->title }}</span>
+                                                <span class="ml-2 truncate">{{ $view->title }}</span>
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                             {{ \Carbon\Carbon::parse($view->created_at)->diffForHumans() }}
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
                                         <td colspan="4"
-                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center">
+                                            class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center">
                                             No views found
                                         </td>
                                     </tr>
@@ -572,7 +572,7 @@
                     postItem.className = 'flex items-center justify-between py-3';
                     postItem.innerHTML = `
                         <div class="flex items-center">
-                            <span class="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-medium rounded ${typeClass}">
+                            <span class="inline-flex items-center justify-center text-center align-middle rounded-full px-2 py-0.5 text-xs font-medium ${typeClass} min-w-[70px]">
                                 ${typeText}
                             </span>
                             <div>
@@ -616,47 +616,108 @@
                     
                     switch (view.type) {
                         case 'w':
-                            typeClass = 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+                            typeClass = 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
                             typeText = 'Wallpaper';
                             break;
                         case 'p':
-                            typeClass = 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300';
+                            typeClass = 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
                             typeText = 'PFP';
                             break;
                         case 'i':
-                            typeClass = 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+                            typeClass = 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
                             typeText = 'Image';
                             break;
                         case 'n':
-                            typeClass = 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
+                            typeClass = 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
                             typeText = 'Nxleak';
                             break;
                         case 'v':
-                            typeClass = 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300';
+                            typeClass = 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400';
                             typeText = 'Video';
                             break;
                     }
                     
-                    const viewItem = document.createElement('div');
-                    viewItem.className = 'flex items-center justify-between py-3';
-                    viewItem.innerHTML = `
+                    // Create a table row for each view
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-surface-50 dark:hover:bg-surface-700/50';
+                    
+                    // IP Address column
+                    const tdIp = document.createElement('td');
+                    tdIp.className = 'px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100';
+                    tdIp.textContent = view.ip_address;
+                    
+                    // Country column
+                    const tdCountry = document.createElement('td');
+                    tdCountry.className = 'px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
+                    tdCountry.innerHTML = `
+                        <span class="inline-flex items-center">
+                            ${view.country || 'Unknown'}
+                            ${view.country_code ? `<span class="ml-1 text-xs text-gray-400 dark:text-gray-500">(${view.country_code})</span>` : ''}
+                        </span>
+                    `;
+                    
+                    // Post column
+                    const tdPost = document.createElement('td');
+                    tdPost.className = 'px-3 py-2 text-sm text-gray-500 dark:text-gray-400';
+                    tdPost.innerHTML = `
                         <div class="flex items-center">
-                            <span class="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-medium rounded ${typeClass}">
+                            <span class="inline-flex items-center justify-center text-center align-middle rounded-full px-2 py-0.5 text-[10px] font-medium ${typeClass} min-w-[65px]">
                                 ${typeText}
                             </span>
-                            <div>
-                                <p class="text-sm font-medium text-surface-900 dark:text-white">${view.title}</p>
-                                <p class="text-xs text-surface-500 dark:text-surface-400">${formattedDate} at ${formattedTime}</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="text-sm font-medium text-surface-900 dark:text-white">${view.ip_address}</span>
-                            <span class="ml-1 text-xs text-surface-500 dark:text-surface-400">${view.country || 'Unknown'}</span>
+                            <span class="ml-2 truncate">${view.title}</span>
                         </div>
                     `;
                     
-                    container.appendChild(viewItem);
+                    // Time column
+                    const tdTime = document.createElement('td');
+                    tdTime.className = 'px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
+                    
+                    // Calculate time ago
+                    const now = new Date();
+                    const diffInSeconds = Math.floor((now - date) / 1000);
+                    let timeAgo;
+                    
+                    if (diffInSeconds < 60) {
+                        timeAgo = 'just now';
+                    } else if (diffInSeconds < 3600) {
+                        const minutes = Math.floor(diffInSeconds / 60);
+                        timeAgo = `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+                    } else if (diffInSeconds < 86400) {
+                        const hours = Math.floor(diffInSeconds / 3600);
+                        timeAgo = `${hours} hour${hours > 1 ? 's' : ''} ago`;
+                    } else if (diffInSeconds < 2592000) {
+                        const days = Math.floor(diffInSeconds / 86400);
+                        timeAgo = `${days} day${days > 1 ? 's' : ''} ago`;
+                    } else if (diffInSeconds < 31536000) {
+                        const months = Math.floor(diffInSeconds / 2592000);
+                        timeAgo = `${months} month${months > 1 ? 's' : ''} ago`;
+                    } else {
+                        const years = Math.floor(diffInSeconds / 31536000);
+                        timeAgo = `${years} year${years > 1 ? 's' : ''} ago`;
+                    }
+                    
+                    tdTime.textContent = timeAgo;
+                    
+                    // Add all columns to the row
+                    tr.appendChild(tdIp);
+                    tr.appendChild(tdCountry);
+                    tr.appendChild(tdPost);
+                    tr.appendChild(tdTime);
+                    
+                    // Add the row to the container
+                    container.appendChild(tr);
                 });
+                
+                // If no views, add a message
+                if (views.length === 0) {
+                    const tr = document.createElement('tr');
+                    const td = document.createElement('td');
+                    td.className = 'px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center';
+                    td.colSpan = 4;
+                    td.textContent = 'No views found';
+                    tr.appendChild(td);
+                    container.appendChild(tr);
+                }
             }
             
             // Function to update view distribution
