@@ -94,11 +94,10 @@
                     </div>
                 </div>
                 <div class="mt-4 flex items-center text-sm">
-                    <span class="flex items-center text-green-500 dark:text-green-400">
-                        <i class="ri-arrow-up-line mr-1"></i>
-                        8%
+                    <span class="flex items-center text-surface-500 dark:text-surface-400">
+                        <i class="ri-shield-check-line mr-1"></i>
+                        Admin Access
                     </span>
-                    <span class="ml-2 text-surface-500 dark:text-surface-400">from last week</span>
                 </div>
                 <div
                     class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-purple-700 opacity-0 transition-opacity group-hover:opacity-100">
@@ -208,8 +207,7 @@
                                 class="text-sm font-medium text-surface-900 dark:text-white">{{ number_format($growthStats['currentViews']) }}</span>
                         </div>
                         <div class="h-2.5 w-full rounded-full bg-surface-200 dark:bg-surface-700">
-                            <div class="h-2.5 rounded-full bg-brand-500"
-                                style="width: 100%">
+                            <div class="h-2.5 rounded-full bg-brand-500" style="width: 100%">
                             </div>
                         </div>
                     </div>
@@ -474,77 +472,80 @@
             // Toggle NSFW content
             const nsfwToggle = document.getElementById('nsfw-toggle');
             const nsfwToggleText = document.getElementById('nsfw-toggle-text');
-            
+
             if (nsfwToggle) {
                 nsfwToggle.addEventListener('change', function() {
                     const isChecked = this.checked;
                     nsfwToggleText.textContent = isChecked ? 'NSFW Enabled' : 'NSFW Disabled';
-                    
+
                     // Update dashboard data via AJAX
                     updateDashboardData(isChecked);
                 });
             }
-            
+
             // Function to update dashboard data via AJAX
             function updateDashboardData(nsfwEnabled) {
                 fetch('{{ route('dashboard.ajax') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        nsfw_enabled: nsfwEnabled
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            nsfw_enabled: nsfwEnabled
+                        })
                     })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Update total posts and views
-                        document.getElementById('total-posts').textContent = data.totalPosts.toLocaleString();
-                        document.getElementById('total-views').textContent = data.totalViews.toLocaleString();
-                        
-                        // Update most viewed posts
-                        updatePostsList('most-viewed-posts', data.mostViewed);
-                        
-                        // Update recent posts
-                        updatePostsList('recent-posts', data.recentPosts);
-                        
-                        // Update latest views by IP
-                        updateLatestViews(data.latestViews);
-                        
-                        // Update view distribution
-                        updateViewDistribution(data.viewDistribution, nsfwEnabled);
-                        
-                        // Update growth statistics
-                        updateGrowthStatistics(data.growthStats);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error updating dashboard data:', error);
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Update total posts and views
+                            document.getElementById('total-posts').textContent = data.totalPosts
+                            .toLocaleString();
+                            document.getElementById('total-views').textContent = data.totalViews
+                            .toLocaleString();
+
+                            // Update most viewed posts
+                            updatePostsList('most-viewed-posts', data.mostViewed);
+
+                            // Update recent posts
+                            updatePostsList('recent-posts', data.recentPosts);
+
+                            // Update latest views by IP
+                            updateLatestViews(data.latestViews);
+
+                            // Update view distribution
+                            updateViewDistribution(data.viewDistribution, nsfwEnabled);
+
+                            // Update growth statistics
+                            updateGrowthStatistics(data.growthStats);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error updating dashboard data:', error);
+                    });
             }
-            
+
             // Function to update posts list (most viewed or recent)
             function updatePostsList(elementId, posts) {
                 const container = document.getElementById(elementId);
                 if (!container) return;
-                
+
                 // Clear existing content
                 container.innerHTML = '';
-                
+
                 // Add new posts
                 posts.forEach(post => {
                     let typeClass = '';
                     let typeText = '';
-                    
+
                     switch (post.type) {
                         case 'w':
                             typeClass = 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
                             typeText = 'Wallpaper';
                             break;
                         case 'p':
-                            typeClass = 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300';
+                            typeClass =
+                                'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300';
                             typeText = 'PFP';
                             break;
                         case 'i':
@@ -560,14 +561,14 @@
                             typeText = 'Video';
                             break;
                     }
-                    
+
                     const date = new Date(post.created_at);
                     const formattedDate = date.toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'short',
                         day: 'numeric'
                     });
-                    
+
                     const postItem = document.createElement('div');
                     postItem.className = 'flex items-center justify-between py-3';
                     postItem.innerHTML = `
@@ -585,19 +586,19 @@
                             <span class="ml-1 text-xs text-surface-500 dark:text-surface-400">views</span>
                         </div>
                     `;
-                    
+
                     container.appendChild(postItem);
                 });
             }
-            
+
             // Function to update latest views by IP
             function updateLatestViews(views) {
                 const container = document.getElementById('latest-views');
                 if (!container) return;
-                
+
                 // Clear existing content
                 container.innerHTML = '';
-                
+
                 // Add new views
                 views.forEach(view => {
                     const date = new Date(view.created_at);
@@ -610,21 +611,23 @@
                         hour: '2-digit',
                         minute: '2-digit'
                     });
-                    
+
                     let typeClass = '';
                     let typeText = '';
-                    
+
                     switch (view.type) {
                         case 'w':
                             typeClass = 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
                             typeText = 'Wallpaper';
                             break;
                         case 'p':
-                            typeClass = 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
+                            typeClass =
+                                'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
                             typeText = 'PFP';
                             break;
                         case 'i':
-                            typeClass = 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+                            typeClass =
+                                'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
                             typeText = 'Image';
                             break;
                         case 'n':
@@ -632,30 +635,33 @@
                             typeText = 'Nxleak';
                             break;
                         case 'v':
-                            typeClass = 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400';
+                            typeClass =
+                                'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400';
                             typeText = 'Video';
                             break;
                     }
-                    
+
                     // Create a table row for each view
                     const tr = document.createElement('tr');
                     tr.className = 'hover:bg-surface-50 dark:hover:bg-surface-700/50';
-                    
+
                     // IP Address column
                     const tdIp = document.createElement('td');
-                    tdIp.className = 'px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100';
+                    tdIp.className =
+                        'px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100';
                     tdIp.textContent = view.ip_address;
-                    
+
                     // Country column
                     const tdCountry = document.createElement('td');
-                    tdCountry.className = 'px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
+                    tdCountry.className =
+                        'px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
                     tdCountry.innerHTML = `
                         <span class="inline-flex items-center">
                             ${view.country || 'Unknown'}
                             ${view.country_code ? `<span class="ml-1 text-xs text-gray-400 dark:text-gray-500">(${view.country_code})</span>` : ''}
                         </span>
                     `;
-                    
+
                     // Post column
                     const tdPost = document.createElement('td');
                     tdPost.className = 'px-3 py-2 text-sm text-gray-500 dark:text-gray-400';
@@ -667,16 +673,17 @@
                             <span class="ml-2 truncate">${view.title}</span>
                         </div>
                     `;
-                    
+
                     // Time column
                     const tdTime = document.createElement('td');
-                    tdTime.className = 'px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
-                    
+                    tdTime.className =
+                        'px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
+
                     // Calculate time ago
                     const now = new Date();
                     const diffInSeconds = Math.floor((now - date) / 1000);
                     let timeAgo;
-                    
+
                     if (diffInSeconds < 60) {
                         timeAgo = 'just now';
                     } else if (diffInSeconds < 3600) {
@@ -695,50 +702,51 @@
                         const years = Math.floor(diffInSeconds / 31536000);
                         timeAgo = `${years} year${years > 1 ? 's' : ''} ago`;
                     }
-                    
+
                     tdTime.textContent = timeAgo;
-                    
+
                     // Add all columns to the row
                     tr.appendChild(tdIp);
                     tr.appendChild(tdCountry);
                     tr.appendChild(tdPost);
                     tr.appendChild(tdTime);
-                    
+
                     // Add the row to the container
                     container.appendChild(tr);
                 });
-                
+
                 // If no views, add a message
                 if (views.length === 0) {
                     const tr = document.createElement('tr');
                     const td = document.createElement('td');
-                    td.className = 'px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center';
+                    td.className =
+                        'px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center';
                     td.colSpan = 4;
                     td.textContent = 'No views found';
                     tr.appendChild(td);
                     container.appendChild(tr);
                 }
             }
-            
+
             // Function to update view distribution
             function updateViewDistribution(distribution, nsfwEnabled) {
                 // Update wallpaper views
                 updateDistributionItem('wallpaper', distribution.wallpaper);
-                
+
                 // Update pfp views
                 updateDistributionItem('pfp', distribution.pfp);
-                
+
                 // Update NSFW content if enabled
                 if (nsfwEnabled) {
                     // Update image views
                     updateDistributionItem('image', distribution.image);
-                    
+
                     // Update nxleak views
                     updateDistributionItem('nxleak', distribution.nxleak);
-                    
+
                     // Update video views
                     updateDistributionItem('video', distribution.video);
-                    
+
                     // Show NSFW distribution items
                     document.querySelectorAll('.nsfw-distribution-item').forEach(item => {
                         item.style.display = 'block';
@@ -750,18 +758,18 @@
                     });
                 }
             }
-            
+
             // Function to update a single distribution item
             function updateDistributionItem(type, data) {
                 const countElement = document.querySelector(`.${type}-count`);
                 const barElement = document.querySelector(`.${type}-bar`);
-                
+
                 if (countElement && barElement) {
                     countElement.textContent = data.count.toLocaleString();
                     barElement.style.width = `${data.percentage}%`;
                 }
             }
-            
+
             // Function to update growth statistics
             function updateGrowthStatistics(stats) {
                 // Update growth percentage
@@ -770,19 +778,19 @@
                     const sign = stats.growthPercentage > 0 ? '+' : '';
                     growthElement.textContent = `${sign}${stats.growthPercentage}%`;
                 }
-                
+
                 // Update current period views
                 const currentViewsElement = document.querySelector('.current-views');
                 if (currentViewsElement) {
                     currentViewsElement.textContent = stats.currentViews.toLocaleString();
                 }
-                
+
                 // Update previous period views
                 const previousViewsElement = document.querySelector('.previous-views');
                 if (previousViewsElement) {
                     previousViewsElement.textContent = stats.previousViews.toLocaleString();
                 }
-                
+
                 // Update previous period bar
                 const previousBarElement = document.querySelector('.previous-bar');
                 if (previousBarElement) {
