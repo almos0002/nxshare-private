@@ -202,7 +202,13 @@
                     @else
                         <tr>
                             <td colspan="6" class="px-4 py-8 text-center text-sm text-surface-500 dark:text-surface-400">
-                                No videos available.
+                                <div class="flex flex-col items-center justify-center">
+                                    <div class="h-12 w-12 rounded-full bg-surface-100 dark:bg-surface-700 flex items-center justify-center text-surface-400 dark:text-surface-500 mb-3">
+                                        <i class="ri-inbox-line text-2xl"></i>
+                                    </div>
+                                    <p class="text-surface-900 dark:text-white font-medium">No NSFW videos found</p>
+                                    <p class="text-surface-500 dark:text-surface-400 text-sm mt-1">Start by adding a new NSFW video</p>
+                                </div>
                             </td>
                         </tr>
                     @endif

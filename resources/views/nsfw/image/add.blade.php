@@ -202,13 +202,11 @@
                         <tr>
                             <td colspan="5" class="px-4 py-8 text-center text-sm text-surface-500 dark:text-surface-400">
                                 <div class="flex flex-col items-center justify-center">
-                                    <i class="ri-inbox-line text-4xl mb-2 text-surface-400 dark:text-surface-500"></i>
-                                    <p class="text-surface-900 dark:text-white font-medium">No posts found</p>
-                                    <p class="text-surface-500 dark:text-surface-400 mt-1">Get started by creating a new post</p>
-                                    <button onclick="createModal()" class="mt-3 inline-flex items-center justify-center px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition-colors">
-                                        <i class="ri-add-line mr-1"></i>
-                                        Add New Image
-                                    </button>
+                                    <div class="h-12 w-12 rounded-full bg-surface-100 dark:bg-surface-700 flex items-center justify-center text-surface-400 dark:text-surface-500 mb-3">
+                                        <i class="ri-inbox-line text-2xl"></i>
+                                    </div>
+                                    <p class="text-surface-900 dark:text-white font-medium">No NSFW images found</p>
+                                    <p class="text-surface-500 dark:text-surface-400 text-sm mt-1">Start by adding a new NSFW image</p>
                                 </div>
                             </td>
                         </tr>

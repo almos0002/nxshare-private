@@ -203,9 +203,9 @@
                             <td colspan="5" class="px-4 py-8 text-center text-sm text-surface-500 dark:text-surface-400">
                                 <div class="flex flex-col items-center justify-center">
                                     <div class="h-12 w-12 rounded-full bg-surface-100 dark:bg-surface-700 flex items-center justify-center text-surface-400 dark:text-surface-500 mb-3">
-                                        <i class="ri-wallpaper-line text-2xl"></i>
+                                        <i class="ri-inbox-line text-2xl"></i>
                                     </div>
-                                    <p class="text-surface-900 dark:text-white font-medium">No posts found</p>
+                                    <p class="text-surface-900 dark:text-white font-medium">No NXLeak posts found</p>
                                     <p class="text-surface-500 dark:text-surface-400 text-sm mt-1">Start by adding a new NXLeak post</p>
                                 </div>
                             </td>
