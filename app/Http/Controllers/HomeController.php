@@ -112,6 +112,15 @@ class HomeController extends Controller
         // Get growth statistics
         $growthStats = $this->getGrowthStatistics($nsfwEnabled);
 
+        // Get top country data
+        $topCountry = $this->getTopCountry($nsfwEnabled);
+
+        // Calculate post growth percentage
+        $postGrowth = $this->calculatePostGrowth($nsfwEnabled);
+        
+        // Calculate views growth percentage
+        $viewsGrowth = $this->calculateViewsGrowth($nsfwEnabled);
+
         return view('dashboard', compact(
             'totalPosts',
             'totalViews',
@@ -122,7 +131,10 @@ class HomeController extends Controller
             'nsfwEnabled',
             'latestViews',
             'viewDistribution',
-            'growthStats'
+            'growthStats',
+            'topCountry',
+            'postGrowth',
+            'viewsGrowth'
         ));
     }
 
@@ -193,6 +205,15 @@ class HomeController extends Controller
         // Get growth statistics
         $growthStats = $this->getGrowthStatistics($nsfwEnabled);
 
+        // Get top country data
+        $topCountry = $this->getTopCountry($nsfwEnabled);
+
+        // Calculate post growth percentage
+        $postGrowth = $this->calculatePostGrowth($nsfwEnabled);
+        
+        // Calculate views growth percentage
+        $viewsGrowth = $this->calculateViewsGrowth($nsfwEnabled);
+
         return response()->json([
             'success' => true,
             'totalPosts' => $totalPosts,
@@ -201,7 +222,10 @@ class HomeController extends Controller
             'recentPosts' => $recentPosts,
             'latestViews' => $latestViews,
             'viewDistribution' => $viewDistribution,
-            'growthStats' => $growthStats
+            'growthStats' => $growthStats,
+            'topCountry' => $topCountry,
+            'postGrowth' => $postGrowth,
+            'viewsGrowth' => $viewsGrowth
         ]);
     }
 
@@ -536,5 +560,390 @@ class HomeController extends Controller
             'growthPercentage' => $growthPercentage,
             'previousPercentage' => $previousPercentage
         ];
+    }
+
+    /**
+     * Get top country data from views
+     *
+     * @param bool $nsfwEnabled Whether NSFW content is enabled
+     * @return array
+     */
+    private function getTopCountry($nsfwEnabled)
+    {
+        // Initialize countries array
+        $countries = [];
+        
+        // Process wallpaper views
+        try {
+            $wallpaperViews = DB::table('wallpaper_views')
+                ->join('wallpaper', 'wallpaper_views.post_id', '=', 'wallpaper.id')
+                ->select('wallpaper_views.ip_address')
+                ->get();
+                
+            foreach ($wallpaperViews as $view) {
+                if ($view->ip_address == '127.0.0.1' || 
+                    $view->ip_address == 'localhost' || 
+                    strpos($view->ip_address, '192.168.') === 0) {
+                    continue;
+                }
+                
+                try {
+                    $response = @file_get_contents('http://ip-api.com/json/' . $view->ip_address . '?fields=country,countryCode');
+                    if ($response) {
+                        $data = json_decode($response);
+                        $country = $data->country ?? 'Unknown';
+                        $countryCode = $data->countryCode ?? 'UN';
+                        
+                        if (!isset($countries[$country])) {
+                            $countries[$country] = [
+                                'count' => 0,
+                                'code' => $countryCode
+                            ];
+                        }
+                        
+                        $countries[$country]['count']++;
+                    }
+                } catch (\Exception $e) {
+                    // Continue silently
+                }
+            }
+        } catch (\Exception $e) {
+            // Table might not exist or other DB error, continue silently
+        }
+        
+        // Process pfp views
+        try {
+            $pfpViews = DB::table('pfp_views')
+                ->join('pfp', 'pfp_views.post_id', '=', 'pfp.id')
+                ->select('pfp_views.ip_address')
+                ->get();
+                
+            foreach ($pfpViews as $view) {
+                if ($view->ip_address == '127.0.0.1' || 
+                    $view->ip_address == 'localhost' || 
+                    strpos($view->ip_address, '192.168.') === 0) {
+                    continue;
+                }
+                
+                try {
+                    $response = @file_get_contents('http://ip-api.com/json/' . $view->ip_address . '?fields=country,countryCode');
+                    if ($response) {
+                        $data = json_decode($response);
+                        $country = $data->country ?? 'Unknown';
+                        $countryCode = $data->countryCode ?? 'UN';
+                        
+                        if (!isset($countries[$country])) {
+                            $countries[$country] = [
+                                'count' => 0,
+                                'code' => $countryCode
+                            ];
+                        }
+                        
+                        $countries[$country]['count']++;
+                    }
+                } catch (\Exception $e) {
+                    // Continue silently
+                }
+            }
+        } catch (\Exception $e) {
+            // Table might not exist or other DB error, continue silently
+        }
+        
+        // Process NSFW views if enabled
+        if ($nsfwEnabled) {
+            // Process image views
+            try {
+                $imageViews = DB::table('image_views')
+                    ->join('image', 'image_views.post_id', '=', 'image.id')
+                    ->select('image_views.ip_address')
+                    ->get();
+                    
+                foreach ($imageViews as $view) {
+                    if ($view->ip_address == '127.0.0.1' || 
+                        $view->ip_address == 'localhost' || 
+                        strpos($view->ip_address, '192.168.') === 0) {
+                        continue;
+                    }
+                    
+                    try {
+                        $response = @file_get_contents('http://ip-api.com/json/' . $view->ip_address . '?fields=country,countryCode');
+                        if ($response) {
+                            $data = json_decode($response);
+                            $country = $data->country ?? 'Unknown';
+                            $countryCode = $data->countryCode ?? 'UN';
+                            
+                            if (!isset($countries[$country])) {
+                                $countries[$country] = [
+                                    'count' => 0,
+                                    'code' => $countryCode
+                                ];
+                            }
+                            
+                            $countries[$country]['count']++;
+                        }
+                    } catch (\Exception $e) {
+                        // Continue silently
+                    }
+                }
+            } catch (\Exception $e) {
+                // Table might not exist or other DB error, continue silently
+            }
+            
+            // Process nxleak views
+            try {
+                $nxleakViews = DB::table('nxleak_views')
+                    ->join('nxleak', 'nxleak_views.post_id', '=', 'nxleak.id')
+                    ->select('nxleak_views.ip_address')
+                    ->get();
+                    
+                foreach ($nxleakViews as $view) {
+                    if ($view->ip_address == '127.0.0.1' || 
+                        $view->ip_address == 'localhost' || 
+                        strpos($view->ip_address, '192.168.') === 0) {
+                        continue;
+                    }
+                    
+                    try {
+                        $response = @file_get_contents('http://ip-api.com/json/' . $view->ip_address . '?fields=country,countryCode');
+                        if ($response) {
+                            $data = json_decode($response);
+                            $country = $data->country ?? 'Unknown';
+                            $countryCode = $data->countryCode ?? 'UN';
+                            
+                            if (!isset($countries[$country])) {
+                                $countries[$country] = [
+                                    'count' => 0,
+                                    'code' => $countryCode
+                                ];
+                            }
+                            
+                            $countries[$country]['count']++;
+                        }
+                    } catch (\Exception $e) {
+                        // Continue silently
+                    }
+                }
+            } catch (\Exception $e) {
+                // Table might not exist or other DB error, continue silently
+            }
+            
+            // Process video views
+            try {
+                $videoViews = DB::table('video_views')
+                    ->join('video', 'video_views.post_id', '=', 'video.id')
+                    ->select('video_views.ip_address')
+                    ->get();
+                    
+                foreach ($videoViews as $view) {
+                    if ($view->ip_address == '127.0.0.1' || 
+                        $view->ip_address == 'localhost' || 
+                        strpos($view->ip_address, '192.168.') === 0) {
+                        continue;
+                    }
+                    
+                    try {
+                        $response = @file_get_contents('http://ip-api.com/json/' . $view->ip_address . '?fields=country,countryCode');
+                        if ($response) {
+                            $data = json_decode($response);
+                            $country = $data->country ?? 'Unknown';
+                            $countryCode = $data->countryCode ?? 'UN';
+                            
+                            if (!isset($countries[$country])) {
+                                $countries[$country] = [
+                                    'count' => 0,
+                                    'code' => $countryCode
+                                ];
+                            }
+                            
+                            $countries[$country]['count']++;
+                        }
+                    } catch (\Exception $e) {
+                        // Continue silently
+                    }
+                }
+            } catch (\Exception $e) {
+                // Table might not exist or other DB error, continue silently
+            }
+        }
+        
+        // Sort countries by count in descending order
+        uasort($countries, function($a, $b) {
+            return $b['count'] - $a['count'];
+        });
+        
+        // Get the top country
+        $topCountry = [
+            'name' => 'Unknown',
+            'code' => 'UN',
+            'count' => 0,
+            'percentage' => 0
+        ];
+        
+        if (!empty($countries)) {
+            $topCountryName = array_key_first($countries);
+            $topCountryData = $countries[$topCountryName];
+            
+            // Calculate total views
+            $totalViews = array_sum(array_column($countries, 'count'));
+            
+            // Calculate percentage
+            $percentage = ($totalViews > 0) ? round(($topCountryData['count'] / $totalViews) * 100) : 0;
+            
+            $topCountry = [
+                'name' => $topCountryName,
+                'code' => $topCountryData['code'],
+                'count' => $topCountryData['count'],
+                'percentage' => $percentage
+            ];
+        }
+        
+        return $topCountry;
+    }
+    
+    /**
+     * Calculate post growth percentage
+     *
+     * @param bool $nsfwEnabled Whether NSFW content is enabled
+     * @return int
+     */
+    private function calculatePostGrowth($nsfwEnabled)
+    {
+        // Define time periods
+        $currentPeriodStart = now()->subDays(30);
+        $previousPeriodStart = now()->subDays(60);
+        
+        // Get current period posts
+        $currentPeriodPosts = Wallpaper::where('created_at', '>=', $currentPeriodStart)->count() + 
+                             Pfp::where('created_at', '>=', $currentPeriodStart)->count();
+        
+        // Get previous period posts
+        $previousPeriodPosts = Wallpaper::where('created_at', '>=', $previousPeriodStart)
+                                       ->where('created_at', '<', $currentPeriodStart)
+                                       ->count() + 
+                              Pfp::where('created_at', '>=', $previousPeriodStart)
+                                 ->where('created_at', '<', $currentPeriodStart)
+                                 ->count();
+        
+        // Add NSFW content if enabled
+        if ($nsfwEnabled) {
+            $currentPeriodPosts += Image::where('created_at', '>=', $currentPeriodStart)->count() + 
+                                 Nxleak::where('created_at', '>=', $currentPeriodStart)->count() + 
+                                 Video::where('created_at', '>=', $currentPeriodStart)->count();
+            
+            $previousPeriodPosts += Image::where('created_at', '>=', $previousPeriodStart)
+                                         ->where('created_at', '<', $currentPeriodStart)
+                                         ->count() + 
+                                  Nxleak::where('created_at', '>=', $previousPeriodStart)
+                                        ->where('created_at', '<', $currentPeriodStart)
+                                        ->count() + 
+                                  Video::where('created_at', '>=', $previousPeriodStart)
+                                       ->where('created_at', '<', $currentPeriodStart)
+                                       ->count();
+        }
+        
+        // Calculate growth percentage
+        $growthPercentage = 0;
+        if ($previousPeriodPosts > 0) {
+            $growthPercentage = round((($currentPeriodPosts - $previousPeriodPosts) / $previousPeriodPosts) * 100);
+        } elseif ($currentPeriodPosts > 0) {
+            $growthPercentage = 100; // If there were no previous posts but there are current posts, that's 100% growth
+        }
+        
+        return $growthPercentage;
+    }
+    
+    /**
+     * Calculate views growth percentage
+     *
+     * @param bool $nsfwEnabled Whether NSFW content is enabled
+     * @return int
+     */
+    private function calculateViewsGrowth($nsfwEnabled)
+    {
+        // Define time periods
+        $currentPeriodStart = now()->subDays(30);
+        $previousPeriodStart = now()->subDays(60);
+        
+        // Get current period views
+        $currentPeriodViews = 0;
+        $previousPeriodViews = 0;
+        
+        // Get wallpaper views
+        try {
+            $currentPeriodViews += DB::table('wallpaper_views')
+                ->where('created_at', '>=', $currentPeriodStart)
+                ->count();
+            $previousPeriodViews += DB::table('wallpaper_views')
+                ->where('created_at', '>=', $previousPeriodStart)
+                ->where('created_at', '<', $currentPeriodStart)
+                ->count();
+        } catch (\Exception $e) {
+            // Table might not exist or other DB error, continue silently
+        }
+        
+        // Get pfp views
+        try {
+            $currentPeriodViews += DB::table('pfp_views')
+                ->where('created_at', '>=', $currentPeriodStart)
+                ->count();
+            $previousPeriodViews += DB::table('pfp_views')
+                ->where('created_at', '>=', $previousPeriodStart)
+                ->where('created_at', '<', $currentPeriodStart)
+                ->count();
+        } catch (\Exception $e) {
+            // Table might not exist or other DB error, continue silently
+        }
+        
+        // Add NSFW content if enabled
+        if ($nsfwEnabled) {
+            // Get image views
+            try {
+                $currentPeriodViews += DB::table('image_views')
+                    ->where('created_at', '>=', $currentPeriodStart)
+                    ->count();
+                $previousPeriodViews += DB::table('image_views')
+                    ->where('created_at', '>=', $previousPeriodStart)
+                    ->where('created_at', '<', $currentPeriodStart)
+                    ->count();
+            } catch (\Exception $e) {
+                // Table might not exist or other DB error, continue silently
+            }
+            
+            // Get nxleak views
+            try {
+                $currentPeriodViews += DB::table('nxleak_views')
+                    ->where('created_at', '>=', $currentPeriodStart)
+                    ->count();
+                $previousPeriodViews += DB::table('nxleak_views')
+                    ->where('created_at', '>=', $previousPeriodStart)
+                    ->where('created_at', '<', $currentPeriodStart)
+                    ->count();
+            } catch (\Exception $e) {
+                // Table might not exist or other DB error, continue silently
+            }
+            
+            // Get video views
+            try {
+                $currentPeriodViews += DB::table('video_views')
+                    ->where('created_at', '>=', $currentPeriodStart)
+                    ->count();
+                $previousPeriodViews += DB::table('video_views')
+                    ->where('created_at', '>=', $previousPeriodStart)
+                    ->where('created_at', '<', $currentPeriodStart)
+                    ->count();
+            } catch (\Exception $e) {
+                // Table might not exist or other DB error, continue silently
+            }
+        }
+        
+        // Calculate growth percentage
+        $growthPercentage = 0;
+        if ($previousPeriodViews > 0) {
+            $growthPercentage = round((($currentPeriodViews - $previousPeriodViews) / $previousPeriodViews) * 100);
+        } elseif ($currentPeriodViews > 0) {
+            $growthPercentage = 100; // If there were no previous views but there are current views, that's 100% growth
+        }
+        
+        return $growthPercentage;
     }
 }

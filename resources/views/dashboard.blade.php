@@ -27,7 +27,7 @@
         </div>
 
         <!-- Stats Grid -->
-        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
             <!-- Total Posts -->
             <div
                 class="group relative overflow-hidden rounded-xl bg-white p-6 shadow-sm transition-all hover:shadow-md dark:bg-surface-800">
@@ -43,9 +43,9 @@
                     </div>
                 </div>
                 <div class="mt-4 flex items-center text-sm">
-                    <span class="flex items-center text-green-500 dark:text-green-400">
-                        <i class="ri-arrow-up-line mr-1"></i>
-                        12%
+                    <span class="flex items-center {{ $postGrowth >= 0 ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400' }}">
+                        <i class="{{ $postGrowth >= 0 ? 'ri-arrow-up-line' : 'ri-arrow-down-line' }} mr-1"></i>
+                        <span class="post-growth-percentage">{{ $postGrowth }}%</span>
                     </span>
                     <span class="ml-2 text-surface-500 dark:text-surface-400">from last month</span>
                 </div>
@@ -69,9 +69,9 @@
                     </div>
                 </div>
                 <div class="mt-4 flex items-center text-sm">
-                    <span class="flex items-center text-green-500 dark:text-green-400">
-                        <i class="ri-arrow-up-line mr-1"></i>
-                        24%
+                    <span class="flex items-center {{ $viewsGrowth >= 0 ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400' }}">
+                        <i class="{{ $viewsGrowth >= 0 ? 'ri-arrow-up-line' : 'ri-arrow-down-line' }} mr-1"></i>
+                        <span class="views-growth-percentage">{{ $viewsGrowth }}%</span>
                     </span>
                     <span class="ml-2 text-surface-500 dark:text-surface-400">from last month</span>
                 </div>
@@ -125,6 +125,31 @@
                 </div>
                 <div
                     class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-amber-700 opacity-0 transition-opacity group-hover:opacity-100">
+                </div>
+            </div>
+
+            <!-- Top Country -->
+            <div
+                class="group relative overflow-hidden rounded-xl bg-white p-6 shadow-sm transition-all hover:shadow-md dark:bg-surface-800">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-surface-500 dark:text-surface-400">Top Country</p>
+                        <h3 class="mt-1 text-3xl font-bold text-surface-900 dark:text-white top-country-name">{{ $topCountry['name'] }}</h3>
+                    </div>
+                    <div
+                        class="flex h-12 w-12 items-center justify-center rounded-full bg-teal-100 text-teal-600 dark:bg-teal-900/50 dark:text-teal-400">
+                        <i class="ri-global-line text-2xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm">
+                    <span class="flex items-center text-teal-500 dark:text-teal-400">
+                        <i class="ri-arrow-up-line mr-1"></i>
+                        <span class="top-country-percentage">{{ $topCountry['percentage'] }}%</span>
+                    </span>
+                    <span class="ml-2 text-surface-500 dark:text-surface-400">of total views</span>
+                </div>
+                <div
+                    class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-500 to-teal-700 opacity-0 transition-opacity group-hover:opacity-100">
                 </div>
             </div>
         </div>
@@ -189,7 +214,7 @@
                 <div class="p-6">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-3xl font-bold text-surface-900 dark:text-white" id="growth-percentage">
+                            <p class="text-3xl font-bold text-surface-900 dark:text-white growth-percentage">
                                 {{ $growthStats['growthPercentage'] > 0 ? '+' : '' }}{{ $growthStats['growthPercentage'] }}%
                             </p>
                             <p class="mt-1 text-sm text-surface-500 dark:text-surface-400">compared to previous 30 days</p>
@@ -204,7 +229,7 @@
                             <span class="text-sm font-medium text-surface-700 dark:text-surface-300">Current period (30
                                 days)</span>
                             <span
-                                class="text-sm font-medium text-surface-900 dark:text-white">{{ number_format($growthStats['currentViews']) }}</span>
+                                class="text-sm font-medium text-surface-900 dark:text-white current-views">{{ number_format($growthStats['currentViews']) }}</span>
                         </div>
                         <div class="h-2.5 w-full rounded-full bg-surface-200 dark:bg-surface-700">
                             <div class="h-2.5 rounded-full bg-brand-500" style="width: 100%">
@@ -216,11 +241,10 @@
                             <span class="text-sm font-medium text-surface-700 dark:text-surface-300">Previous period (30
                                 days)</span>
                             <span
-                                class="text-sm font-medium text-surface-900 dark:text-white">{{ number_format($growthStats['previousViews']) }}</span>
+                                class="text-sm font-medium text-surface-900 dark:text-white previous-views">{{ number_format($growthStats['previousViews']) }}</span>
                         </div>
                         <div class="h-2.5 w-full rounded-full bg-surface-200 dark:bg-surface-700">
-                            <div class="h-2.5 rounded-full bg-surface-500"
-                                style="width: {{ $growthStats['previousPercentage'] }}%">
+                            <div class="h-2.5 rounded-full bg-surface-400 previous-bar" style="width: {{ $growthStats['previousPercentage'] }}%">
                             </div>
                         </div>
                     </div>
@@ -238,11 +262,10 @@
                                         Wallpaper
                                     </span>
                                     <span
-                                        class="text-xs font-medium text-surface-900 dark:text-white">{{ number_format($viewDistribution['wallpaper']['count']) }}</span>
+                                        class="text-xs font-medium text-surface-900 dark:text-white wallpaper-count">{{ number_format($viewDistribution['wallpaper']['count']) }}</span>
                                 </div>
                                 <div class="h-1.5 w-full rounded-full bg-surface-200 dark:bg-surface-700">
-                                    <div class="h-1.5 rounded-full bg-blue-500"
-                                        style="width: {{ $viewDistribution['wallpaper']['percentage'] }}%">
+                                    <div class="h-1.5 rounded-full bg-blue-500 wallpaper-bar" style="width: {{ $viewDistribution['wallpaper']['percentage'] }}%">
                                     </div>
                                 </div>
                             </div>
@@ -255,11 +278,10 @@
                                         PFP
                                     </span>
                                     <span
-                                        class="text-xs font-medium text-surface-900 dark:text-white">{{ number_format($viewDistribution['pfp']['count']) }}</span>
+                                        class="text-xs font-medium text-surface-900 dark:text-white pfp-count">{{ number_format($viewDistribution['pfp']['count']) }}</span>
                                 </div>
                                 <div class="h-1.5 w-full rounded-full bg-surface-200 dark:bg-surface-700">
-                                    <div class="h-1.5 rounded-full bg-purple-500"
-                                        style="width: {{ $viewDistribution['pfp']['percentage'] }}%">
+                                    <div class="h-1.5 rounded-full bg-purple-500 pfp-bar" style="width: {{ $viewDistribution['pfp']['percentage'] }}%">
                                     </div>
                                 </div>
                             </div>
@@ -273,11 +295,10 @@
                                             Image
                                         </span>
                                         <span
-                                            class="text-xs font-medium text-surface-900 dark:text-white">{{ number_format($viewDistribution['image']['count']) }}</span>
+                                            class="text-xs font-medium text-surface-900 dark:text-white image-count">{{ number_format($viewDistribution['image']['count']) }}</span>
                                     </div>
                                     <div class="h-1.5 w-full rounded-full bg-surface-200 dark:bg-surface-700">
-                                        <div class="h-1.5 rounded-full bg-green-500"
-                                            style="width: {{ $viewDistribution['image']['percentage'] }}%">
+                                        <div class="h-1.5 rounded-full bg-green-500 image-bar" style="width: {{ $viewDistribution['image']['percentage'] }}%">
                                         </div>
                                     </div>
                                 </div>
@@ -290,11 +311,10 @@
                                             Nxleak
                                         </span>
                                         <span
-                                            class="text-xs font-medium text-surface-900 dark:text-white">{{ number_format($viewDistribution['nxleak']['count']) }}</span>
+                                            class="text-xs font-medium text-surface-900 dark:text-white nxleak-count">{{ number_format($viewDistribution['nxleak']['count']) }}</span>
                                     </div>
                                     <div class="h-1.5 w-full rounded-full bg-surface-200 dark:bg-surface-700">
-                                        <div class="h-1.5 rounded-full bg-red-500"
-                                            style="width: {{ $viewDistribution['nxleak']['percentage'] }}%">
+                                        <div class="h-1.5 rounded-full bg-red-500 nxleak-bar" style="width: {{ $viewDistribution['nxleak']['percentage'] }}%">
                                         </div>
                                     </div>
                                 </div>
@@ -307,11 +327,10 @@
                                             Video
                                         </span>
                                         <span
-                                            class="text-xs font-medium text-surface-900 dark:text-white">{{ number_format($viewDistribution['video']['count']) }}</span>
+                                            class="text-xs font-medium text-surface-900 dark:text-white video-count">{{ number_format($viewDistribution['video']['count']) }}</span>
                                     </div>
                                     <div class="h-1.5 w-full rounded-full bg-surface-200 dark:bg-surface-700">
-                                        <div class="h-1.5 rounded-full bg-amber-500"
-                                            style="width: {{ $viewDistribution['video']['percentage'] }}%">
+                                        <div class="h-1.5 rounded-full bg-amber-500 video-bar" style="width: {{ $viewDistribution['video']['percentage'] }}%">
                                         </div>
                                     </div>
                                 </div>
@@ -470,21 +489,22 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Toggle NSFW content
-            const nsfwToggle = document.getElementById('nsfw-toggle');
-            const nsfwToggleText = document.getElementById('nsfw-toggle-text');
+            document.getElementById('nsfw-toggle').addEventListener('change', function() {
+                nsfwEnabled = this.checked;
+                localStorage.setItem('nsfwEnabled', nsfwEnabled);
+                
+                // Update toggle text
+                const nsfwToggleText = document.getElementById('nsfw-toggle-text');
+                if (nsfwToggleText) {
+                    nsfwToggleText.textContent = nsfwEnabled ? 'NSFW Enabled' : 'NSFW Disabled';
+                }
+                
+                // Update dashboard data via AJAX
+                fetchDashboardData(nsfwEnabled);
+            });
 
-            if (nsfwToggle) {
-                nsfwToggle.addEventListener('change', function() {
-                    const isChecked = this.checked;
-                    nsfwToggleText.textContent = isChecked ? 'NSFW Enabled' : 'NSFW Disabled';
-
-                    // Update dashboard data via AJAX
-                    updateDashboardData(isChecked);
-                });
-            }
-
-            // Function to update dashboard data via AJAX
-            function updateDashboardData(nsfwEnabled) {
+            // Function to fetch dashboard data via AJAX
+            function fetchDashboardData(nsfwEnabled) {
                 fetch('{{ route('dashboard.ajax') }}', {
                         method: 'POST',
                         headers: {
@@ -498,26 +518,7 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            // Update total posts and views
-                            document.getElementById('total-posts').textContent = data.totalPosts
-                            .toLocaleString();
-                            document.getElementById('total-views').textContent = data.totalViews
-                            .toLocaleString();
-
-                            // Update most viewed posts
-                            updatePostsList('most-viewed-posts', data.mostViewed);
-
-                            // Update recent posts
-                            updatePostsList('recent-posts', data.recentPosts);
-
-                            // Update latest views by IP
-                            updateLatestViews(data.latestViews);
-
-                            // Update view distribution
-                            updateViewDistribution(data.viewDistribution, nsfwEnabled);
-
-                            // Update growth statistics
-                            updateGrowthStatistics(data.growthStats);
+                            updateDashboardData(data);
                         }
                     })
                     .catch(error => {
@@ -525,70 +526,109 @@
                     });
             }
 
-            // Function to update posts list (most viewed or recent)
-            function updatePostsList(elementId, posts) {
-                const container = document.getElementById(elementId);
-                if (!container) return;
+            // Function to update dashboard data
+            function updateDashboardData(data) {
+                // Update total posts
+                document.querySelector('.total-posts-value').textContent = data.totalPosts;
+                
+                // Update post growth percentage
+                const postGrowthElement = document.querySelector('.post-growth-percentage');
+                const postGrowthParent = postGrowthElement.parentElement;
+                postGrowthElement.textContent = data.postGrowth + '%';
+                
+                // Update post growth icon and color
+                const postGrowthIcon = postGrowthParent.querySelector('i');
+                if (data.postGrowth >= 0) {
+                    postGrowthParent.classList.remove('text-red-500', 'dark:text-red-400');
+                    postGrowthParent.classList.add('text-green-500', 'dark:text-green-400');
+                    postGrowthIcon.classList.remove('ri-arrow-down-line');
+                    postGrowthIcon.classList.add('ri-arrow-up-line');
+                } else {
+                    postGrowthParent.classList.remove('text-green-500', 'dark:text-green-400');
+                    postGrowthParent.classList.add('text-red-500', 'dark:text-red-400');
+                    postGrowthIcon.classList.remove('ri-arrow-up-line');
+                    postGrowthIcon.classList.add('ri-arrow-down-line');
+                }
+                
+                // Update total views
+                document.querySelector('.total-views-value').textContent = data.totalViews;
+                
+                // Update views growth percentage
+                const viewsGrowthElement = document.querySelector('.views-growth-percentage');
+                const viewsGrowthParent = viewsGrowthElement.parentElement;
+                viewsGrowthElement.textContent = data.viewsGrowth + '%';
+                
+                // Update views growth icon and color
+                const viewsGrowthIcon = viewsGrowthParent.querySelector('i');
+                if (data.viewsGrowth >= 0) {
+                    viewsGrowthParent.classList.remove('text-red-500', 'dark:text-red-400');
+                    viewsGrowthParent.classList.add('text-green-500', 'dark:text-green-400');
+                    viewsGrowthIcon.classList.remove('ri-arrow-down-line');
+                    viewsGrowthIcon.classList.add('ri-arrow-up-line');
+                } else {
+                    viewsGrowthParent.classList.remove('text-green-500', 'dark:text-green-400');
+                    viewsGrowthParent.classList.add('text-red-500', 'dark:text-red-400');
+                    viewsGrowthIcon.classList.remove('ri-arrow-up-line');
+                    viewsGrowthIcon.classList.add('ri-arrow-down-line');
+                }
+                
+                // Update growth stats
+                document.querySelector('.growth-percentage').textContent = (data.growthStats.growthPercentage > 0 ? '+' : '') + data.growthStats.growthPercentage + '%';
+                document.querySelector('.current-views').textContent = data.growthStats.currentViews.toLocaleString();
+                document.querySelector('.previous-views').textContent = data.growthStats.previousViews.toLocaleString();
+                document.querySelector('.previous-bar').style.width = data.growthStats.previousPercentage + '%';
+                
+                // Update top country data
+                document.querySelector('.top-country-name').textContent = data.topCountry.name;
+                document.querySelector('.top-country-percentage').textContent = data.topCountry.percentage + '%';
+                
+                // Update view distribution
+                updateViewDistribution(data.viewDistribution, nsfwEnabled);
+                
+                // Update latest views
+                updateLatestViews(data.latestViews);
+            }
 
-                // Clear existing content
-                container.innerHTML = '';
+            // Function to update view distribution
+            function updateViewDistribution(distribution, nsfwEnabled) {
+                // Update wallpaper views
+                updateDistributionItem('wallpaper', distribution.wallpaper);
 
-                // Add new posts
-                posts.forEach(post => {
-                    let typeClass = '';
-                    let typeText = '';
+                // Update pfp views
+                updateDistributionItem('pfp', distribution.pfp);
 
-                    switch (post.type) {
-                        case 'w':
-                            typeClass = 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
-                            typeText = 'Wallpaper';
-                            break;
-                        case 'p':
-                            typeClass =
-                                'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300';
-                            typeText = 'PFP';
-                            break;
-                        case 'i':
-                            typeClass = 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
-                            typeText = 'Image';
-                            break;
-                        case 'n':
-                            typeClass = 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
-                            typeText = 'Nxleak';
-                            break;
-                        case 'v':
-                            typeClass = 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300';
-                            typeText = 'Video';
-                            break;
-                    }
+                // Process NSFW content if enabled
+                if (nsfwEnabled) {
+                    // Update image views
+                    updateDistributionItem('image', distribution.image);
 
-                    const date = new Date(post.created_at);
-                    const formattedDate = date.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
+                    // Update nxleak views
+                    updateDistributionItem('nxleak', distribution.nxleak);
+
+                    // Update video views
+                    updateDistributionItem('video', distribution.video);
+
+                    // Show NSFW distribution items
+                    document.querySelectorAll('.nsfw-distribution-item').forEach(item => {
+                        item.style.display = 'block';
                     });
+                } else {
+                    // Hide NSFW distribution items
+                    document.querySelectorAll('.nsfw-distribution-item').forEach(item => {
+                        item.style.display = 'none';
+                    });
+                }
+            }
 
-                    const postItem = document.createElement('div');
-                    postItem.className = 'flex items-center justify-between py-3';
-                    postItem.innerHTML = `
-                        <div class="flex items-center">
-                            <span class="inline-flex items-center justify-center text-center align-middle rounded-full px-2 py-0.5 text-xs font-medium ${typeClass} min-w-[70px]">
-                                ${typeText}
-                            </span>
-                            <div>
-                                <p class="text-sm font-medium text-surface-900 dark:text-white">${post.title}</p>
-                                <p class="text-xs text-surface-500 dark:text-surface-400">${formattedDate}</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="text-sm font-medium text-surface-900 dark:text-white">${post.views.toLocaleString()}</span>
-                            <span class="ml-1 text-xs text-surface-500 dark:text-surface-400">views</span>
-                        </div>
-                    `;
+            // Function to update a single distribution item
+            function updateDistributionItem(type, data) {
+                const countElement = document.querySelector(`.${type}-count`);
+                const barElement = document.querySelector(`.${type}-bar`);
 
-                    container.appendChild(postItem);
-                });
+                if (countElement && barElement) {
+                    countElement.textContent = data.count.toLocaleString();
+                    barElement.style.width = `${data.percentage}%`;
+                }
             }
 
             // Function to update latest views by IP
@@ -725,76 +765,6 @@
                     td.textContent = 'No views found';
                     tr.appendChild(td);
                     container.appendChild(tr);
-                }
-            }
-
-            // Function to update view distribution
-            function updateViewDistribution(distribution, nsfwEnabled) {
-                // Update wallpaper views
-                updateDistributionItem('wallpaper', distribution.wallpaper);
-
-                // Update pfp views
-                updateDistributionItem('pfp', distribution.pfp);
-
-                // Update NSFW content if enabled
-                if (nsfwEnabled) {
-                    // Update image views
-                    updateDistributionItem('image', distribution.image);
-
-                    // Update nxleak views
-                    updateDistributionItem('nxleak', distribution.nxleak);
-
-                    // Update video views
-                    updateDistributionItem('video', distribution.video);
-
-                    // Show NSFW distribution items
-                    document.querySelectorAll('.nsfw-distribution-item').forEach(item => {
-                        item.style.display = 'block';
-                    });
-                } else {
-                    // Hide NSFW distribution items
-                    document.querySelectorAll('.nsfw-distribution-item').forEach(item => {
-                        item.style.display = 'none';
-                    });
-                }
-            }
-
-            // Function to update a single distribution item
-            function updateDistributionItem(type, data) {
-                const countElement = document.querySelector(`.${type}-count`);
-                const barElement = document.querySelector(`.${type}-bar`);
-
-                if (countElement && barElement) {
-                    countElement.textContent = data.count.toLocaleString();
-                    barElement.style.width = `${data.percentage}%`;
-                }
-            }
-
-            // Function to update growth statistics
-            function updateGrowthStatistics(stats) {
-                // Update growth percentage
-                const growthElement = document.getElementById('growth-percentage');
-                if (growthElement) {
-                    const sign = stats.growthPercentage > 0 ? '+' : '';
-                    growthElement.textContent = `${sign}${stats.growthPercentage}%`;
-                }
-
-                // Update current period views
-                const currentViewsElement = document.querySelector('.current-views');
-                if (currentViewsElement) {
-                    currentViewsElement.textContent = stats.currentViews.toLocaleString();
-                }
-
-                // Update previous period views
-                const previousViewsElement = document.querySelector('.previous-views');
-                if (previousViewsElement) {
-                    previousViewsElement.textContent = stats.previousViews.toLocaleString();
-                }
-
-                // Update previous period bar
-                const previousBarElement = document.querySelector('.previous-bar');
-                if (previousBarElement) {
-                    previousBarElement.style.width = `${stats.previousPercentage}%`;
                 }
             }
         });
