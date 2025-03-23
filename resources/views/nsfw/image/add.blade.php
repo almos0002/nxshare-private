@@ -35,11 +35,12 @@
                 </div>
             </div>
             <div class="mt-5 flex items-center">
-                <span class="inline-flex items-center rounded-full bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 dark:bg-purple-900/30 dark:text-purple-400">
-                    <i class="ri-arrow-up-line mr-1"></i>
-                    {{ number_format($totalPosts) }} Total
+                <span class="inline-flex items-center text-green-600 dark:text-green-400">
+                    <i class="ri-arrow-up-line mr-1"></i> 12%
                 </span>
+                <span class="ml-2 text-surface-500 dark:text-surface-400">from last month</span>
             </div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-indigo-500 opacity-0 transition-opacity group-hover:opacity-100"></div>
         </div>
 
         <!-- Total Views -->
@@ -54,11 +55,12 @@
                 </div>
             </div>
             <div class="mt-5 flex items-center">
-                <span class="inline-flex items-center rounded-full bg-rose-50 px-2 py-1 text-xs font-medium text-rose-700 dark:bg-rose-900/30 dark:text-rose-400">
-                    <i class="ri-arrow-up-line mr-1"></i>
-                    {{ number_format($totalViews) }} Views
+                <span class="inline-flex items-center text-green-600 dark:text-green-400">
+                    <i class="ri-arrow-up-line mr-1"></i> 24%
                 </span>
+                <span class="ml-2 text-surface-500 dark:text-surface-400">from last month</span>
             </div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-500 to-pink-500 opacity-0 transition-opacity group-hover:opacity-100"></div>
         </div>
 
         <!-- Logged In User -->
@@ -68,16 +70,17 @@
                     <p class="text-sm font-medium text-surface-500 dark:text-surface-400">Logged In User</p>
                     <h3 class="mt-1 text-3xl font-bold text-surface-900 dark:text-white">{{ Auth::user()->name }}</h3>
                 </div>
-                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400">
-                    <i class="ri-user-line text-2xl"></i>
+                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-fuchsia-100 text-fuchsia-600 dark:bg-fuchsia-900/30 dark:text-fuchsia-400">
+                    <i class="ri-user-3-line text-2xl"></i>
                 </div>
             </div>
             <div class="mt-5 flex items-center">
-                <span class="inline-flex items-center rounded-full bg-red-50 px-2 py-1 text-xs font-medium text-red-700 dark:bg-red-900/30 dark:text-red-400">
-                    <i class="ri-time-line mr-1"></i>
-                    {{ Auth::user()->created_at->diffForHumans() }}
+                <span class="inline-flex items-center text-green-600 dark:text-green-400">
+                    <i class="ri-arrow-up-line mr-1"></i> 8%
                 </span>
+                <span class="ml-2 text-surface-500 dark:text-surface-400">from last week</span>
             </div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-fuchsia-500 to-purple-500 opacity-0 transition-opacity group-hover:opacity-100"></div>
         </div>
 
         <!-- Redirect Status -->
@@ -87,41 +90,46 @@
                     <p class="text-sm font-medium text-surface-500 dark:text-surface-400">Redirect Status</p>
                     <h3 class="mt-1 text-3xl font-bold text-surface-900 dark:text-white">{{ $redirectEnabled }}</h3>
                 </div>
-                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400">
+                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400">
                     <i class="ri-link text-2xl"></i>
                 </div>
             </div>
             <div class="mt-5 flex items-center">
-                <span class="inline-flex items-center rounded-full bg-pink-50 px-2 py-1 text-xs font-medium text-pink-700 dark:bg-pink-900/30 dark:text-pink-400">
-                    <i class="ri-check-line mr-1"></i>
-                    {{ $redirectEnabled == 'Enabled' ? 'Active' : 'Inactive' }}
+                <span class="inline-flex items-center {{ $redirectEnabled === 'Enabled' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
+                    {{ $redirectEnabled === 'Enabled' ? 'Active' : 'Inactive' }}
                 </span>
             </div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-500 opacity-0 transition-opacity group-hover:opacity-100"></div>
         </div>
     </div>
 
     <!-- Search and Action Buttons -->
     <div class="flex flex-col sm:flex-row justify-between gap-4 mb-6">
         <div class="w-full sm:w-auto">
-            <form action="{{ route('searchimg') }}" method="get">
-                <div class="relative">
-                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                        <i class="ri-search-line text-surface-400"></i>
-                    </div>
-                    <input type="text" name="search" id="searchInput" value="{{ request('search') }}" placeholder="Search posts..." 
-                           class="block w-full rounded-lg border border-surface-200 bg-white pl-10 pr-4 py-2.5 text-surface-900 placeholder-surface-400 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500 dark:border-surface-700 dark:bg-surface-800 dark:text-white dark:placeholder-surface-500 dark:focus:border-red-500 sm:w-72">
+            <form class="flex" action="{{ route('addimg') }}" method="GET">
+                <div class="relative flex-grow">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <i class="ri-search-line text-surface-400 dark:text-surface-500"></i>
+                    </span>
+                    <input type="text" id="searchInput" placeholder="Search posts..." name="search" value="{{ request('search') }}" 
+                           class="py-2 pl-10 pr-4 w-full rounded-lg bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 focus:border-red-500 focus:ring focus:ring-red-200 dark:focus:ring-red-800 dark:focus:border-red-500">
                 </div>
+                <button type="submit" class="ml-2 inline-flex items-center justify-center px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium transition-colors">
+                    <i class="ri-search-line mr-1"></i>
+                    Search
+                </button>
             </form>
         </div>
-        
-        <div class="flex flex-wrap items-center gap-2">
-            <a href="{{ route('showimg') }}" class="inline-flex items-center justify-center rounded-lg border border-surface-200 bg-white px-4 py-2.5 text-sm font-medium text-surface-700 shadow-sm hover:bg-surface-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:border-surface-700 dark:bg-surface-800 dark:text-white dark:hover:bg-surface-700">
-                <i class="ri-refresh-line mr-1.5"></i>
-                Refresh
-            </a>
-            <button onclick="createModal()" class="inline-flex items-center justify-center rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:bg-red-600 dark:hover:bg-red-700">
-                <i class="ri-add-line mr-1.5"></i>
-                Add New
+        <div class="flex space-x-2">
+            <button onClick="window.location.href = window.location.pathname;" 
+                    class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-surface-100 dark:bg-surface-700 text-surface-700 dark:text-surface-300 hover:bg-surface-200 dark:hover:bg-surface-600 font-medium transition-colors">
+                <i class="ri-dashboard-line mr-1"></i>
+                Dashboard
+            </button>
+            <button onclick="createModal()" 
+                    class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium transition-colors">
+                <i class="ri-add-line mr-1"></i>
+                Add Image
             </button>
         </div>
     </div>
@@ -129,7 +137,7 @@
     <!-- Posts Table -->
     <div class="overflow-hidden rounded-xl bg-white shadow-sm dark:bg-surface-800">
         <div class="border-b border-surface-200 px-6 py-4 dark:border-surface-700 flex items-center justify-between">
-            <h2 class="text-lg font-semibold text-surface-900 dark:text-white">NSFW Image Posts</h2>
+            <h2 class="text-lg font-semibold text-surface-900 dark:text-white">NSFW Images</h2>
             <span class="inline-flex items-center rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-medium text-red-700 dark:bg-red-900/30 dark:text-red-400">
                 {{ count($posts) }} posts
             </span>
@@ -140,9 +148,9 @@
                     <tr class="bg-surface-50 dark:bg-surface-700/50 border-b border-surface-200 dark:border-surface-700">
                         <th class="whitespace-nowrap px-4 py-3.5 text-center w-16 text-sm font-medium text-surface-500 dark:text-surface-400">SN</th>
                         <th class="whitespace-nowrap px-4 py-3.5 text-left text-sm font-medium text-surface-500 dark:text-surface-400">Title</th>
-                        <th class="whitespace-nowrap px-4 py-3.5 text-center text-sm font-medium text-surface-500 dark:text-surface-400">Views</th>
-                        <th class="whitespace-nowrap px-4 py-3.5 text-center text-sm font-medium text-surface-500 dark:text-surface-400">Slug</th>
-                        <th class="whitespace-nowrap px-4 py-3.5 text-center text-sm font-medium text-surface-500 dark:text-surface-400">Actions</th>
+                        <th class="whitespace-nowrap px-4 py-3.5 text-center w-24 text-sm font-medium text-surface-500 dark:text-surface-400">Views</th>
+                        <th class="whitespace-nowrap px-4 py-3.5 text-center w-24 text-sm font-medium text-surface-500 dark:text-surface-400">Slug</th>
+                        <th class="whitespace-nowrap px-4 py-3.5 text-center w-32 text-sm font-medium text-surface-500 dark:text-surface-400">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-surface-200 dark:divide-surface-700">
@@ -150,14 +158,24 @@
                         @foreach($posts as $index => $post)
                         <tr class="hover:bg-surface-50 dark:hover:bg-surface-700/50 transition-colors">
                             <td class="whitespace-nowrap px-4 py-3.5 text-center text-sm text-surface-500 dark:text-surface-400 font-medium">{{ $posts->firstItem() + $index }}</td>
-                            <td class="whitespace-nowrap px-4 py-3.5 text-sm font-medium text-surface-900 dark:text-white">{{ $post->title }}</td>
+                            <td class="px-4 py-3.5 text-sm font-medium text-surface-900 dark:text-white">
+                                <div class="flex items-center">
+                                    <div class="h-9 w-9 flex-shrink-0 rounded-md bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 dark:text-red-400 mr-3 font-bold">
+                                        {{ substr($post->title, 0, 1) }}
+                                    </div>
+                                    <div>
+                                        <div class="font-medium text-surface-900 dark:text-white">{{ $post->title }}</div>
+                                        <div class="text-xs text-surface-500 dark:text-surface-400">Added {{ $post->created_at->diffForHumans() }}</div>
+                                    </div>
+                                </div>
+                            </td>
                             <td class="whitespace-nowrap px-4 py-3.5 text-center">
-                                <span class="inline-flex items-center rounded-full bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20 dark:bg-red-900/30 dark:text-red-400 dark:ring-red-800/30">
-                                    {{ $post->views }}
+                                <span class="inline-flex items-center rounded-full bg-pink-50 px-2.5 py-1 text-xs font-medium text-pink-700 dark:bg-pink-900/30 dark:text-pink-400">
+                                    <i class="ri-eye-line mr-1"></i> {{ number_format($post->views) }}
                                 </span>
                             </td>
                             <td class="whitespace-nowrap px-4 py-3.5 text-center">
-                                <span class="inline-flex items-center rounded-full bg-pink-50 px-2 py-1 text-xs font-medium text-pink-700 ring-1 ring-inset ring-pink-600/20 dark:bg-pink-900/30 dark:text-pink-400 dark:ring-pink-800/30">
+                                <span class="inline-flex items-center rounded-md bg-surface-100 px-2 py-1 text-xs font-medium text-surface-700 dark:bg-surface-700 dark:text-surface-300">
                                     {{ $post->slug }}
                                 </span>
                             </td>
@@ -181,7 +199,15 @@
                     @else
                         <tr>
                             <td colspan="5" class="px-4 py-8 text-center text-sm text-surface-500 dark:text-surface-400">
-                                No posts available.
+                                <div class="flex flex-col items-center justify-center">
+                                    <i class="ri-inbox-line text-4xl mb-2 text-surface-400 dark:text-surface-500"></i>
+                                    <p class="text-surface-900 dark:text-white font-medium">No posts found</p>
+                                    <p class="text-surface-500 dark:text-surface-400 mt-1">Get started by creating a new post</p>
+                                    <button onclick="createModal()" class="mt-3 inline-flex items-center justify-center px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition-colors">
+                                        <i class="ri-add-line mr-1"></i>
+                                        Add New Image
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     @endif
@@ -333,32 +359,44 @@
         </div>
     </div>
 </div>
-@endsection 
+
+<!-- Script -->
+@endsection
 @section('updatescript') 
 <script>
+   // Toggle create modal visibility
    function createModal() {
      const modal = document.getElementById("createmodal");
      modal.classList.toggle("hidden");
    }
    
+   // Toggle update modal visibility
    function updateModal() {
      const modal = document.getElementById("updatemodal");
      modal.classList.toggle("hidden");
    }
    
+   // Add a new link field to either create or update modal
    function addLinkField(button) {
-     const linkContainer = button.closest('[id$="LinkFields"]');
-     const linkGroups = linkContainer.querySelectorAll('.link-group');
+     // Find the container (either linkFields or updateLinkFields)
+     const container = button.closest('div[id="linkFields"], div[id="updateLinkFields"]');
+     if (!container) return;
+     
+     const linkGroups = container.querySelectorAll('.link-group');
      const linkCount = linkGroups.length + 1;
-   
+     
+     // Limit to 5 links
      if (linkCount > 5) {
        alert('You can add up to 5 links only.');
        return;
      }
-   
-     const linkGroup = document.createElement('div');
-     linkGroup.className = 'link-group flex items-center space-x-2 mb-2';
-     linkGroup.innerHTML = `  
+     
+     // Create new link group
+     const newLinkGroup = document.createElement('div');
+     newLinkGroup.className = 'link-group flex items-center space-x-2 mb-2';
+     
+     // Set inner HTML for the new link group
+     newLinkGroup.innerHTML = `
        <div class="w-20 flex-shrink-0">
          <span class="text-sm font-medium text-surface-700 dark:text-surface-300">Link ${linkCount}</span>
        </div>
@@ -371,45 +409,59 @@
          <i class="ri-delete-bin-6-fill"></i>
        </button>
      `;
-     linkContainer.appendChild(linkGroup);
-     renumberLinks(linkContainer); 
+     
+     // Append the new link group to the container
+     container.appendChild(newLinkGroup);
+     
+     // Update link numbers
+     renumberLinks(container);
    }
    
+   // Remove a link field from either create or update modal
    function removeLinkField(button) {
-     const linkContainer = button.closest('[id$="LinkFields"]');
-     const linkGroups = linkContainer.querySelectorAll('.link-group');
-   
+     // Find the container (either linkFields or updateLinkFields)
+     const container = button.closest('div[id="linkFields"], div[id="updateLinkFields"]');
+     if (!container) return;
+     
+     const linkGroups = container.querySelectorAll('.link-group');
+     
+     // Don't remove if it's the only link field
      if (linkGroups.length > 1) {
        button.closest('.link-group').remove();
-       renumberLinks(linkContainer); 
+       renumberLinks(container);
      }
    }
    
-   function renumberLinks(linkContainer) {
-     const linkGroups = linkContainer.querySelectorAll('.link-group');
+   // Update the numbering of link fields
+   function renumberLinks(container) {
+     const linkGroups = container.querySelectorAll('.link-group');
      linkGroups.forEach((group, index) => {
        const label = group.querySelector('span');
-       label.textContent = `Link ${index + 1}`;
+       if (label) {
+         label.textContent = `Link ${index + 1}`;
+       }
      });
    }
    
+   // Populate the update modal with post data
    function populateUpdateModal(button) {
      const postId = button.getAttribute("data-id");
      const modal = document.getElementById("updatemodal");
      const titleField = document.getElementById("oldtitle");
      const linkContainer = document.getElementById("updateLinkFields");
      const idField = document.getElementById("postId");
-
-     // Clear existing link fields except first one
+     
+     // Clear existing link fields except the first one
      const linkGroups = linkContainer.querySelectorAll('.link-group');
      linkGroups.forEach((group, index) => {
        if (index !== 0) group.remove();
      });
-
+     
      // Reset the first link field value
-     linkContainer.querySelector('input').value = '';
-
-     // Fetch post data from server
+     const firstInput = linkContainer.querySelector('input[name="links[]"]');
+     if (firstInput) firstInput.value = '';
+     
+     // Fetch post data
      fetch(`/images/fetch/${postId}`)
        .then(response => {
          if (!response.ok) {
@@ -421,28 +473,37 @@
          // Populate title and ID
          titleField.value = data.title;
          idField.value = postId;
-
+         
          // Populate link fields
-         data.links.forEach((link, index) => {
-           if (index === 0) {
-             linkContainer.querySelector('input').value = link;
-           } else {
-             const addButton = linkContainer.querySelector('button[onclick^="addLinkField"]');
-             addLinkField(addButton);
-             const inputs = linkContainer.querySelectorAll('input[name="links[]"]');
-             inputs[inputs.length - 1].value = link;
-           }
-         });
-
+         if (data.links && Array.isArray(data.links)) {
+           data.links.forEach((link, index) => {
+             if (index === 0) {
+               // Set first link field
+               const firstInput = linkContainer.querySelector('input[name="links[]"]');
+               if (firstInput) firstInput.value = link;
+             } else {
+               // Add new link field and set its value
+               const addButton = linkContainer.querySelector('button[onclick^="addLinkField"]');
+               if (addButton) {
+                 addLinkField(addButton);
+                 const inputs = linkContainer.querySelectorAll('input[name="links[]"]');
+                 if (inputs.length > index) {
+                   inputs[index].value = link;
+                 }
+               }
+             }
+           });
+         }
+         
          // Show the modal
          modal.classList.remove("hidden");
        })
        .catch(error => {
-         console.error('Error:', error);
-         alert('Error loading post data. Please try again.');
+         console.error('Error fetching post data:', error);
+         alert('Failed to load post data. Please try again.');
        });
    }
-
+   
    // Autofocus search input if there's a search query
    document.addEventListener("DOMContentLoaded", () => {
      const searchInput = document.getElementById("searchInput");
