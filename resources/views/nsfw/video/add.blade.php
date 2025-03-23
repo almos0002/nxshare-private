@@ -97,7 +97,7 @@
                 </div>
             </div>
             <div class="mt-4 flex items-center">
-                <span class="inline-flex items-center rounded-full bg-{{ $redirectEnabled === 'Enabled' ? 'green' : 'red' }}-100 px-2.5 py-0.5 text-xs font-medium text-{{ $redirectEnabled === 'Enabled' ? 'green' : 'red' }}-800 dark:bg-{{ $redirectEnabled === 'Enabled' ? 'green' : 'red' }}-900/30 dark:text-{{ $redirectEnabled === 'Enabled' ? 'green' : 'red' }}-400">
+                <span class="inline-flex items-center rounded-full bg-{{ $redirectEnabled === 'Enabled' ? 'green' : 'red' }}-100 px-2.5 py-1 text-xs font-medium text-{{ $redirectEnabled === 'Enabled' ? 'green' : 'red' }}-800 dark:bg-{{ $redirectEnabled === 'Enabled' ? 'green' : 'red' }}-900/30 dark:text-{{ $redirectEnabled === 'Enabled' ? 'green' : 'red' }}-400">
                     {{ $redirectEnabled === 'Enabled' ? 'Active' : 'Inactive' }}
                 </span>
             </div>
@@ -252,7 +252,7 @@
                             
                             <div>
                                 <label for="link" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Video Link</label>
-                                <input type="text" name="link" id="link" placeholder="Enter video link" required
+                                <input type="text" name="links" id="link" placeholder="Enter video link" required
                                        class="w-full rounded-lg bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-700 focus:border-red-500 focus:ring focus:ring-red-200 dark:focus:ring-red-800 dark:focus:border-red-500 py-2 px-3">
                             </div>
                         </div>
@@ -304,7 +304,7 @@
                             
                             <div>
                                 <label for="oldlinks" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Video Link</label>
-                                <input type="text" name="link" id="oldlinks" placeholder="Enter video link" required
+                                <input type="text" name="links" id="oldlinks" placeholder="Enter video link" required
                                        class="w-full rounded-lg bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-700 focus:border-red-500 focus:ring focus:ring-red-200 dark:focus:ring-red-800 dark:focus:border-red-500 py-2 px-3">
                             </div>
                         </div>
@@ -351,7 +351,7 @@
                 titleField.value = data.title;
                 idField.value = postId;
                 thumbnailField.value = data.thumbnail;
-                linkField.value = data.link;
+                linkField.value = data.links;
 
                 // Show the modal
                 modal.classList.toggle("hidden");
