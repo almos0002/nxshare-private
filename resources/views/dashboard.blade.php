@@ -27,7 +27,7 @@
         </div>
 
         <!-- Stats Grid -->
-        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             <!-- Total Posts -->
             <div
                 class="group relative overflow-hidden rounded-xl bg-white p-6 shadow-sm transition-all hover:shadow-md dark:bg-surface-800">
@@ -125,31 +125,6 @@
                 </div>
                 <div
                     class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-amber-700 opacity-0 transition-opacity group-hover:opacity-100">
-                </div>
-            </div>
-
-            <!-- Top Country -->
-            <div
-                class="group relative overflow-hidden rounded-xl bg-white p-6 shadow-sm transition-all hover:shadow-md dark:bg-surface-800">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-surface-500 dark:text-surface-400">Top Country</p>
-                        <h3 class="mt-1 text-3xl font-bold text-surface-900 dark:text-white top-country-name">{{ $topCountry['name'] }}</h3>
-                    </div>
-                    <div
-                        class="flex h-12 w-12 items-center justify-center rounded-full bg-teal-100 text-teal-600 dark:bg-teal-900/50 dark:text-teal-400">
-                        <i class="ri-global-line text-2xl"></i>
-                    </div>
-                </div>
-                <div class="mt-4 flex items-center text-sm">
-                    <span class="flex items-center text-teal-500 dark:text-teal-400">
-                        <i class="ri-arrow-up-line mr-1"></i>
-                        <span class="top-country-percentage">{{ $topCountry['percentage'] }}%</span>
-                    </span>
-                    <span class="ml-2 text-surface-500 dark:text-surface-400">of total views</span>
-                </div>
-                <div
-                    class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-500 to-teal-700 opacity-0 transition-opacity group-hover:opacity-100">
                 </div>
             </div>
         </div>
@@ -416,11 +391,6 @@
                                             </div>
                                             <div class="flex items-center text-xs text-surface-500 dark:text-surface-400 mt-1">
                                                 <span class="flex items-center">
-                                                    <i class="ri-map-pin-line mr-1"></i>
-                                                    {{ $view->country }} ({{ $view->country_code }})
-                                                </span>
-                                                <span class="mx-2">•</span>
-                                                <span class="flex items-center">
                                                     <i class="ri-time-line mr-1"></i>
                                                     {{ \Carbon\Carbon::parse($view->created_at)->diffForHumans() }}
                                                 </span>
@@ -553,10 +523,6 @@
                 document.querySelector('.current-views').textContent = data.growthStats.currentViews.toLocaleString();
                 document.querySelector('.previous-views').textContent = data.growthStats.previousViews.toLocaleString();
                 document.querySelector('.previous-bar').style.width = data.growthStats.previousPercentage + '%';
-                
-                // Update top country data
-                document.querySelector('.top-country-name').textContent = data.topCountry.name;
-                document.querySelector('.top-country-percentage').textContent = data.topCountry.percentage + '%';
                 
                 // Update view distribution
                 updateViewDistribution(data.viewDistribution, nsfwEnabled);
@@ -705,11 +671,6 @@
                                         </span>
                                     </div>
                                     <div class="flex items-center text-xs text-surface-500 dark:text-surface-400 mt-1">
-                                        <span class="flex items-center">
-                                            <i class="ri-map-pin-line mr-1"></i>
-                                            ${view.country || 'Unknown'} (${view.country_code || '??'})
-                                        </span>
-                                        <span class="mx-2">•</span>
                                         <span class="flex items-center">
                                             <i class="ri-time-line mr-1"></i>
                                             ${timeAgo}

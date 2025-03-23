@@ -112,9 +112,6 @@ class HomeController extends Controller
         // Get growth statistics
         $growthStats = $this->getGrowthStatistics($nsfwEnabled);
 
-        // Get top country data
-        $topCountry = $this->getTopCountry($nsfwEnabled);
-
         // Calculate post growth percentage
         $postGrowth = $this->calculatePostGrowth($nsfwEnabled);
         
@@ -132,7 +129,6 @@ class HomeController extends Controller
             'latestViews',
             'viewDistribution',
             'growthStats',
-            'topCountry',
             'postGrowth',
             'viewsGrowth'
         ));
@@ -205,9 +201,6 @@ class HomeController extends Controller
         // Get growth statistics
         $growthStats = $this->getGrowthStatistics($nsfwEnabled);
 
-        // Get top country data
-        $topCountry = $this->getTopCountry($nsfwEnabled);
-
         // Calculate post growth percentage
         $postGrowth = $this->calculatePostGrowth($nsfwEnabled);
         
@@ -223,7 +216,6 @@ class HomeController extends Controller
             'latestViews' => $latestViews,
             'viewDistribution' => $viewDistribution,
             'growthStats' => $growthStats,
-            'topCountry' => $topCountry,
             'postGrowth' => $postGrowth,
             'viewsGrowth' => $viewsGrowth
         ]);
@@ -336,34 +328,18 @@ class HomeController extends Controller
         // Sort by created_at and take the 5 most recent
         $latestViews = $latestViews->sortByDesc('created_at')->take(5);
         
-        // Get country information for each IP address
+        // Set default values for IP addresses (no country lookup)
         foreach ($latestViews as $view) {
-            // Skip localhost or private IPs
+            // Mark local IPs
             if (
                 $view->ip_address == '127.0.0.1' ||
                 $view->ip_address == 'localhost' ||
                 strpos($view->ip_address, '192.168.') === 0 ||
                 strpos($view->ip_address, '10.') === 0
             ) {
-                $view->country = 'Local';
-                $view->country_code = 'LO';
-                continue;
-            }
-            
-            try {
-                // Use IP-API for geolocation (free tier, no API key required)
-                $response = @file_get_contents('http://ip-api.com/json/' . $view->ip_address . '?fields=country,countryCode');
-                if ($response) {
-                    $data = json_decode($response);
-                    $view->country = $data->country ?? 'Unknown';
-                    $view->country_code = $data->countryCode ?? 'UN';
-                } else {
-                    $view->country = 'Unknown';
-                    $view->country_code = 'UN';
-                }
-            } catch (\Exception $e) {
-                $view->country = 'Unknown';
-                $view->country_code = 'UN';
+                $view->is_local = true;
+            } else {
+                $view->is_local = false;
             }
         }
         
@@ -562,244 +538,6 @@ class HomeController extends Controller
         ];
     }
 
-    /**
-     * Get top country data from views
-     *
-     * @param bool $nsfwEnabled Whether NSFW content is enabled
-     * @return array
-     */
-    private function getTopCountry($nsfwEnabled)
-    {
-        // Initialize countries array
-        $countries = [];
-        
-        // Process wallpaper views
-        try {
-            $wallpaperViews = DB::table('wallpaper_views')
-                ->join('wallpaper', 'wallpaper_views.post_id', '=', 'wallpaper.id')
-                ->select('wallpaper_views.ip_address')
-                ->get();
-                
-            foreach ($wallpaperViews as $view) {
-                if ($view->ip_address == '127.0.0.1' || 
-                    $view->ip_address == 'localhost' || 
-                    strpos($view->ip_address, '192.168.') === 0) {
-                    continue;
-                }
-                
-                try {
-                    $response = @file_get_contents('http://ip-api.com/json/' . $view->ip_address . '?fields=country,countryCode');
-                    if ($response) {
-                        $data = json_decode($response);
-                        $country = $data->country ?? 'Unknown';
-                        $countryCode = $data->countryCode ?? 'UN';
-                        
-                        if (!isset($countries[$country])) {
-                            $countries[$country] = [
-                                'count' => 0,
-                                'code' => $countryCode
-                            ];
-                        }
-                        
-                        $countries[$country]['count']++;
-                    }
-                } catch (\Exception $e) {
-                    // Continue silently
-                }
-            }
-        } catch (\Exception $e) {
-            // Table might not exist or other DB error, continue silently
-        }
-        
-        // Process pfp views
-        try {
-            $pfpViews = DB::table('pfp_views')
-                ->join('pfp', 'pfp_views.post_id', '=', 'pfp.id')
-                ->select('pfp_views.ip_address')
-                ->get();
-                
-            foreach ($pfpViews as $view) {
-                if ($view->ip_address == '127.0.0.1' || 
-                    $view->ip_address == 'localhost' || 
-                    strpos($view->ip_address, '192.168.') === 0) {
-                    continue;
-                }
-                
-                try {
-                    $response = @file_get_contents('http://ip-api.com/json/' . $view->ip_address . '?fields=country,countryCode');
-                    if ($response) {
-                        $data = json_decode($response);
-                        $country = $data->country ?? 'Unknown';
-                        $countryCode = $data->countryCode ?? 'UN';
-                        
-                        if (!isset($countries[$country])) {
-                            $countries[$country] = [
-                                'count' => 0,
-                                'code' => $countryCode
-                            ];
-                        }
-                        
-                        $countries[$country]['count']++;
-                    }
-                } catch (\Exception $e) {
-                    // Continue silently
-                }
-            }
-        } catch (\Exception $e) {
-            // Table might not exist or other DB error, continue silently
-        }
-        
-        // Process NSFW views if enabled
-        if ($nsfwEnabled) {
-            // Process image views
-            try {
-                $imageViews = DB::table('image_views')
-                    ->join('image', 'image_views.post_id', '=', 'image.id')
-                    ->select('image_views.ip_address')
-                    ->get();
-                    
-                foreach ($imageViews as $view) {
-                    if ($view->ip_address == '127.0.0.1' || 
-                        $view->ip_address == 'localhost' || 
-                        strpos($view->ip_address, '192.168.') === 0) {
-                        continue;
-                    }
-                    
-                    try {
-                        $response = @file_get_contents('http://ip-api.com/json/' . $view->ip_address . '?fields=country,countryCode');
-                        if ($response) {
-                            $data = json_decode($response);
-                            $country = $data->country ?? 'Unknown';
-                            $countryCode = $data->countryCode ?? 'UN';
-                            
-                            if (!isset($countries[$country])) {
-                                $countries[$country] = [
-                                    'count' => 0,
-                                    'code' => $countryCode
-                                ];
-                            }
-                            
-                            $countries[$country]['count']++;
-                        }
-                    } catch (\Exception $e) {
-                        // Continue silently
-                    }
-                }
-            } catch (\Exception $e) {
-                // Table might not exist or other DB error, continue silently
-            }
-            
-            // Process nxleak views
-            try {
-                $nxleakViews = DB::table('nxleak_views')
-                    ->join('nxleak', 'nxleak_views.post_id', '=', 'nxleak.id')
-                    ->select('nxleak_views.ip_address')
-                    ->get();
-                    
-                foreach ($nxleakViews as $view) {
-                    if ($view->ip_address == '127.0.0.1' || 
-                        $view->ip_address == 'localhost' || 
-                        strpos($view->ip_address, '192.168.') === 0) {
-                        continue;
-                    }
-                    
-                    try {
-                        $response = @file_get_contents('http://ip-api.com/json/' . $view->ip_address . '?fields=country,countryCode');
-                        if ($response) {
-                            $data = json_decode($response);
-                            $country = $data->country ?? 'Unknown';
-                            $countryCode = $data->countryCode ?? 'UN';
-                            
-                            if (!isset($countries[$country])) {
-                                $countries[$country] = [
-                                    'count' => 0,
-                                    'code' => $countryCode
-                                ];
-                            }
-                            
-                            $countries[$country]['count']++;
-                        }
-                    } catch (\Exception $e) {
-                        // Continue silently
-                    }
-                }
-            } catch (\Exception $e) {
-                // Table might not exist or other DB error, continue silently
-            }
-            
-            // Process video views
-            try {
-                $videoViews = DB::table('video_views')
-                    ->join('video', 'video_views.post_id', '=', 'video.id')
-                    ->select('video_views.ip_address')
-                    ->get();
-                    
-                foreach ($videoViews as $view) {
-                    if ($view->ip_address == '127.0.0.1' || 
-                        $view->ip_address == 'localhost' || 
-                        strpos($view->ip_address, '192.168.') === 0) {
-                        continue;
-                    }
-                    
-                    try {
-                        $response = @file_get_contents('http://ip-api.com/json/' . $view->ip_address . '?fields=country,countryCode');
-                        if ($response) {
-                            $data = json_decode($response);
-                            $country = $data->country ?? 'Unknown';
-                            $countryCode = $data->countryCode ?? 'UN';
-                            
-                            if (!isset($countries[$country])) {
-                                $countries[$country] = [
-                                    'count' => 0,
-                                    'code' => $countryCode
-                                ];
-                            }
-                            
-                            $countries[$country]['count']++;
-                        }
-                    } catch (\Exception $e) {
-                        // Continue silently
-                    }
-                }
-            } catch (\Exception $e) {
-                // Table might not exist or other DB error, continue silently
-            }
-        }
-        
-        // Sort countries by count in descending order
-        uasort($countries, function($a, $b) {
-            return $b['count'] - $a['count'];
-        });
-        
-        // Get the top country
-        $topCountry = [
-            'name' => 'Unknown',
-            'code' => 'UN',
-            'count' => 0,
-            'percentage' => 0
-        ];
-        
-        if (!empty($countries)) {
-            $topCountryName = array_key_first($countries);
-            $topCountryData = $countries[$topCountryName];
-            
-            // Calculate total views
-            $totalViews = array_sum(array_column($countries, 'count'));
-            
-            // Calculate percentage
-            $percentage = ($totalViews > 0) ? round(($topCountryData['count'] / $totalViews) * 100) : 0;
-            
-            $topCountry = [
-                'name' => $topCountryName,
-                'code' => $topCountryData['code'],
-                'count' => $topCountryData['count'],
-                'percentage' => $percentage
-            ];
-        }
-        
-        return $topCountry;
-    }
-    
     /**
      * Calculate post growth percentage
      *
