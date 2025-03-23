@@ -14,10 +14,10 @@
                     <p class="mt-1 text-brand-100">Here's what's happening with your content today.</p>
                 </div>
                 <div>
-                    <a href="#" class="inline-flex items-center rounded-lg bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50">
-                        <i class="ri-add-line mr-2"></i>
-                        Create New Post
-                    </a>
+                    <div class="inline-flex items-center rounded-lg bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm">
+                        <i class="ri-calendar-line mr-2"></i>
+                        {{ now()->format('l, F j, Y') }}
+                    </div>
                 </div>
             </div>
         </div>
