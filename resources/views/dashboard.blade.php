@@ -191,93 +191,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-3xl font-bold text-surface-900 dark:text-white" id="growth-percentage">
-                                @php
-                                    // Calculate views from the last 30 days
-                                    $currentPeriodStart = now()->subDays(30);
-                                    $previousPeriodStart = now()->subDays(60);
-
-                                    // Get current period views
-                                    $currentViews = 0;
-                                    $previousViews = 0;
-
-                                    // Add wallpaper views
-                                    try {
-                                        $currentViews += DB::table('wallpaper_views')
-                                            ->where('created_at', '>=', $currentPeriodStart)
-                                            ->count();
-                                        $previousViews += DB::table('wallpaper_views')
-                                            ->where('created_at', '>=', $previousPeriodStart)
-                                            ->where('created_at', '<', $currentPeriodStart)
-                                            ->count();
-                                    } catch (\Exception $e) {
-                                        // Table might not exist or other DB error, continue silently
-                                    }
-
-                                    // Add pfp views
-                                    try {
-                                        $currentViews += DB::table('pfp_views')
-                                            ->where('created_at', '>=', $currentPeriodStart)
-                                            ->count();
-                                        $previousViews += DB::table('pfp_views')
-                                            ->where('created_at', '>=', $previousPeriodStart)
-                                            ->where('created_at', '<', $currentPeriodStart)
-                                            ->count();
-                                    } catch (\Exception $e) {
-                                        // Table might not exist or other DB error, continue silently
-                                    }
-
-                                    // Add NSFW content if enabled
-                                    if ($nsfwEnabled) {
-                                        // Add image views
-                                        try {
-                                            $currentViews += DB::table('image_views')
-                                                ->where('created_at', '>=', $currentPeriodStart)
-                                                ->count();
-                                            $previousViews += DB::table('image_views')
-                                                ->where('created_at', '>=', $previousPeriodStart)
-                                                ->where('created_at', '<', $currentPeriodStart)
-                                                ->count();
-                                        } catch (\Exception $e) {
-                                            // Table might not exist or other DB error, continue silently
-                                        }
-
-                                        // Add nxleak views
-                                        try {
-                                            $currentViews += DB::table('nxleak_views')
-                                                ->where('created_at', '>=', $currentPeriodStart)
-                                                ->count();
-                                            $previousViews += DB::table('nxleak_views')
-                                                ->where('created_at', '>=', $previousPeriodStart)
-                                                ->where('created_at', '<', $currentPeriodStart)
-                                                ->count();
-                                        } catch (\Exception $e) {
-                                            // Table might not exist or other DB error, continue silently
-                                        }
-
-                                        // Add video views
-                                        try {
-                                            $currentViews += DB::table('video_views')
-                                                ->where('created_at', '>=', $currentPeriodStart)
-                                                ->count();
-                                            $previousViews += DB::table('video_views')
-                                                ->where('created_at', '>=', $previousPeriodStart)
-                                                ->where('created_at', '<', $currentPeriodStart)
-                                                ->count();
-                                        } catch (\Exception $e) {
-                                            // Table might not exist or other DB error, continue silently
-                                        }
-                                    }
-
-                                    // Calculate growth percentage
-                                    $growthPercentage =
-                                        $previousViews > 0
-                                            ? round((($currentViews - $previousViews) / $previousViews) * 100)
-                                            : 100;
-
-                                    // Ensure we have a positive sign for positive growth
-                                    $growthSign = $growthPercentage >= 0 ? '+' : '';
-                                    echo $growthSign . $growthPercentage . '%';
-                                @endphp
+                                {{ $growthStats['growthPercentage'] > 0 ? '+' : '' }}{{ $growthStats['growthPercentage'] }}%
                             </p>
                             <p class="mt-1 text-sm text-surface-500 dark:text-surface-400">compared to previous 30 days</p>
                         </div>
@@ -291,21 +205,24 @@
                             <span class="text-sm font-medium text-surface-700 dark:text-surface-300">Current period (30
                                 days)</span>
                             <span
-                                class="text-sm font-medium text-surface-900 dark:text-white">{{ number_format($currentViews) }}</span>
+                                class="text-sm font-medium text-surface-900 dark:text-white">{{ number_format($growthStats['currentViews']) }}</span>
                         </div>
                         <div class="h-2.5 w-full rounded-full bg-surface-200 dark:bg-surface-700">
-                            <div class="h-2.5 rounded-full bg-green-500"
-                                style="width: {{ min(100, max(5, $currentViews > 0 ? 100 : 0)) }}%"></div>
+                            <div class="h-2.5 rounded-full bg-brand-500"
+                                style="width: 100%">
+                            </div>
                         </div>
-                        <div class="mt-4 mb-1 flex items-center justify-between">
+                    </div>
+                    <div class="mt-4">
+                        <div class="mb-1 flex items-center justify-between">
                             <span class="text-sm font-medium text-surface-700 dark:text-surface-300">Previous period (30
                                 days)</span>
                             <span
-                                class="text-sm font-medium text-surface-900 dark:text-white">{{ number_format($previousViews) }}</span>
+                                class="text-sm font-medium text-surface-900 dark:text-white">{{ number_format($growthStats['previousViews']) }}</span>
                         </div>
                         <div class="h-2.5 w-full rounded-full bg-surface-200 dark:bg-surface-700">
                             <div class="h-2.5 rounded-full bg-surface-500"
-                                style="width: {{ min(100, max(5, $previousViews > 0 ? ($previousViews / max(1, $currentViews)) * 100 : 0)) }}%">
+                                style="width: {{ $growthStats['previousPercentage'] }}%">
                             </div>
                         </div>
                     </div>
@@ -315,45 +232,6 @@
                         <h3 class="mb-4 text-sm font-semibold text-surface-900 dark:text-white">View Distribution by Type
                         </h3>
                         <div class="grid grid-cols-2 gap-4">
-                            @php
-                                // Calculate view distribution by type
-                                $wallpaperCount = 0;
-                                $pfpCount = 0;
-                                $imageCount = 0;
-                                $nxleakCount = 0;
-                                $videoCount = 0;
-
-                                try {
-                                    $wallpaperCount = DB::table('wallpaper_views')->count();
-                                } catch (\Exception $e) {
-                                }
-
-                                try {
-                                    $pfpCount = DB::table('pfp_views')->count();
-                                } catch (\Exception $e) {
-                                }
-
-                                if ($nsfwEnabled) {
-                                    try {
-                                        $imageCount = DB::table('image_views')->count();
-                                    } catch (\Exception $e) {
-                                    }
-
-                                    try {
-                                        $nxleakCount = DB::table('nxleak_views')->count();
-                                    } catch (\Exception $e) {
-                                    }
-
-                                    try {
-                                        $videoCount = DB::table('video_views')->count();
-                                    } catch (\Exception $e) {
-                                    }
-                                }
-
-                                $totalViews = $wallpaperCount + $pfpCount + $imageCount + $nxleakCount + $videoCount;
-                                $totalViews = max(1, $totalViews); // Avoid division by zero
-                            @endphp
-
                             <!-- Wallpaper Views -->
                             <div>
                                 <div class="flex items-center justify-between mb-1">
@@ -362,11 +240,11 @@
                                         Wallpaper
                                     </span>
                                     <span
-                                        class="text-xs font-medium text-surface-900 dark:text-white">{{ number_format($wallpaperCount) }}</span>
+                                        class="text-xs font-medium text-surface-900 dark:text-white">{{ number_format($viewDistribution['wallpaper']['count']) }}</span>
                                 </div>
                                 <div class="h-1.5 w-full rounded-full bg-surface-200 dark:bg-surface-700">
                                     <div class="h-1.5 rounded-full bg-blue-500"
-                                        style="width: {{ min(100, max(5, $wallpaperCount > 0 ? ($wallpaperCount / $totalViews) * 100 : 0)) }}%">
+                                        style="width: {{ $viewDistribution['wallpaper']['percentage'] }}%">
                                     </div>
                                 </div>
                             </div>
@@ -379,11 +257,11 @@
                                         PFP
                                     </span>
                                     <span
-                                        class="text-xs font-medium text-surface-900 dark:text-white">{{ number_format($pfpCount) }}</span>
+                                        class="text-xs font-medium text-surface-900 dark:text-white">{{ number_format($viewDistribution['pfp']['count']) }}</span>
                                 </div>
                                 <div class="h-1.5 w-full rounded-full bg-surface-200 dark:bg-surface-700">
                                     <div class="h-1.5 rounded-full bg-purple-500"
-                                        style="width: {{ min(100, max(5, $pfpCount > 0 ? ($pfpCount / $totalViews) * 100 : 0)) }}%">
+                                        style="width: {{ $viewDistribution['pfp']['percentage'] }}%">
                                     </div>
                                 </div>
                             </div>
@@ -397,11 +275,11 @@
                                             Image
                                         </span>
                                         <span
-                                            class="text-xs font-medium text-surface-900 dark:text-white">{{ number_format($imageCount) }}</span>
+                                            class="text-xs font-medium text-surface-900 dark:text-white">{{ number_format($viewDistribution['image']['count']) }}</span>
                                     </div>
                                     <div class="h-1.5 w-full rounded-full bg-surface-200 dark:bg-surface-700">
                                         <div class="h-1.5 rounded-full bg-green-500"
-                                            style="width: {{ min(100, max(5, $imageCount > 0 ? ($imageCount / $totalViews) * 100 : 0)) }}%">
+                                            style="width: {{ $viewDistribution['image']['percentage'] }}%">
                                         </div>
                                     </div>
                                 </div>
@@ -414,11 +292,11 @@
                                             Nxleak
                                         </span>
                                         <span
-                                            class="text-xs font-medium text-surface-900 dark:text-white">{{ number_format($nxleakCount) }}</span>
+                                            class="text-xs font-medium text-surface-900 dark:text-white">{{ number_format($viewDistribution['nxleak']['count']) }}</span>
                                     </div>
                                     <div class="h-1.5 w-full rounded-full bg-surface-200 dark:bg-surface-700">
                                         <div class="h-1.5 rounded-full bg-red-500"
-                                            style="width: {{ min(100, max(5, $nxleakCount > 0 ? ($nxleakCount / $totalViews) * 100 : 0)) }}%">
+                                            style="width: {{ $viewDistribution['nxleak']['percentage'] }}%">
                                         </div>
                                     </div>
                                 </div>
@@ -431,11 +309,11 @@
                                             Video
                                         </span>
                                         <span
-                                            class="text-xs font-medium text-surface-900 dark:text-white">{{ number_format($videoCount) }}</span>
+                                            class="text-xs font-medium text-surface-900 dark:text-white">{{ number_format($viewDistribution['video']['count']) }}</span>
                                     </div>
                                     <div class="h-1.5 w-full rounded-full bg-surface-200 dark:bg-surface-700">
                                         <div class="h-1.5 rounded-full bg-amber-500"
-                                            style="width: {{ min(100, max(5, $videoCount > 0 ? ($videoCount / $totalViews) * 100 : 0)) }}%">
+                                            style="width: {{ $viewDistribution['video']['percentage'] }}%">
                                         </div>
                                     </div>
                                 </div>
@@ -501,138 +379,6 @@
                     <h2 class="text-lg font-semibold text-surface-900 dark:text-white">Latest Views by IP</h2>
                 </div>
                 <div id="latest-views-container">
-                    @php
-                        // Get the latest views from all view tables
-                        $latestViews = collect();
-                        
-                        // Add wallpaper views
-                        try {
-                            $wallpaperViews = DB::table('wallpaper_views')
-                                ->join('wallpaper', 'wallpaper_views.post_id', '=', 'wallpaper.id')
-                                ->select(
-                                    'wallpaper_views.ip_address',
-                                    'wallpaper_views.created_at',
-                                    'wallpaper.title',
-                                    DB::raw("'w' as type"),
-                                )
-                                ->orderBy('wallpaper_views.created_at', 'desc')
-                                ->take(5)
-                                ->get();
-                            $latestViews = $latestViews->concat($wallpaperViews);
-                        } catch (\Exception $e) {
-                            // Table might not exist or other DB error, continue silently
-                        }
-                        
-                        // Add pfp views
-                        try {
-                            $pfpViews = DB::table('pfp_views')
-                                ->join('pfp', 'pfp_views.post_id', '=', 'pfp.id')
-                                ->select(
-                                    'pfp_views.ip_address',
-                                    'pfp_views.created_at',
-                                    'pfp.title',
-                                    DB::raw("'p' as type"),
-                                )
-                                ->orderBy('pfp_views.created_at', 'desc')
-                                ->take(5)
-                                ->get();
-                            $latestViews = $latestViews->concat($pfpViews);
-                        } catch (\Exception $e) {
-                            // Table might not exist or other DB error, continue silently
-                        }
-                        
-                        // Add NSFW content if enabled
-                        if ($nsfwEnabled) {
-                            // Add image views
-                            try {
-                                $imageViews = DB::table('image_views')
-                                    ->join('image', 'image_views.post_id', '=', 'image.id')
-                                    ->select(
-                                        'image_views.ip_address',
-                                        'image_views.created_at',
-                                        'image.title',
-                                        DB::raw("'i' as type"),
-                                    )
-                                    ->orderBy('image_views.created_at', 'desc')
-                                    ->take(5)
-                                    ->get();
-                                $latestViews = $latestViews->concat($imageViews);
-                            } catch (\Exception $e) {
-                                // Table might not exist or other DB error, continue silently
-                            }
-                            
-                            // Add nxleak views
-                            try {
-                                $nxleakViews = DB::table('nxleak_views')
-                                    ->join('nxleak', 'nxleak_views.post_id', '=', 'nxleak.id')
-                                    ->select(
-                                        'nxleak_views.ip_address',
-                                        'nxleak_views.created_at',
-                                        'nxleak.title',
-                                        DB::raw("'n' as type"),
-                                    )
-                                    ->orderBy('nxleak_views.created_at', 'desc')
-                                    ->take(5)
-                                    ->get();
-                                $latestViews = $latestViews->concat($nxleakViews);
-                            } catch (\Exception $e) {
-                                // Table might not exist or other DB error, continue silently
-                            }
-                            
-                            // Add video views
-                            try {
-                                $videoViews = DB::table('video_views')
-                                    ->join('video', 'video_views.post_id', '=', 'video.id')
-                                    ->select(
-                                        'video_views.ip_address',
-                                        'video_views.created_at',
-                                        'video.title',
-                                        DB::raw("'v' as type"),
-                                    )
-                                    ->orderBy('video_views.created_at', 'desc')
-                                    ->take(5)
-                                    ->get();
-                                $latestViews = $latestViews->concat($videoViews);
-                            } catch (\Exception $e) {
-                                // Table might not exist or other DB error, continue silently
-                            }
-                        }
-                        
-                        // Sort by created_at and take the 5 most recent
-                        $latestViews = $latestViews->sortByDesc('created_at')->take(5);
-                        
-                        // Get country information for each IP address
-                        foreach ($latestViews as $view) {
-                            // Skip localhost or private IPs
-                            if (
-                                $view->ip_address == '127.0.0.1' ||
-                                $view->ip_address == 'localhost' ||
-                                strpos($view->ip_address, '192.168.') === 0 ||
-                                strpos($view->ip_address, '10.') === 0
-                            ) {
-                                $view->country = 'Local';
-                                $view->country_code = 'LO';
-                                continue;
-                            }
-                            
-                            try {
-                                // Use IP-API for geolocation (free tier, no API key required)
-                                $response = @file_get_contents('http://ip-api.com/json/' . $view->ip_address . '?fields=country,countryCode');
-                                if ($response) {
-                                    $data = json_decode($response);
-                                    $view->country = $data->country ?? 'Unknown';
-                                    $view->country_code = $data->countryCode ?? 'UN';
-                                } else {
-                                    $view->country = 'Unknown';
-                                    $view->country_code = 'UN';
-                                }
-                            } catch (\Exception $e) {
-                                $view->country = 'Unknown';
-                                $view->country_code = 'UN';
-                            }
-                        }
-                    @endphp
-
                     <div class="overflow-hidden">
                         <table class="min-w-full">
                             <thead class="border-b">
@@ -725,16 +471,262 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Function to fetch real data from backend (to be implemented)
-            function fetchAnalyticsData() {
-                // This would be an AJAX call to get real data
-                // For now, we're using the sample data
+            // Toggle NSFW content
+            const nsfwToggle = document.getElementById('nsfw-toggle');
+            const nsfwToggleText = document.getElementById('nsfw-toggle-text');
+            
+            if (nsfwToggle) {
+                nsfwToggle.addEventListener('change', function() {
+                    const isChecked = this.checked;
+                    nsfwToggleText.textContent = isChecked ? 'NSFW Enabled' : 'NSFW Disabled';
+                    
+                    // Update dashboard data via AJAX
+                    updateDashboardData(isChecked);
+                });
             }
-
-            // Function to fetch latest views by IP (to be implemented)
-            function fetchLatestViews() {
-                // This would be an AJAX call to get real data
-                // For now, we're using the sample data in the HTML
+            
+            // Function to update dashboard data via AJAX
+            function updateDashboardData(nsfwEnabled) {
+                fetch('{{ route('dashboard.ajax') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        nsfw_enabled: nsfwEnabled
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update total posts and views
+                        document.getElementById('total-posts').textContent = data.totalPosts.toLocaleString();
+                        document.getElementById('total-views').textContent = data.totalViews.toLocaleString();
+                        
+                        // Update most viewed posts
+                        updatePostsList('most-viewed-posts', data.mostViewed);
+                        
+                        // Update recent posts
+                        updatePostsList('recent-posts', data.recentPosts);
+                        
+                        // Update latest views by IP
+                        updateLatestViews(data.latestViews);
+                        
+                        // Update view distribution
+                        updateViewDistribution(data.viewDistribution, nsfwEnabled);
+                        
+                        // Update growth statistics
+                        updateGrowthStatistics(data.growthStats);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating dashboard data:', error);
+                });
+            }
+            
+            // Function to update posts list (most viewed or recent)
+            function updatePostsList(elementId, posts) {
+                const container = document.getElementById(elementId);
+                if (!container) return;
+                
+                // Clear existing content
+                container.innerHTML = '';
+                
+                // Add new posts
+                posts.forEach(post => {
+                    let typeClass = '';
+                    let typeText = '';
+                    
+                    switch (post.type) {
+                        case 'w':
+                            typeClass = 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+                            typeText = 'Wallpaper';
+                            break;
+                        case 'p':
+                            typeClass = 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300';
+                            typeText = 'PFP';
+                            break;
+                        case 'i':
+                            typeClass = 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+                            typeText = 'Image';
+                            break;
+                        case 'n':
+                            typeClass = 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
+                            typeText = 'Nxleak';
+                            break;
+                        case 'v':
+                            typeClass = 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300';
+                            typeText = 'Video';
+                            break;
+                    }
+                    
+                    const date = new Date(post.created_at);
+                    const formattedDate = date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                    
+                    const postItem = document.createElement('div');
+                    postItem.className = 'flex items-center justify-between py-3';
+                    postItem.innerHTML = `
+                        <div class="flex items-center">
+                            <span class="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-medium rounded ${typeClass}">
+                                ${typeText}
+                            </span>
+                            <div>
+                                <p class="text-sm font-medium text-surface-900 dark:text-white">${post.title}</p>
+                                <p class="text-xs text-surface-500 dark:text-surface-400">${formattedDate}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="text-sm font-medium text-surface-900 dark:text-white">${post.views.toLocaleString()}</span>
+                            <span class="ml-1 text-xs text-surface-500 dark:text-surface-400">views</span>
+                        </div>
+                    `;
+                    
+                    container.appendChild(postItem);
+                });
+            }
+            
+            // Function to update latest views by IP
+            function updateLatestViews(views) {
+                const container = document.getElementById('latest-views');
+                if (!container) return;
+                
+                // Clear existing content
+                container.innerHTML = '';
+                
+                // Add new views
+                views.forEach(view => {
+                    const date = new Date(view.created_at);
+                    const formattedDate = date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                    const formattedTime = date.toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    let typeClass = '';
+                    let typeText = '';
+                    
+                    switch (view.type) {
+                        case 'w':
+                            typeClass = 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+                            typeText = 'Wallpaper';
+                            break;
+                        case 'p':
+                            typeClass = 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300';
+                            typeText = 'PFP';
+                            break;
+                        case 'i':
+                            typeClass = 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+                            typeText = 'Image';
+                            break;
+                        case 'n':
+                            typeClass = 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
+                            typeText = 'Nxleak';
+                            break;
+                        case 'v':
+                            typeClass = 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300';
+                            typeText = 'Video';
+                            break;
+                    }
+                    
+                    const viewItem = document.createElement('div');
+                    viewItem.className = 'flex items-center justify-between py-3';
+                    viewItem.innerHTML = `
+                        <div class="flex items-center">
+                            <span class="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-medium rounded ${typeClass}">
+                                ${typeText}
+                            </span>
+                            <div>
+                                <p class="text-sm font-medium text-surface-900 dark:text-white">${view.title}</p>
+                                <p class="text-xs text-surface-500 dark:text-surface-400">${formattedDate} at ${formattedTime}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="text-sm font-medium text-surface-900 dark:text-white">${view.ip_address}</span>
+                            <span class="ml-1 text-xs text-surface-500 dark:text-surface-400">${view.country || 'Unknown'}</span>
+                        </div>
+                    `;
+                    
+                    container.appendChild(viewItem);
+                });
+            }
+            
+            // Function to update view distribution
+            function updateViewDistribution(distribution, nsfwEnabled) {
+                // Update wallpaper views
+                updateDistributionItem('wallpaper', distribution.wallpaper);
+                
+                // Update pfp views
+                updateDistributionItem('pfp', distribution.pfp);
+                
+                // Update NSFW content if enabled
+                if (nsfwEnabled) {
+                    // Update image views
+                    updateDistributionItem('image', distribution.image);
+                    
+                    // Update nxleak views
+                    updateDistributionItem('nxleak', distribution.nxleak);
+                    
+                    // Update video views
+                    updateDistributionItem('video', distribution.video);
+                    
+                    // Show NSFW distribution items
+                    document.querySelectorAll('.nsfw-distribution-item').forEach(item => {
+                        item.style.display = 'block';
+                    });
+                } else {
+                    // Hide NSFW distribution items
+                    document.querySelectorAll('.nsfw-distribution-item').forEach(item => {
+                        item.style.display = 'none';
+                    });
+                }
+            }
+            
+            // Function to update a single distribution item
+            function updateDistributionItem(type, data) {
+                const countElement = document.querySelector(`.${type}-count`);
+                const barElement = document.querySelector(`.${type}-bar`);
+                
+                if (countElement && barElement) {
+                    countElement.textContent = data.count.toLocaleString();
+                    barElement.style.width = `${data.percentage}%`;
+                }
+            }
+            
+            // Function to update growth statistics
+            function updateGrowthStatistics(stats) {
+                // Update growth percentage
+                const growthElement = document.getElementById('growth-percentage');
+                if (growthElement) {
+                    const sign = stats.growthPercentage > 0 ? '+' : '';
+                    growthElement.textContent = `${sign}${stats.growthPercentage}%`;
+                }
+                
+                // Update current period views
+                const currentViewsElement = document.querySelector('.current-views');
+                if (currentViewsElement) {
+                    currentViewsElement.textContent = stats.currentViews.toLocaleString();
+                }
+                
+                // Update previous period views
+                const previousViewsElement = document.querySelector('.previous-views');
+                if (previousViewsElement) {
+                    previousViewsElement.textContent = stats.previousViews.toLocaleString();
+                }
+                
+                // Update previous period bar
+                const previousBarElement = document.querySelector('.previous-bar');
+                if (previousBarElement) {
+                    previousBarElement.style.width = `${stats.previousPercentage}%`;
+                }
             }
         });
     </script>

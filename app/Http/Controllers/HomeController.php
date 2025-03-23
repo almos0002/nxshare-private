@@ -103,6 +103,15 @@ class HomeController extends Controller
             ->take(5)
             ->get();
 
+        // Get latest views by IP
+        $latestViews = $this->getLatestViews($nsfwEnabled);
+        
+        // Get view distribution by type
+        $viewDistribution = $this->getViewDistribution($nsfwEnabled);
+        
+        // Get growth statistics
+        $growthStats = $this->getGrowthStatistics($nsfwEnabled);
+
         return view('dashboard', compact(
             'totalPosts',
             'totalViews',
@@ -110,7 +119,10 @@ class HomeController extends Controller
             'redirectEnabled',
             'mostViewed',
             'recentPosts',
-            'nsfwEnabled'
+            'nsfwEnabled',
+            'latestViews',
+            'viewDistribution',
+            'growthStats'
         ));
     }
 
@@ -172,12 +184,357 @@ class HomeController extends Controller
             ->take(5)
             ->get();
 
+        // Get latest views by IP
+        $latestViews = $this->getLatestViews($nsfwEnabled);
+        
+        // Get view distribution by type
+        $viewDistribution = $this->getViewDistribution($nsfwEnabled);
+        
+        // Get growth statistics
+        $growthStats = $this->getGrowthStatistics($nsfwEnabled);
+
         return response()->json([
             'success' => true,
             'totalPosts' => $totalPosts,
             'totalViews' => $totalViews,
             'mostViewed' => $mostViewed,
-            'recentPosts' => $recentPosts
+            'recentPosts' => $recentPosts,
+            'latestViews' => $latestViews,
+            'viewDistribution' => $viewDistribution,
+            'growthStats' => $growthStats
         ]);
+    }
+
+    /**
+     * Get the latest views by IP address with country information
+     *
+     * @param bool $nsfwEnabled Whether NSFW content is enabled
+     * @return \Illuminate\Support\Collection
+     */
+    private function getLatestViews($nsfwEnabled)
+    {
+        // Get the latest views from all view tables
+        $latestViews = collect();
+        
+        // Add wallpaper views
+        try {
+            $wallpaperViews = DB::table('wallpaper_views')
+                ->join('wallpaper', 'wallpaper_views.post_id', '=', 'wallpaper.id')
+                ->select(
+                    'wallpaper_views.ip_address',
+                    'wallpaper_views.created_at',
+                    'wallpaper.title',
+                    DB::raw("'w' as type"),
+                )
+                ->orderBy('wallpaper_views.created_at', 'desc')
+                ->take(5)
+                ->get();
+            $latestViews = $latestViews->concat($wallpaperViews);
+        } catch (\Exception $e) {
+            // Table might not exist or other DB error, continue silently
+        }
+        
+        // Add pfp views
+        try {
+            $pfpViews = DB::table('pfp_views')
+                ->join('pfp', 'pfp_views.post_id', '=', 'pfp.id')
+                ->select(
+                    'pfp_views.ip_address',
+                    'pfp_views.created_at',
+                    'pfp.title',
+                    DB::raw("'p' as type"),
+                )
+                ->orderBy('pfp_views.created_at', 'desc')
+                ->take(5)
+                ->get();
+            $latestViews = $latestViews->concat($pfpViews);
+        } catch (\Exception $e) {
+            // Table might not exist or other DB error, continue silently
+        }
+        
+        // Add NSFW content if enabled
+        if ($nsfwEnabled) {
+            // Add image views
+            try {
+                $imageViews = DB::table('image_views')
+                    ->join('image', 'image_views.post_id', '=', 'image.id')
+                    ->select(
+                        'image_views.ip_address',
+                        'image_views.created_at',
+                        'image.title',
+                        DB::raw("'i' as type"),
+                    )
+                    ->orderBy('image_views.created_at', 'desc')
+                    ->take(5)
+                    ->get();
+                $latestViews = $latestViews->concat($imageViews);
+            } catch (\Exception $e) {
+                // Table might not exist or other DB error, continue silently
+            }
+            
+            // Add nxleak views
+            try {
+                $nxleakViews = DB::table('nxleak_views')
+                    ->join('nxleak', 'nxleak_views.post_id', '=', 'nxleak.id')
+                    ->select(
+                        'nxleak_views.ip_address',
+                        'nxleak_views.created_at',
+                        'nxleak.title',
+                        DB::raw("'n' as type"),
+                    )
+                    ->orderBy('nxleak_views.created_at', 'desc')
+                    ->take(5)
+                    ->get();
+                $latestViews = $latestViews->concat($nxleakViews);
+            } catch (\Exception $e) {
+                // Table might not exist or other DB error, continue silently
+            }
+            
+            // Add video views
+            try {
+                $videoViews = DB::table('video_views')
+                    ->join('video', 'video_views.post_id', '=', 'video.id')
+                    ->select(
+                        'video_views.ip_address',
+                        'video_views.created_at',
+                        'video.title',
+                        DB::raw("'v' as type"),
+                    )
+                    ->orderBy('video_views.created_at', 'desc')
+                    ->take(5)
+                    ->get();
+                $latestViews = $latestViews->concat($videoViews);
+            } catch (\Exception $e) {
+                // Table might not exist or other DB error, continue silently
+            }
+        }
+        
+        // Sort by created_at and take the 5 most recent
+        $latestViews = $latestViews->sortByDesc('created_at')->take(5);
+        
+        // Get country information for each IP address
+        foreach ($latestViews as $view) {
+            // Skip localhost or private IPs
+            if (
+                $view->ip_address == '127.0.0.1' ||
+                $view->ip_address == 'localhost' ||
+                strpos($view->ip_address, '192.168.') === 0 ||
+                strpos($view->ip_address, '10.') === 0
+            ) {
+                $view->country = 'Local';
+                $view->country_code = 'LO';
+                continue;
+            }
+            
+            try {
+                // Use IP-API for geolocation (free tier, no API key required)
+                $response = @file_get_contents('http://ip-api.com/json/' . $view->ip_address . '?fields=country,countryCode');
+                if ($response) {
+                    $data = json_decode($response);
+                    $view->country = $data->country ?? 'Unknown';
+                    $view->country_code = $data->countryCode ?? 'UN';
+                } else {
+                    $view->country = 'Unknown';
+                    $view->country_code = 'UN';
+                }
+            } catch (\Exception $e) {
+                $view->country = 'Unknown';
+                $view->country_code = 'UN';
+            }
+        }
+        
+        return $latestViews;
+    }
+
+    /**
+     * Get view distribution by type
+     *
+     * @param bool $nsfwEnabled Whether NSFW content is enabled
+     * @return array
+     */
+    private function getViewDistribution($nsfwEnabled)
+    {
+        // Initialize view counts
+        $wallpaperCount = 0;
+        $pfpCount = 0;
+        $imageCount = 0;
+        $nxleakCount = 0;
+        $videoCount = 0;
+
+        // Get wallpaper views
+        try {
+            $wallpaperCount = DB::table('wallpaper_views')->count();
+        } catch (\Exception $e) {
+            // Table might not exist or other DB error, continue silently
+        }
+
+        // Get pfp views
+        try {
+            $pfpCount = DB::table('pfp_views')->count();
+        } catch (\Exception $e) {
+            // Table might not exist or other DB error, continue silently
+        }
+
+        // Get NSFW content if enabled
+        if ($nsfwEnabled) {
+            // Get image views
+            try {
+                $imageCount = DB::table('image_views')->count();
+            } catch (\Exception $e) {
+                // Table might not exist or other DB error, continue silently
+            }
+
+            // Get nxleak views
+            try {
+                $nxleakCount = DB::table('nxleak_views')->count();
+            } catch (\Exception $e) {
+                // Table might not exist or other DB error, continue silently
+            }
+
+            // Get video views
+            try {
+                $videoCount = DB::table('video_views')->count();
+            } catch (\Exception $e) {
+                // Table might not exist or other DB error, continue silently
+            }
+        }
+
+        // Calculate total views
+        $totalViews = $wallpaperCount + $pfpCount + $imageCount + $nxleakCount + $videoCount;
+        $totalViews = max(1, $totalViews); // Avoid division by zero
+
+        // Calculate percentages
+        $wallpaperPercentage = min(100, max(5, $wallpaperCount > 0 ? ($wallpaperCount / $totalViews) * 100 : 0));
+        $pfpPercentage = min(100, max(5, $pfpCount > 0 ? ($pfpCount / $totalViews) * 100 : 0));
+        $imagePercentage = min(100, max(5, $imageCount > 0 ? ($imageCount / $totalViews) * 100 : 0));
+        $nxleakPercentage = min(100, max(5, $nxleakCount > 0 ? ($nxleakCount / $totalViews) * 100 : 0));
+        $videoPercentage = min(100, max(5, $videoCount > 0 ? ($videoCount / $totalViews) * 100 : 0));
+
+        return [
+            'wallpaper' => [
+                'count' => $wallpaperCount,
+                'percentage' => $wallpaperPercentage
+            ],
+            'pfp' => [
+                'count' => $pfpCount,
+                'percentage' => $pfpPercentage
+            ],
+            'image' => [
+                'count' => $imageCount,
+                'percentage' => $imagePercentage
+            ],
+            'nxleak' => [
+                'count' => $nxleakCount,
+                'percentage' => $nxleakPercentage
+            ],
+            'video' => [
+                'count' => $videoCount,
+                'percentage' => $videoPercentage
+            ],
+            'total' => $totalViews
+        ];
+    }
+
+    /**
+     * Get growth statistics for the dashboard
+     *
+     * @param bool $nsfwEnabled Whether NSFW content is enabled
+     * @return array
+     */
+    private function getGrowthStatistics($nsfwEnabled)
+    {
+        // Define time periods
+        $currentPeriodStart = now()->subDays(30);
+        $previousPeriodStart = now()->subDays(60);
+
+        // Initialize view counts
+        $currentViews = 0;
+        $previousViews = 0;
+
+        // Get wallpaper views
+        try {
+            $currentViews += DB::table('wallpaper_views')
+                ->where('created_at', '>=', $currentPeriodStart)
+                ->count();
+            $previousViews += DB::table('wallpaper_views')
+                ->where('created_at', '>=', $previousPeriodStart)
+                ->where('created_at', '<', $currentPeriodStart)
+                ->count();
+        } catch (\Exception $e) {
+            // Table might not exist or other DB error, continue silently
+        }
+
+        // Get pfp views
+        try {
+            $currentViews += DB::table('pfp_views')
+                ->where('created_at', '>=', $currentPeriodStart)
+                ->count();
+            $previousViews += DB::table('pfp_views')
+                ->where('created_at', '>=', $previousPeriodStart)
+                ->where('created_at', '<', $currentPeriodStart)
+                ->count();
+        } catch (\Exception $e) {
+            // Table might not exist or other DB error, continue silently
+        }
+
+        // Get NSFW content if enabled
+        if ($nsfwEnabled) {
+            // Get image views
+            try {
+                $currentViews += DB::table('image_views')
+                    ->where('created_at', '>=', $currentPeriodStart)
+                    ->count();
+                $previousViews += DB::table('image_views')
+                    ->where('created_at', '>=', $previousPeriodStart)
+                    ->where('created_at', '<', $currentPeriodStart)
+                    ->count();
+            } catch (\Exception $e) {
+                // Table might not exist or other DB error, continue silently
+            }
+
+            // Get nxleak views
+            try {
+                $currentViews += DB::table('nxleak_views')
+                    ->where('created_at', '>=', $currentPeriodStart)
+                    ->count();
+                $previousViews += DB::table('nxleak_views')
+                    ->where('created_at', '>=', $previousPeriodStart)
+                    ->where('created_at', '<', $currentPeriodStart)
+                    ->count();
+            } catch (\Exception $e) {
+                // Table might not exist or other DB error, continue silently
+            }
+
+            // Get video views
+            try {
+                $currentViews += DB::table('video_views')
+                    ->where('created_at', '>=', $currentPeriodStart)
+                    ->count();
+                $previousViews += DB::table('video_views')
+                    ->where('created_at', '>=', $previousPeriodStart)
+                    ->where('created_at', '<', $currentPeriodStart)
+                    ->count();
+            } catch (\Exception $e) {
+                // Table might not exist or other DB error, continue silently
+            }
+        }
+
+        // Calculate growth percentage
+        $growthPercentage = 0;
+        if ($previousViews > 0) {
+            $growthPercentage = round((($currentViews - $previousViews) / $previousViews) * 100);
+        } elseif ($currentViews > 0) {
+            $growthPercentage = 100; // If there were no previous views but there are current views, that's 100% growth
+        }
+
+        // Calculate previous period percentage for the progress bar
+        $previousPercentage = min(100, max(5, $previousViews > 0 ? ($previousViews / max(1, $currentViews)) * 100 : 0));
+
+        return [
+            'currentViews' => $currentViews,
+            'previousViews' => $previousViews,
+            'growthPercentage' => $growthPercentage,
+            'previousPercentage' => $previousPercentage
+        ];
     }
 }
