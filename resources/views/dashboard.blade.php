@@ -379,13 +379,14 @@
                             @forelse ($latestViews as $view)
                                 <div class="flex items-center justify-between p-4 hover:bg-surface-50 dark:hover:bg-surface-700/50 transition-colors">
                                     <div class="flex items-center space-x-3">
-                                        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-100 dark:bg-surface-700 text-{{ $view->type == 'w' ? 'blue' : ($view->type == 'p' ? 'purple' : ($view->type == 'n' ? 'red' : ($view->type == 'i' ? 'green' : 'amber'))) }}-600 dark:text-{{ $view->type == 'w' ? 'blue' : ($view->type == 'p' ? 'purple' : ($view->type == 'n' ? 'red' : ($view->type == 'i' ? 'green' : 'amber'))) }}-400">
-                                            <i class="ri-{{ $view->type == 'w' ? 'image-2' : ($view->type == 'p' ? 'user' : ($view->type == 'n' ? 'lock' : ($view->type == 'i' ? 'image' : 'video'))) }}-line text-lg"></i>
+                                        <div
+                                            class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-100 font-bold text-{{ $view->type == 'w' ? 'blue' : ($view->type == 'p' ? 'purple' : ($view->type == 'n' ? 'red' : ($view->type == 'i' ? 'green' : 'amber'))) }}-600 dark:bg-surface-700 dark:text-{{ $view->type == 'w' ? 'blue' : ($view->type == 'p' ? 'purple' : ($view->type == 'n' ? 'red' : ($view->type == 'i' ? 'green' : 'amber'))) }}-400">
+                                            {{ substr($view->title, 0, 1) }}
                                         </div>
                                         <div class="flex flex-col">
                                             <div class="flex items-center space-x-2">
                                                 <span class="text-sm font-medium text-surface-900 dark:text-white truncate max-w-[180px]">{{ $view->title }}</span>
-                                                <span class="inline-flex items-center justify-center text-center align-middle rounded-full px-2 py-0.5 text-[10px] font-medium bg-{{ $view->type == 'w' ? 'blue' : ($view->type == 'p' ? 'purple' : ($view->type == 'n' ? 'red' : ($view->type == 'i' ? 'green' : 'amber'))) }}-100 text-{{ $view->type == 'w' ? 'blue' : ($view->type == 'p' ? 'purple' : ($view->type == 'n' ? 'red' : ($view->type == 'i' ? 'green' : 'amber'))) }}-800 dark:bg-{{ $view->type == 'w' ? 'blue' : ($view->type == 'p' ? 'purple' : ($view->type == 'n' ? 'red' : ($view->type == 'i' ? 'green' : 'amber'))) }}-900/30 dark:text-{{ $view->type == 'w' ? 'blue' : ($view->type == 'p' ? 'purple' : ($view->type == 'n' ? 'red' : ($view->type == 'i' ? 'green' : 'amber'))) }}-400 min-w-[65px]">
+                                                <span class="inline-flex items-center justify-center text-center align-middle rounded-full px-2 py-0.5 text-[10px] font-medium {{ $view->type == 'w' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400' : ($view->type == 'p' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400' : ($view->type == 'n' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' : ($view->type == 'i' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400'))) }} min-w-[65px]">
                                                     {{ $view->type == 'w' ? 'Wallpaper' : ($view->type == 'p' ? 'PFP' : ($view->type == 'n' ? 'Nxleak' : ($view->type == 'i' ? 'Image' : 'Video'))) }}
                                                 </span>
                                             </div>
@@ -602,7 +603,6 @@
                             case 'w':
                                 typeClass = 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
                                 typeText = 'Wallpaper';
-                                typeIcon = 'image-2';
                                 typeColor = 'blue';
                                 break;
                             case 'p':
@@ -660,8 +660,8 @@
                         
                         viewItem.innerHTML = `
                             <div class="flex items-center space-x-3">
-                                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-100 dark:bg-surface-700 text-${typeColor}-600 dark:text-${typeColor}-400">
-                                    <i class="ri-${typeIcon}-line text-lg"></i>
+                                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-100 font-bold text-${typeColor}-600 dark:bg-surface-700 dark:text-${typeColor}-400">
+                                    ${view.title.charAt(0)}
                                 </div>
                                 <div class="flex flex-col">
                                     <div class="flex items-center space-x-2">
