@@ -3,13 +3,13 @@
 @section('content')
 <div class="space-y-8">
     <!-- Welcome Banner -->
-    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-500 text-white shadow-lg">
+    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-brand-600 to-brand-800 text-white shadow-lg">
         <div class="absolute inset-0 bg-pattern opacity-10" style="background-image: url('data:image/svg+xml,%3Csvg width=\'30\' height=\'30\' viewBox=\'0 0 30 30\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M1.22676 0C1.91374 0 2.45351 0.539773 2.45351 1.22676C2.45351 1.91374 1.91374 2.45351 1.22676 2.45351C0.539773 2.45351 0 1.91374 0 1.22676C0 0.539773 0.539773 0 1.22676 0Z\' fill=\'rgba(255,255,255,0.5)\'/%3E%3C/svg%3E');"></div>
         <div class="relative px-6 py-8 md:px-8 md:py-10">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                 <div class="mb-4 md:mb-0">
                     <h1 class="text-2xl font-bold">Your Profile</h1>
-                    <p class="mt-1 text-indigo-100">Update your personal information and password</p>
+                    <p class="mt-1 text-brand-100">Update your personal information and password</p>
                 </div>
             </div>
         </div>
@@ -61,19 +61,19 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-surface-500 dark:text-surface-400">Last Login</p>
-                    <h3 class="mt-1 text-xl font-bold text-surface-900 dark:text-white">{{ now()->format('M d, Y') }}</h3>
+                    <h3 class="mt-1 text-xl font-bold text-surface-900 dark:text-white">{{ $user->last_login ? $user->last_login->format('M d, Y') : 'N/A' }}</h3>
                 </div>
-                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400">
+                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-purple-100 text-purple-600 dark:bg-purple-900/50 dark:text-purple-400">
                     <i class="ri-login-circle-line text-2xl"></i>
                 </div>
             </div>
             <div class="mt-4 flex items-center text-sm">
                 <span class="flex items-center text-surface-500 dark:text-surface-400">
                     <i class="ri-time-line mr-1"></i>
-                    {{ now()->format('h:i A') }}
+                    {{ $user->last_login ? $user->last_login->diffForHumans() : 'Never logged in' }}
                 </span>
             </div>
-            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-amber-700 opacity-0 transition-opacity group-hover:opacity-100"></div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-purple-700 opacity-0 transition-opacity group-hover:opacity-100"></div>
         </div>
     </div>
 
@@ -96,7 +96,7 @@
                                 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                     <i class="ri-user-line text-surface-400"></i>
                                 </div>
-                                <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" placeholder="Enter your full name" class="block w-full rounded-md border-surface-300 pl-10 py-2.5 text-surface-900 placeholder:text-surface-400 focus:border-indigo-500 focus:ring-indigo-500 dark:border-surface-600 dark:bg-surface-700 dark:text-white dark:placeholder:text-surface-500">
+                                <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" placeholder="Enter your full name" class="block w-full rounded-md border-surface-300 pl-10 py-2.5 text-surface-900 placeholder:text-surface-400 focus:border-brand-500 focus:ring-brand-500 dark:border-surface-600 dark:bg-surface-700 dark:text-white dark:placeholder:text-surface-500">
                             </div>
                         </div>
                     </div>
@@ -109,7 +109,7 @@
                                 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                     <i class="ri-mail-line text-surface-400"></i>
                                 </div>
-                                <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" placeholder="Enter your email address" class="block w-full rounded-md border-surface-300 pl-10 py-2.5 text-surface-900 placeholder:text-surface-400 focus:border-indigo-500 focus:ring-indigo-500 dark:border-surface-600 dark:bg-surface-700 dark:text-white dark:placeholder:text-surface-500">
+                                <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" placeholder="Enter your email address" class="block w-full rounded-md border-surface-300 pl-10 py-2.5 text-surface-900 placeholder:text-surface-400 focus:border-brand-500 focus:ring-brand-500 dark:border-surface-600 dark:bg-surface-700 dark:text-white dark:placeholder:text-surface-500">
                             </div>
                         </div>
                     </div>
@@ -124,7 +124,7 @@
                     <div class="flex items-center">
                         <label for="notifications_enabled" class="relative inline-flex cursor-pointer items-center">
                             <input type="checkbox" id="notifications_enabled" name="notifications_enabled" value="1" class="peer sr-only" {{ isset($settings->notifications_enabled) && $settings->notifications_enabled ? 'checked' : '' }}>
-                            <div class="peer h-6 w-11 rounded-full bg-surface-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-indigo-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:border-gray-600 dark:bg-surface-700 dark:peer-focus:ring-indigo-800"></div>
+                            <div class="peer h-6 w-11 rounded-full bg-surface-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-brand-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-300 dark:border-gray-600 dark:bg-surface-700 dark:peer-focus:ring-brand-800"></div>
                             <span class="ml-3 text-sm font-medium text-surface-700 dark:text-surface-300" id="notifications_status">{{ isset($settings->notifications_enabled) && $settings->notifications_enabled ? 'Enabled' : 'Disabled' }}</span>
                         </label>
                     </div>
@@ -148,7 +148,7 @@
                                 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                     <i class="ri-lock-line text-surface-400"></i>
                                 </div>
-                                <input type="password" name="password" id="password" placeholder="Enter new password" class="block w-full rounded-md border-surface-300 pl-10 py-2.5 text-surface-900 placeholder:text-surface-400 focus:border-indigo-500 focus:ring-indigo-500 dark:border-surface-600 dark:bg-surface-700 dark:text-white dark:placeholder:text-surface-500">
+                                <input type="password" name="password" id="password" placeholder="Enter new password" class="block w-full rounded-md border-surface-300 pl-10 py-2.5 text-surface-900 placeholder:text-surface-400 focus:border-brand-500 focus:ring-brand-500 dark:border-surface-600 dark:bg-surface-700 dark:text-white dark:placeholder:text-surface-500">
                             </div>
                         </div>
                     </div>
@@ -161,7 +161,7 @@
                                 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                     <i class="ri-lock-line text-surface-400"></i>
                                 </div>
-                                <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Confirm your new password" class="block w-full rounded-md border-surface-300 pl-10 py-2.5 text-surface-900 placeholder:text-surface-400 focus:border-indigo-500 focus:ring-indigo-500 dark:border-surface-600 dark:bg-surface-700 dark:text-white dark:placeholder:text-surface-500">
+                                <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Confirm your new password" class="block w-full rounded-md border-surface-300 pl-10 py-2.5 text-surface-900 placeholder:text-surface-400 focus:border-brand-500 focus:ring-brand-500 dark:border-surface-600 dark:bg-surface-700 dark:text-white dark:placeholder:text-surface-500">
                             </div>
                         </div>
                     </div>
@@ -177,17 +177,17 @@
 
         <!-- Action Buttons -->
         <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-            <button type="reset" class="inline-flex items-center justify-center rounded-lg border border-surface-300 bg-white px-5 py-2.5 text-sm font-medium text-surface-700 shadow-sm hover:bg-surface-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:border-surface-600 dark:bg-surface-800 dark:text-surface-300 dark:hover:bg-surface-700">
+            <button type="reset" class="inline-flex items-center justify-center rounded-lg border border-surface-300 bg-white px-5 py-2.5 text-sm font-medium text-surface-700 shadow-sm hover:bg-surface-50 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 dark:border-surface-600 dark:bg-surface-800 dark:text-surface-300 dark:hover:bg-surface-700">
                 <i class="ri-refresh-line mr-1.5"></i> Reset
             </button>
-            <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:bg-indigo-500 dark:hover:bg-indigo-600 dark:focus:ring-indigo-400">
+            <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 dark:bg-brand-500 dark:hover:bg-brand-600 dark:focus:ring-brand-400">
                 <i class="ri-save-line mr-1.5"></i> Save Profile
             </button>
         </div>
 
         <!-- Mobile Save Button -->
         <div class="md:hidden">
-            <button type="submit" class="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-center text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:bg-indigo-500 dark:hover:bg-indigo-600 dark:focus:ring-indigo-400">
+            <button type="submit" class="w-full rounded-lg bg-brand-600 px-4 py-2.5 text-center text-sm font-medium text-white shadow-sm hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 dark:bg-brand-500 dark:hover:bg-brand-600 dark:focus:ring-brand-400">
                 <i class="ri-save-line mr-1.5"></i> Save Profile
             </button>
         </div>
