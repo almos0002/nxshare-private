@@ -392,87 +392,63 @@
 
             <!-- Latest Views by IP -->
             <div class="overflow-hidden rounded-xl bg-white shadow-sm dark:bg-surface-800">
-                <div class="border-b border-surface-200 px-6 py-4 dark:border-surface-700">
+                <div class="border-b border-surface-200 px-6 py-4 dark:border-surface-700 flex items-center justify-between">
                     <h2 class="text-lg font-semibold text-surface-900 dark:text-white">Latest Views by IP</h2>
-                </div>
-                <div id="latest-views-container" class="p-4">
-                    <div class="overflow-hidden">
-                        <table class="w-full table-fixed divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead>
-                                <tr>
-                                    <th scope="col"
-                                        class="w-[15%] px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                        IP Address</th>
-                                    <th scope="col"
-                                        class="w-[15%] px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                        Country</th>
-                                    <th scope="col"
-                                        class="w-[50%] px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                        Post</th>
-                                    <th scope="col"
-                                        class="w-[20%] px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                        Time</th>
-                                </tr>
-                            </thead>
-                            <tbody id="latest-views" class="divide-y divide-gray-200 dark:divide-gray-700">
-                                @forelse ($latestViews as $view)
-                                    <tr class="hover:bg-surface-50 dark:hover:bg-surface-700/50">
-                                        <td
-                                            class="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100 overflow-hidden">
-                                            {{ $view->ip_address }}</td>
-                                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 overflow-hidden">
-                                            <span class="inline-flex items-center">
-                                                {{ $view->country }}
-                                                <span
-                                                    class="ml-1 text-xs text-gray-400 dark:text-gray-500">({{ $view->country_code }})</span>
-                                            </span>
-                                        </td>
-                                        <td class="px-3 py-2 text-sm text-gray-500 dark:text-gray-400 overflow-hidden truncate">
-                                            <div class="flex items-center">
-                                                @if ($view->type == 'w')
-                                                    <span
-                                                        class="inline-flex items-center justify-center text-center align-middle rounded-full px-2 py-0.5 text-[10px] font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 min-w-[65px]">
-                                                        Wallpaper
-                                                    </span>
-                                                @elseif ($view->type == 'p')
-                                                    <span
-                                                        class="inline-flex items-center justify-center text-center align-middle rounded-full px-2 py-0.5 text-[10px] font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 min-w-[65px]">
-                                                        PFP
-                                                    </span>
-                                                @elseif ($view->type == 'i')
-                                                    <span
-                                                        class="inline-flex items-center justify-center text-center align-middle rounded-full px-2 py-0.5 text-[10px] font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 min-w-[65px]">
-                                                        Image
-                                                    </span>
-                                                @elseif ($view->type == 'n')
-                                                    <span
-                                                        class="inline-flex items-center justify-center text-center align-middle rounded-full px-2 py-0.5 text-[10px] font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 min-w-[65px]">
-                                                        Nxleak
-                                                    </span>
-                                                @elseif ($view->type == 'v')
-                                                    <span
-                                                        class="inline-flex items-center justify-center text-center align-middle rounded-full px-2 py-0.5 text-[10px] font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 min-w-[65px]">
-                                                        Video
-                                                    </span>
-                                                @endif
-                                                <span class="ml-2 truncate">{{ $view->title }}</span>
-                                            </div>
-                                        </td>
-                                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 overflow-hidden">
-                                            {{ \Carbon\Carbon::parse($view->created_at)->diffForHumans() }}
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="4"
-                                            class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center">
-                                            No views found
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                    <div class="flex h-8 w-8 items-center justify-center rounded-lg text-surface-500 transition-colors hover:bg-surface-100 hover:text-brand-600 dark:text-surface-400 dark:hover:bg-surface-700 dark:hover:text-brand-400">
+                        <i class="ri-refresh-line text-lg"></i>
                     </div>
+                </div>
+                <div id="latest-views-container" class="p-0">
+                    <div class="overflow-hidden">
+                        <div class="divide-y divide-surface-200 dark:divide-surface-700">
+                            @forelse ($latestViews as $view)
+                                <div class="flex items-center justify-between p-4 hover:bg-surface-50 dark:hover:bg-surface-700/50 transition-colors">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-100 dark:bg-surface-700 text-{{ $view->type == 'w' ? 'blue' : ($view->type == 'p' ? 'purple' : ($view->type == 'n' ? 'red' : ($view->type == 'i' ? 'green' : 'amber'))) }}-600 dark:text-{{ $view->type == 'w' ? 'blue' : ($view->type == 'p' ? 'purple' : ($view->type == 'n' ? 'red' : ($view->type == 'i' ? 'green' : 'amber'))) }}-400">
+                                            <i class="ri-{{ $view->type == 'w' ? 'image-2' : ($view->type == 'p' ? 'user' : ($view->type == 'n' ? 'lock' : ($view->type == 'i' ? 'image' : 'video'))) }}-line text-lg"></i>
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <div class="flex items-center space-x-2">
+                                                <span class="text-sm font-medium text-surface-900 dark:text-white truncate max-w-[180px]">{{ $view->title }}</span>
+                                                <span class="inline-flex items-center justify-center text-center align-middle rounded-full px-2 py-0.5 text-[10px] font-medium bg-{{ $view->type == 'w' ? 'blue' : ($view->type == 'p' ? 'purple' : ($view->type == 'n' ? 'red' : ($view->type == 'i' ? 'green' : 'amber'))) }}-100 text-{{ $view->type == 'w' ? 'blue' : ($view->type == 'p' ? 'purple' : ($view->type == 'n' ? 'red' : ($view->type == 'i' ? 'green' : 'amber'))) }}-800 dark:bg-{{ $view->type == 'w' ? 'blue' : ($view->type == 'p' ? 'purple' : ($view->type == 'n' ? 'red' : ($view->type == 'i' ? 'green' : 'amber'))) }}-900/30 dark:text-{{ $view->type == 'w' ? 'blue' : ($view->type == 'p' ? 'purple' : ($view->type == 'n' ? 'red' : ($view->type == 'i' ? 'green' : 'amber'))) }}-400 min-w-[65px]">
+                                                    {{ $view->type == 'w' ? 'Wallpaper' : ($view->type == 'p' ? 'PFP' : ($view->type == 'n' ? 'Nxleak' : ($view->type == 'i' ? 'Image' : 'Video'))) }}
+                                                </span>
+                                            </div>
+                                            <div class="flex items-center text-xs text-surface-500 dark:text-surface-400 mt-1">
+                                                <span class="flex items-center">
+                                                    <i class="ri-map-pin-line mr-1"></i>
+                                                    {{ $view->country }} ({{ $view->country_code }})
+                                                </span>
+                                                <span class="mx-2">•</span>
+                                                <span class="flex items-center">
+                                                    <i class="ri-time-line mr-1"></i>
+                                                    {{ \Carbon\Carbon::parse($view->created_at)->diffForHumans() }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="flex items-center space-x-2">
+                                            <span class="text-xs text-surface-500 dark:text-surface-400">{{ $view->ip_address }}</span>
+                                            <a href="#" class="flex h-8 w-8 items-center justify-center rounded-lg text-surface-500 transition-colors hover:bg-surface-100 hover:text-brand-600 dark:text-surface-400 dark:hover:bg-surface-700 dark:hover:text-brand-400">
+                                                <i class="ri-external-link-line text-lg"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="p-6 text-center">
+                                    <p class="text-surface-500 dark:text-surface-400">No views recorded yet.</p>
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+                <div class="border-t border-surface-200 bg-surface-50 px-6 py-3 dark:border-surface-700 dark:bg-surface-800/80">
+                    <a href="#" class="text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300">
+                        View all views
+                        <i class="ri-arrow-right-line ml-1"></i>
+                    </a>
                 </div>
             </div>
         </div>
@@ -633,139 +609,133 @@
 
             // Function to update latest views by IP
             function updateLatestViews(views) {
-                const container = document.getElementById('latest-views');
+                const container = document.getElementById('latest-views-container');
                 if (!container) return;
 
-                // Clear existing content
-                container.innerHTML = '';
+                // Create a new div to hold the views
+                const viewsContainer = document.createElement('div');
+                viewsContainer.className = 'overflow-hidden';
+                
+                const viewsList = document.createElement('div');
+                viewsList.className = 'divide-y divide-surface-200 dark:divide-surface-700';
 
-                // Add new views
-                views.forEach(view => {
-                    const date = new Date(view.created_at);
-                    const formattedDate = date.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                    });
-                    const formattedTime = date.toLocaleTimeString('en-US', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-
-                    let typeClass = '';
-                    let typeText = '';
-
-                    switch (view.type) {
-                        case 'w':
-                            typeClass = 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
-                            typeText = 'Wallpaper';
-                            break;
-                        case 'p':
-                            typeClass =
-                                'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
-                            typeText = 'PFP';
-                            break;
-                        case 'i':
-                            typeClass =
-                                'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
-                            typeText = 'Image';
-                            break;
-                        case 'n':
-                            typeClass = 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
-                            typeText = 'Nxleak';
-                            break;
-                        case 'v':
-                            typeClass =
-                                'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400';
-                            typeText = 'Video';
-                            break;
-                    }
-
-                    // Create a table row for each view
-                    const tr = document.createElement('tr');
-                    tr.className = 'hover:bg-surface-50 dark:hover:bg-surface-700/50';
-
-                    // IP Address column
-                    const tdIp = document.createElement('td');
-                    tdIp.className =
-                        'px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100 overflow-hidden';
-                    tdIp.textContent = view.ip_address;
-
-                    // Country column
-                    const tdCountry = document.createElement('td');
-                    tdCountry.className =
-                        'px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 overflow-hidden';
-                    tdCountry.innerHTML = `
-                        <span class="inline-flex items-center">
-                            ${view.country || 'Unknown'}
-                            ${view.country_code ? `<span class="ml-1 text-xs text-gray-400 dark:text-gray-500">(${view.country_code})</span>` : ''}
-                        </span>
-                    `;
-
-                    // Post column
-                    const tdPost = document.createElement('td');
-                    tdPost.className = 'px-3 py-2 text-sm text-gray-500 dark:text-gray-400 overflow-hidden truncate';
-                    tdPost.innerHTML = `
-                        <div class="flex items-center">
-                            <span class="inline-flex items-center justify-center text-center align-middle rounded-full px-2 py-0.5 text-[10px] font-medium ${typeClass} min-w-[65px]">
-                                ${typeText}
-                            </span>
-                            <span class="ml-2 truncate">${view.title}</span>
-                        </div>
-                    `;
-
-                    // Time column
-                    const tdTime = document.createElement('td');
-                    tdTime.className =
-                        'px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 overflow-hidden';
-
-                    // Calculate time ago
-                    const now = new Date();
-                    const diffInSeconds = Math.floor((now - date) / 1000);
-                    let timeAgo;
-
-                    if (diffInSeconds < 60) {
-                        timeAgo = 'just now';
-                    } else if (diffInSeconds < 3600) {
-                        const minutes = Math.floor(diffInSeconds / 60);
-                        timeAgo = `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-                    } else if (diffInSeconds < 86400) {
-                        const hours = Math.floor(diffInSeconds / 3600);
-                        timeAgo = `${hours} hour${hours > 1 ? 's' : ''} ago`;
-                    } else if (diffInSeconds < 2592000) {
-                        const days = Math.floor(diffInSeconds / 86400);
-                        timeAgo = `${days} day${days > 1 ? 's' : ''} ago`;
-                    } else if (diffInSeconds < 31536000) {
-                        const months = Math.floor(diffInSeconds / 2592000);
-                        timeAgo = `${months} month${months > 1 ? 's' : ''} ago`;
-                    } else {
-                        const years = Math.floor(diffInSeconds / 31536000);
-                        timeAgo = `${years} year${years > 1 ? 's' : ''} ago`;
-                    }
-
-                    tdTime.textContent = timeAgo;
-
-                    // Add all columns to the row
-                    tr.appendChild(tdIp);
-                    tr.appendChild(tdCountry);
-                    tr.appendChild(tdPost);
-                    tr.appendChild(tdTime);
-
-                    // Add the row to the container
-                    container.appendChild(tr);
-                });
-
-                // If no views, add a message
+                // Add views to the container
                 if (views.length === 0) {
-                    const tr = document.createElement('tr');
-                    const td = document.createElement('td');
-                    td.className =
-                        'px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center';
-                    td.colSpan = 4;
-                    td.textContent = 'No views found';
-                    tr.appendChild(td);
-                    container.appendChild(tr);
+                    const emptyDiv = document.createElement('div');
+                    emptyDiv.className = 'p-6 text-center';
+                    emptyDiv.innerHTML = '<p class="text-surface-500 dark:text-surface-400">No views recorded yet.</p>';
+                    viewsList.appendChild(emptyDiv);
+                } else {
+                    views.forEach(view => {
+                        // Determine type class and text
+                        let typeClass = '';
+                        let typeText = '';
+                        let typeIcon = '';
+                        
+                        switch (view.type) {
+                            case 'w':
+                                typeClass = 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
+                                typeText = 'Wallpaper';
+                                typeIcon = 'image-2';
+                                typeColor = 'blue';
+                                break;
+                            case 'p':
+                                typeClass =
+                                    'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
+                                typeText = 'PFP';
+                                typeIcon = 'user';
+                                typeColor = 'purple';
+                                break;
+                            case 'i':
+                                typeClass =
+                                    'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+                                typeText = 'Image';
+                                typeIcon = 'image';
+                                typeColor = 'green';
+                                break;
+                            case 'n':
+                                typeClass = 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
+                                typeText = 'Nxleak';
+                                typeIcon = 'lock';
+                                typeColor = 'red';
+                                break;
+                            case 'v':
+                                typeClass =
+                                    'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400';
+                                typeText = 'Video';
+                                typeIcon = 'video';
+                                typeColor = 'amber';
+                                break;
+                        }
+                        
+                        // Create view item
+                        const viewItem = document.createElement('div');
+                        viewItem.className = 'flex items-center justify-between p-4 hover:bg-surface-50 dark:hover:bg-surface-700/50 transition-colors';
+                        
+                        // Calculate time ago
+                        const now = new Date();
+                        const viewDate = new Date(view.created_at);
+                        const diffMs = now - viewDate;
+                        const diffSec = Math.round(diffMs / 1000);
+                        const diffMin = Math.round(diffSec / 60);
+                        const diffHour = Math.round(diffMin / 60);
+                        const diffDay = Math.round(diffHour / 24);
+                        
+                        let timeAgo = '';
+                        if (diffSec < 60) {
+                            timeAgo = `${diffSec} second${diffSec !== 1 ? 's' : ''} ago`;
+                        } else if (diffMin < 60) {
+                            timeAgo = `${diffMin} minute${diffMin !== 1 ? 's' : ''} ago`;
+                        } else if (diffHour < 24) {
+                            timeAgo = `${diffHour} hour${diffHour !== 1 ? 's' : ''} ago`;
+                        } else {
+                            timeAgo = `${diffDay} day${diffDay !== 1 ? 's' : ''} ago`;
+                        }
+                        
+                        viewItem.innerHTML = `
+                            <div class="flex items-center space-x-3">
+                                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-100 dark:bg-surface-700 text-${typeColor}-600 dark:text-${typeColor}-400">
+                                    <i class="ri-${typeIcon}-line text-lg"></i>
+                                </div>
+                                <div class="flex flex-col">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-sm font-medium text-surface-900 dark:text-white truncate max-w-[180px]">${view.title}</span>
+                                        <span class="inline-flex items-center justify-center text-center align-middle rounded-full px-2 py-0.5 text-[10px] font-medium ${typeClass} min-w-[65px]">
+                                            ${typeText}
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center text-xs text-surface-500 dark:text-surface-400 mt-1">
+                                        <span class="flex items-center">
+                                            <i class="ri-map-pin-line mr-1"></i>
+                                            ${view.country || 'Unknown'} (${view.country_code || '??'})
+                                        </span>
+                                        <span class="mx-2">•</span>
+                                        <span class="flex items-center">
+                                            <i class="ri-time-line mr-1"></i>
+                                            ${timeAgo}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-surface-500 dark:text-surface-400">${view.ip_address}</span>
+                                    <a href="#" class="flex h-8 w-8 items-center justify-center rounded-lg text-surface-500 transition-colors hover:bg-surface-100 hover:text-brand-600 dark:text-surface-400 dark:hover:bg-surface-700 dark:hover:text-brand-400">
+                                        <i class="ri-external-link-line text-lg"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                        
+                        viewsList.appendChild(viewItem);
+                    });
                 }
+                
+                viewsContainer.appendChild(viewsList);
+                
+                // Clear existing content and add new content
+                container.innerHTML = '';
+                container.appendChild(viewsContainer);
             }
         });
     </script>
