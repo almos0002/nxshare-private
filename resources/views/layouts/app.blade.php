@@ -806,7 +806,12 @@
                         </div>
                     </div>
                     <div class="ml-4 flex-1 min-w-0">
-                        <p class="truncate text-sm font-medium text-surface-900 dark:text-white">${post.title}</p>
+                        <div class="flex items-center space-x-2">
+                            <p class="truncate text-sm font-medium text-surface-900 dark:text-white">${post.title}</p>
+                            <span class="inline-flex items-center justify-center rounded-full px-2.5 py-1.5 text-xs font-medium leading-none ${post.type === 'w' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400' : (post.type === 'p' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400' : (post.type === 'n' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' : (post.type === 'i' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400')))}">
+                                ${post.type === 'w' ? 'Wallpaper' : (post.type === 'p' ? 'PFP' : (post.type === 'n' ? 'Nxleak' : (post.type === 'i' ? 'Image' : 'Video')))}
+                            </span>
+                        </div>
                         <p class="text-xs text-surface-500 dark:text-surface-400">${formattedDate}</p>
                     </div>
                     <div class="flex items-center space-x-4">
