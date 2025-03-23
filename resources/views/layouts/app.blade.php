@@ -271,7 +271,7 @@
                                 @mouseenter="sidebarCollapsed && $dispatch('tooltip-enter', {text: 'Wallpapers', el: $el})"
                                 @mouseleave="sidebarCollapsed && $dispatch('tooltip-leave')">
                                 <div class="flex items-center" :class="{ 'justify-center': sidebarCollapsed }">
-                                    <i class="ri-image-line {{ request()->routeIs('addwp') ? 'text-brand-500' : 'text-surface-500' }}"
+                                    <i class="ri-corner-down-right-line {{ request()->routeIs('addwp') ? 'text-brand-500' : 'text-surface-500' }}"
                                         :class="sidebarCollapsed ? 'mx-auto text-sm' : 'mr-2'"></i>
                                     <span x-show="!sidebarCollapsed">Wallpapers</span>
                                 </div>
@@ -282,7 +282,7 @@
                                 @mouseenter="sidebarCollapsed && $dispatch('tooltip-enter', {text: 'Profile Pictures', el: $el})"
                                 @mouseleave="sidebarCollapsed && $dispatch('tooltip-leave')">
                                 <div class="flex items-center" :class="{ 'justify-center': sidebarCollapsed }">
-                                    <i class="ri-user-line {{ request()->routeIs('addpfp') ? 'text-brand-500' : 'text-surface-500' }}"
+                                    <i class="ri-corner-down-right-line {{ request()->routeIs('addpfp') ? 'text-brand-500' : 'text-surface-500' }}"
                                         :class="sidebarCollapsed ? 'mx-auto text-sm' : 'mr-2'"></i>
                                     <span x-show="!sidebarCollapsed">Profile Pictures</span>
                                 </div>
@@ -313,7 +313,7 @@
                                 @mouseenter="sidebarCollapsed && $dispatch('tooltip-enter', {text: 'Nxleak', el: $el})"
                                 @mouseleave="sidebarCollapsed && $dispatch('tooltip-leave')">
                                 <div class="flex items-center" :class="{ 'justify-center': sidebarCollapsed }">
-                                    <i class="ri-file-lock-line {{ request()->routeIs('addnx') ? 'text-red-500' : 'text-surface-500' }}"
+                                    <i class="ri-corner-down-right-line {{ request()->routeIs('addnx') ? 'text-red-500' : 'text-surface-500' }}"
                                         :class="sidebarCollapsed ? 'mx-auto text-sm' : 'mr-2'"></i>
                                     <span x-show="!sidebarCollapsed">Nxleak</span>
                                 </div>
@@ -324,7 +324,7 @@
                                 @mouseenter="sidebarCollapsed && $dispatch('tooltip-enter', {text: 'Images', el: $el})"
                                 @mouseleave="sidebarCollapsed && $dispatch('tooltip-leave')">
                                 <div class="flex items-center" :class="{ 'justify-center': sidebarCollapsed }">
-                                    <i class="ri-image-2-line {{ request()->routeIs('addimg') ? 'text-red-500' : 'text-surface-500' }}"
+                                    <i class="ri-corner-down-right-line {{ request()->routeIs('addimg') ? 'text-red-500' : 'text-surface-500' }}"
                                         :class="sidebarCollapsed ? 'mx-auto text-sm' : 'mr-2'"></i>
                                     <span x-show="!sidebarCollapsed">Images</span>
                                 </div>
@@ -335,7 +335,7 @@
                                 @mouseenter="sidebarCollapsed && $dispatch('tooltip-enter', {text: 'Videos', el: $el})"
                                 @mouseleave="sidebarCollapsed && $dispatch('tooltip-leave')">
                                 <div class="flex items-center" :class="{ 'justify-center': sidebarCollapsed }">
-                                    <i class="ri-video-line {{ request()->routeIs('addvd') ? 'text-red-500' : 'text-surface-500' }}"
+                                    <i class="ri-corner-down-right-line {{ request()->routeIs('addvd') ? 'text-red-500' : 'text-surface-500' }}"
                                         :class="sidebarCollapsed ? 'mx-auto text-sm' : 'mr-2'"></i>
                                     <span x-show="!sidebarCollapsed">Videos</span>
                                 </div>
