@@ -113,71 +113,103 @@ class SettingController extends Controller
         
         // Prepare dashboard data if we're on the dashboard page
         $dashboardData = [];
-        if ($request->input('on_dashboard') === 'true') {
-            // Calculate total posts
-            $totalPosts = \App\Models\Wallpaper::count() + \App\Models\Pfp::count();
-            if ($status === 'enabled') {
-                $totalPosts += \App\Models\Image::count() + \App\Models\Nxleak::count() + \App\Models\Video::count();
-            }
+        if ($request->input('on_dashboard') == true || $request->input('on_dashboard') === 'true') {
+            // Calculate total posts - use caching to improve performance
+            $cacheKey = 'dashboard_stats_' . $status;
+            $cacheDuration = 60; // Cache for 1 minute
             
-            // Calculate total views
-            $totalViews = \App\Models\Wallpaper::sum('views') + \App\Models\Pfp::sum('views');
-            if ($status === 'enabled') {
-                $totalViews += \App\Models\Image::sum('views') + \App\Models\Nxleak::sum('views') + \App\Models\Video::sum('views');
-            }
+            if (\Illuminate\Support\Facades\Cache::has($cacheKey)) {
+                $dashboardData = \Illuminate\Support\Facades\Cache::get($cacheKey);
+            } else {
+                // Calculate total posts
+                $totalPosts = \App\Models\Wallpaper::count() + \App\Models\Pfp::count();
+                if ($status === 'enabled') {
+                    $totalPosts += \App\Models\Image::count() + \App\Models\Nxleak::count() + \App\Models\Video::count();
+                }
+                
+                // Calculate total views
+                $totalViews = \App\Models\Wallpaper::sum('views') + \App\Models\Pfp::sum('views');
+                if ($status === 'enabled') {
+                    $totalViews += \App\Models\Image::sum('views') + \App\Models\Nxleak::sum('views') + \App\Models\Video::sum('views');
+                }
 
-            // Define SFW query first (Wallpapers and PFP)
-            $wallpaperQuery = \App\Models\Wallpaper::select('title', 'slug', 'views', 'created_at', \Illuminate\Support\Facades\DB::raw("'w' as type"));
-            $pfpQuery = \App\Models\Pfp::select('title', 'slug', 'views', 'created_at', \Illuminate\Support\Facades\DB::raw("'p' as type"));
-            
-            // Define NSFW queries
-            $imageQuery = \App\Models\Image::select('title', 'slug', 'views', 'created_at', \Illuminate\Support\Facades\DB::raw("'i' as type"));
-            $nxleakQuery = \App\Models\Nxleak::select('title', 'slug', 'views', 'created_at', \Illuminate\Support\Facades\DB::raw("'n' as type"));
-            $videoQuery = \App\Models\Video::select('title', 'slug', 'views', 'created_at', \Illuminate\Support\Facades\DB::raw("'v' as type"));
+                // Define SFW query first (Wallpapers and PFP)
+                $wallpaperQuery = \App\Models\Wallpaper::select('title', 'slug', 'views', 'created_at', \Illuminate\Support\Facades\DB::raw("'w' as type"));
+                $pfpQuery = \App\Models\Pfp::select('title', 'slug', 'views', 'created_at', \Illuminate\Support\Facades\DB::raw("'p' as type"));
+                
+                // Define NSFW queries
+                $imageQuery = \App\Models\Image::select('title', 'slug', 'views', 'created_at', \Illuminate\Support\Facades\DB::raw("'i' as type"));
+                $nxleakQuery = \App\Models\Nxleak::select('title', 'slug', 'views', 'created_at', \Illuminate\Support\Facades\DB::raw("'n' as type"));
+                $videoQuery = \App\Models\Video::select('title', 'slug', 'views', 'created_at', \Illuminate\Support\Facades\DB::raw("'v' as type"));
 
-            // Start with SFW content query (always include PFP)
-            $mostViewedQuery = $wallpaperQuery->unionAll($pfpQuery);
-            
-            // Add NSFW content if enabled
-            if ($status === 'enabled') {
-                $mostViewedQuery = $mostViewedQuery->unionAll($imageQuery)
-                                               ->unionAll($nxleakQuery)
-                                               ->unionAll($videoQuery);
+                // Start with SFW content query (always include PFP)
+                $mostViewedQuery = $wallpaperQuery->unionAll($pfpQuery);
+                
+                // Add NSFW content if enabled
+                if ($status === 'enabled') {
+                    $mostViewedQuery = $mostViewedQuery->unionAll($imageQuery)
+                                                   ->unionAll($nxleakQuery)
+                                                   ->unionAll($videoQuery);
+                }
+                
+                // Get most viewed posts - limit to 5 for performance
+                $mostViewed = $mostViewedQuery
+                    ->orderBy('views', 'desc')
+                    ->take(5)
+                    ->get()
+                    ->map(function($item) {
+                        // Convert dates to ISO format for JavaScript
+                        return [
+                            'title' => $item->title,
+                            'slug' => $item->slug,
+                            'views' => $item->views,
+                            'type' => $item->type,
+                            'created_at' => $item->created_at->toISOString()
+                        ];
+                    });
+                
+                // For recent posts, same approach (always include PFP)
+                $recentPostsQuery = $wallpaperQuery->unionAll($pfpQuery);
+                
+                // Add NSFW content if enabled
+                if ($status === 'enabled') {
+                    $recentPostsQuery = $recentPostsQuery->unionAll($imageQuery)
+                                                     ->unionAll($nxleakQuery)
+                                                     ->unionAll($videoQuery);
+                }
+                
+                // Get recent posts - limit to 5 for performance
+                $recentPosts = $recentPostsQuery
+                    ->orderBy('created_at', 'desc')
+                    ->take(5)
+                    ->get()
+                    ->map(function($item) {
+                        // Convert dates to ISO format for JavaScript
+                        return [
+                            'title' => $item->title,
+                            'slug' => $item->slug,
+                            'views' => $item->views,
+                            'type' => $item->type,
+                            'created_at' => $item->created_at->toISOString()
+                        ];
+                    });
+                
+                $dashboardData = [
+                    'totalPosts' => $totalPosts,
+                    'totalViews' => $totalViews,
+                    'mostViewed' => $mostViewed,
+                    'recentPosts' => $recentPosts
+                ];
+                
+                // Cache the results
+                \Illuminate\Support\Facades\Cache::put($cacheKey, $dashboardData, $cacheDuration);
             }
-            
-            // Get most viewed posts
-            $mostViewed = $mostViewedQuery
-                ->orderBy('views', 'desc')
-                ->take(5)
-                ->get();
-
-            // For recent posts, same approach (always include PFP)
-            $recentPostsQuery = $wallpaperQuery->unionAll($pfpQuery);
-            
-            // Add NSFW content if enabled
-            if ($status === 'enabled') {
-                $recentPostsQuery = $recentPostsQuery->unionAll($imageQuery)
-                                                 ->unionAll($nxleakQuery)
-                                                 ->unionAll($videoQuery);
-            }
-            
-            // Get recent posts
-            $recentPosts = $recentPostsQuery
-                ->orderBy('created_at', 'desc')
-                ->take(5)
-                ->get();
-            
-            $dashboardData = [
-                'totalPosts' => $totalPosts,
-                'totalViews' => $totalViews,
-                'mostViewed' => $mostViewed,
-                'recentPosts' => $recentPosts
-            ];
         }
 
         return response()->json(array_merge([
             'success' => true, 
-            'message' => $status == 'enabled' ? 'NSFW content enabled' : 'NSFW content disabled'
-        ], $dashboardData));
+            'message' => $status == 'enabled' ? 'NSFW content enabled' : 'NSFW content disabled',
+            'dashboardData' => $dashboardData
+        ]));
     }
 }

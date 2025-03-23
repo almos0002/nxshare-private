@@ -111,11 +111,11 @@
     <!-- Content Sections -->
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <!-- Top Viewed Posts -->
-        <div class="overflow-hidden rounded-xl bg-white shadow-sm dark:bg-surface-800">
+        <div id="top-viewed-posts-section" class="overflow-hidden rounded-xl bg-white shadow-sm dark:bg-surface-800">
             <div class="border-b border-surface-200 px-6 py-4 dark:border-surface-700">
                 <h2 class="text-lg font-semibold text-surface-900 dark:text-white">Top Viewed Posts</h2>
             </div>
-            <div class="divide-y divide-surface-200 dark:divide-surface-700">
+            <div id="top-viewed-posts-container" class="divide-y divide-surface-200 dark:divide-surface-700">
                 @foreach($mostViewed as $view)
                 <div class="flex items-center p-4 transition-colors hover:bg-surface-50 dark:hover:bg-surface-700/50">
                     <div class="flex-shrink-0">
@@ -148,11 +148,11 @@
         </div>
 
         <!-- Recent Posts -->
-        <div class="overflow-hidden rounded-xl bg-white shadow-sm dark:bg-surface-800">
+        <div id="recent-posts-section" class="overflow-hidden rounded-xl bg-white shadow-sm dark:bg-surface-800">
             <div class="border-b border-surface-200 px-6 py-4 dark:border-surface-700">
                 <h2 class="text-lg font-semibold text-surface-900 dark:text-white">Recent Posts</h2>
             </div>
-            <div class="divide-y divide-surface-200 dark:divide-surface-700">
+            <div id="recent-posts-container" class="divide-y divide-surface-200 dark:divide-surface-700">
                 @foreach($recentPosts as $post)
                 <div class="flex items-center p-4 transition-colors hover:bg-surface-50 dark:hover:bg-surface-700/50">
                     <div class="flex-shrink-0">

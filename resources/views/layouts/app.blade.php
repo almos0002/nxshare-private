@@ -578,24 +578,38 @@
 
             // Get current status from button class
             const currentStatus = button.classList.contains('bg-green-600') ? 'enabled' : 'disabled';
-
+            
+            // Show loading indicator on the button
+            const originalButtonContent = button.innerHTML;
+            button.innerHTML = '<div class="w-5 h-5 border-t-2 border-r-2 border-white rounded-full animate-spin"></div>';
+            
             // Toggle visual state immediately for better UX
             if (currentStatus === 'enabled') {
                 button.classList.remove('bg-green-600');
                 button.classList.add('bg-red-600');
-                icon.classList.remove('ri-shield-check-fill');
-                icon.classList.add('ri-shield-flash-line');
                 nsfw_menu.style.display = 'none';
             } else {
                 button.classList.remove('bg-red-600');
                 button.classList.add('bg-green-600');
-                icon.classList.remove('ri-shield-flash-line');
-                icon.classList.add('ri-shield-check-fill');
                 nsfw_menu.style.display = 'block';
             }
 
             // Determine if we're on the dashboard page
-            const onDashboard = window.location.pathname.includes('dashboard');
+            const onDashboard = window.location.pathname === '/dashboard' || window.location.pathname === '/';
+            
+            // If on dashboard, preload empty UI state to improve perceived performance
+            if (onDashboard) {
+                // Pre-update the UI with loading state
+                if (currentStatus === 'enabled') {
+                    // Going from enabled to disabled, show fewer posts
+                    document.querySelectorAll('.total-posts-value').forEach(function(el) {
+                        el.innerHTML = '<span class="animate-pulse">...</span>';
+                    });
+                    document.querySelectorAll('.total-views-value').forEach(function(el) {
+                        el.innerHTML = '<span class="animate-pulse">...</span>';
+                    });
+                }
+            }
 
             // Send AJAX request to update server-side state
             $.ajax({
@@ -607,28 +621,53 @@
                     on_dashboard: onDashboard
                 },
                 success: function(response) {
-                    console.log('NSFW toggle successful:', response);
-
+                    // Restore the button content
+                    button.innerHTML = originalButtonContent;
+                    
+                    // Update icon based on new status
+                    if (currentStatus === 'enabled') {
+                        icon.classList.remove('ri-shield-check-fill');
+                        icon.classList.add('ri-shield-flash-line');
+                    } else {
+                        icon.classList.remove('ri-shield-flash-line');
+                        icon.classList.add('ri-shield-check-fill');
+                    }
+                    
                     // If we're on the dashboard and the response includes dashboard data, update the UI
-                    if (onDashboard && response.dashboardData) {
-                        // Update total posts count
-                        if (response.dashboardData.totalPosts !== undefined) {
-                            document.querySelectorAll('.total-posts-value').forEach(function(el) {
-                                el.textContent = response.dashboardData.totalPosts;
-                            });
-                        }
+                    if (onDashboard) {
+                        console.log('On dashboard, checking for dashboard data');
+                        
+                        if (response.dashboardData) {
+                            console.log('Dashboard data found:', response.dashboardData);
+                            
+                            // Update total posts count
+                            if (response.dashboardData.totalPosts !== undefined) {
+                                document.querySelectorAll('.total-posts-value').forEach(function(el) {
+                                    el.textContent = response.dashboardData.totalPosts;
+                                });
+                            }
 
-                        // Update total views count
-                        if (response.dashboardData.totalViews !== undefined) {
-                            document.querySelectorAll('.total-views-value').forEach(function(el) {
-                                el.textContent = response.dashboardData.totalViews;
-                            });
-                        }
+                            // Update total views count
+                            if (response.dashboardData.totalViews !== undefined) {
+                                document.querySelectorAll('.total-views-value').forEach(function(el) {
+                                    el.textContent = response.dashboardData.totalViews;
+                                });
+                            }
 
-                        // Refresh the page if there are more complex updates needed
-                        if (response.dashboardData.needsRefresh) {
-                            window.location.reload();
+                            // Update most viewed posts section
+                            if (response.dashboardData.mostViewed) {
+                                updatePostsSection(response.dashboardData.mostViewed, 'Top Viewed Posts');
+                            }
+
+                            // Update recent posts section
+                            if (response.dashboardData.recentPosts) {
+                                updatePostsSection(response.dashboardData.recentPosts, 'Recent Posts');
+                            }
+                        } else {
+                            console.error('No dashboard data in response');
                         }
+                    } else {
+                        console.log('Not on dashboard, skipping UI updates');
                     }
                 },
                 error: function(xhr, status, error) {
@@ -653,6 +692,73 @@
                     alert('Failed to toggle NSFW setting. Please try again.');
                 }
             });
+        }
+
+        // Function to update posts sections (Most Viewed and Recent Posts)
+        function updatePostsSection(posts, sectionTitle) {
+            console.log(`Updating ${sectionTitle} section with ${posts.length} posts`);
+            
+            // Determine which container to update based on section title
+            let containerId = '';
+            if (sectionTitle === 'Top Viewed Posts') {
+                containerId = 'top-viewed-posts-container';
+            } else if (sectionTitle === 'Recent Posts') {
+                containerId = 'recent-posts-container';
+            } else {
+                console.error(`Unknown section title: ${sectionTitle}`);
+                return;
+            }
+            
+            // Get the container by ID
+            const postsContainer = document.getElementById(containerId);
+            if (!postsContainer) {
+                console.error(`Container with ID "${containerId}" not found`);
+                return;
+            }
+            
+            // Clear existing posts
+            postsContainer.innerHTML = '';
+            
+            // Add new posts
+            posts.forEach(post => {
+                // Determine the color based on post type
+                const typeColor = post.type === 'w' ? 'blue' : 
+                                 (post.type === 'p' ? 'purple' : 
+                                 (post.type === 'n' ? 'red' : 
+                                 (post.type === 'i' ? 'green' : 'amber')));
+                
+                // Format the date
+                const date = new Date(post.created_at);
+                const formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                
+                // Create the post element
+                const postElement = document.createElement('div');
+                postElement.className = 'flex items-center p-4 transition-colors hover:bg-surface-50 dark:hover:bg-surface-700/50';
+                postElement.innerHTML = `
+                    <div class="flex-shrink-0">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-100 font-bold text-${typeColor}-600 dark:bg-surface-700 dark:text-${typeColor}-400">
+                            ${post.title.charAt(0)}
+                        </div>
+                    </div>
+                    <div class="ml-4 flex-1 min-w-0">
+                        <p class="truncate text-sm font-medium text-surface-900 dark:text-white">${post.title}</p>
+                        <p class="text-xs text-surface-500 dark:text-surface-400">${formattedDate}</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center text-surface-500 dark:text-surface-400">
+                            <i class="ri-eye-line mr-1 text-sm"></i>
+                            <span class="text-xs">${post.views}</span>
+                        </div>
+                        <a href="/${post.type == 'i' ? 'i' : (post.type == 'n' ? 'n' : (post.type == 'w' ? 'w' : (post.type == 'p' ? 'p' : 'v')))}/${post.slug}" class="flex h-8 w-8 items-center justify-center rounded-lg text-surface-500 transition-colors hover:bg-surface-100 hover:text-brand-600 dark:text-surface-400 dark:hover:bg-surface-700 dark:hover:text-brand-400">
+                            <i class="ri-external-link-line text-lg"></i>
+                        </a>
+                    </div>
+                `;
+                
+                postsContainer.appendChild(postElement);
+            });
+            
+            console.log(`Updated ${sectionTitle} section successfully`);
         }
     </script>
     @yield('updatescript')
