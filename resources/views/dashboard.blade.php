@@ -418,16 +418,16 @@
                                 @forelse ($latestViews as $view)
                                     <tr class="hover:bg-surface-50 dark:hover:bg-surface-700/50">
                                         <td
-                                            class="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                                            class="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100 overflow-hidden">
                                             {{ $view->ip_address }}</td>
-                                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 overflow-hidden">
                                             <span class="inline-flex items-center">
                                                 {{ $view->country }}
                                                 <span
                                                     class="ml-1 text-xs text-gray-400 dark:text-gray-500">({{ $view->country_code }})</span>
                                             </span>
                                         </td>
-                                        <td class="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">
+                                        <td class="px-3 py-2 text-sm text-gray-500 dark:text-gray-400 overflow-hidden truncate">
                                             <div class="flex items-center">
                                                 @if ($view->type == 'w')
                                                     <span
@@ -458,7 +458,7 @@
                                                 <span class="ml-2 truncate">{{ $view->title }}</span>
                                             </div>
                                         </td>
-                                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 overflow-hidden">
                                             {{ \Carbon\Carbon::parse($view->created_at)->diffForHumans() }}
                                         </td>
                                     </tr>
@@ -688,13 +688,13 @@
                     // IP Address column
                     const tdIp = document.createElement('td');
                     tdIp.className =
-                        'px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100';
+                        'px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100 overflow-hidden';
                     tdIp.textContent = view.ip_address;
 
                     // Country column
                     const tdCountry = document.createElement('td');
                     tdCountry.className =
-                        'px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
+                        'px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 overflow-hidden';
                     tdCountry.innerHTML = `
                         <span class="inline-flex items-center">
                             ${view.country || 'Unknown'}
@@ -704,7 +704,7 @@
 
                     // Post column
                     const tdPost = document.createElement('td');
-                    tdPost.className = 'px-3 py-2 text-sm text-gray-500 dark:text-gray-400';
+                    tdPost.className = 'px-3 py-2 text-sm text-gray-500 dark:text-gray-400 overflow-hidden truncate';
                     tdPost.innerHTML = `
                         <div class="flex items-center">
                             <span class="inline-flex items-center justify-center text-center align-middle rounded-full px-2 py-0.5 text-[10px] font-medium ${typeClass} min-w-[65px]">
@@ -717,7 +717,7 @@
                     // Time column
                     const tdTime = document.createElement('td');
                     tdTime.className =
-                        'px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
+                        'px-3 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 overflow-hidden';
 
                     // Calculate time ago
                     const now = new Date();
