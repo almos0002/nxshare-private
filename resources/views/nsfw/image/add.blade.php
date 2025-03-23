@@ -22,84 +22,86 @@
     </div>
 
     <!-- Stats Grid -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <!-- Total Posts -->
-        <div class="group relative overflow-hidden rounded-xl bg-white p-5 shadow-md transition-all hover:shadow-lg dark:bg-surface-800">
+        <div class="group relative overflow-hidden rounded-xl bg-white p-6 shadow-sm transition-all hover:shadow-md dark:bg-surface-800">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-surface-500 dark:text-surface-400">Total Posts</p>
                     <h3 class="mt-1 text-3xl font-bold text-surface-900 dark:text-white">{{ number_format($totalPosts) }}</h3>
                 </div>
-                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400">
+                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-900/50 dark:text-red-400">
                     <i class="ri-file-list-3-line text-2xl"></i>
                 </div>
             </div>
-            <div class="mt-5 flex items-center">
-                <span class="inline-flex items-center text-green-600 dark:text-green-400">
-                    <i class="ri-arrow-up-line mr-1"></i> 12%
+            <div class="mt-4 flex items-center text-sm">
+                <span class="flex items-center text-green-500 dark:text-green-400">
+                    <i class="ri-arrow-up-line mr-1"></i>
+                    12%
                 </span>
                 <span class="ml-2 text-surface-500 dark:text-surface-400">from last month</span>
             </div>
-            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-indigo-500 opacity-0 transition-opacity group-hover:opacity-100"></div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-red-500 to-pink-500 opacity-0 transition-opacity group-hover:opacity-100"></div>
         </div>
 
         <!-- Total Views -->
-        <div class="group relative overflow-hidden rounded-xl bg-white p-5 shadow-md transition-all hover:shadow-lg dark:bg-surface-800">
+        <div class="group relative overflow-hidden rounded-xl bg-white p-6 shadow-sm transition-all hover:shadow-md dark:bg-surface-800">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-surface-500 dark:text-surface-400">Total Views</p>
                     <h3 class="mt-1 text-3xl font-bold text-surface-900 dark:text-white">{{ number_format($totalViews) }}</h3>
                 </div>
-                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400">
+                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-pink-100 text-pink-600 dark:bg-pink-900/50 dark:text-pink-400">
                     <i class="ri-eye-line text-2xl"></i>
                 </div>
             </div>
-            <div class="mt-5 flex items-center">
-                <span class="inline-flex items-center text-green-600 dark:text-green-400">
-                    <i class="ri-arrow-up-line mr-1"></i> 24%
+            <div class="mt-4 flex items-center text-sm">
+                <span class="flex items-center text-green-500 dark:text-green-400">
+                    <i class="ri-arrow-up-line mr-1"></i>
+                    24%
                 </span>
                 <span class="ml-2 text-surface-500 dark:text-surface-400">from last month</span>
             </div>
-            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-500 to-pink-500 opacity-0 transition-opacity group-hover:opacity-100"></div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-pink-500 to-red-500 opacity-0 transition-opacity group-hover:opacity-100"></div>
         </div>
 
         <!-- Logged In User -->
-        <div class="group relative overflow-hidden rounded-xl bg-white p-5 shadow-md transition-all hover:shadow-lg dark:bg-surface-800">
+        <div class="group relative overflow-hidden rounded-xl bg-white p-6 shadow-sm transition-all hover:shadow-md dark:bg-surface-800">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-surface-500 dark:text-surface-400">Logged In User</p>
-                    <h3 class="mt-1 text-3xl font-bold text-surface-900 dark:text-white">{{ Auth::user()->name }}</h3>
+                    <h3 class="mt-1 text-3xl font-bold text-surface-900 dark:text-white">{{ $userName }}</h3>
                 </div>
-                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-fuchsia-100 text-fuchsia-600 dark:bg-fuchsia-900/30 dark:text-fuchsia-400">
+                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-purple-100 text-purple-600 dark:bg-purple-900/50 dark:text-purple-400">
                     <i class="ri-user-3-line text-2xl"></i>
                 </div>
             </div>
-            <div class="mt-5 flex items-center">
-                <span class="inline-flex items-center text-green-600 dark:text-green-400">
-                    <i class="ri-arrow-up-line mr-1"></i> 8%
+            <div class="mt-4 flex items-center text-sm">
+                <span class="flex items-center text-surface-500 dark:text-surface-400">
+                    <i class="ri-shield-check-line mr-1"></i>
+                    Admin Access
                 </span>
-                <span class="ml-2 text-surface-500 dark:text-surface-400">from last week</span>
             </div>
-            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-fuchsia-500 to-purple-500 opacity-0 transition-opacity group-hover:opacity-100"></div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-indigo-500 opacity-0 transition-opacity group-hover:opacity-100"></div>
         </div>
 
         <!-- Redirect Status -->
-        <div class="group relative overflow-hidden rounded-xl bg-white p-5 shadow-md transition-all hover:shadow-lg dark:bg-surface-800">
+        <div class="group relative overflow-hidden rounded-xl bg-white p-6 shadow-sm transition-all hover:shadow-md dark:bg-surface-800">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-surface-500 dark:text-surface-400">Redirect Status</p>
                     <h3 class="mt-1 text-3xl font-bold text-surface-900 dark:text-white">{{ $redirectEnabled }}</h3>
                 </div>
-                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400">
+                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400">
                     <i class="ri-link text-2xl"></i>
                 </div>
             </div>
-            <div class="mt-5 flex items-center">
-                <span class="inline-flex items-center {{ $redirectEnabled === 'Enabled' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
+            <div class="mt-4 flex items-center">
+                <span class="inline-flex items-center rounded-full bg-{{ $redirectEnabled === 'Enabled' ? 'green' : 'red' }}-100 px-2.5 py-0.5 text-xs font-medium text-{{ $redirectEnabled === 'Enabled' ? 'green' : 'red' }}-800 dark:bg-{{ $redirectEnabled === 'Enabled' ? 'green' : 'red' }}-900/30 dark:text-{{ $redirectEnabled === 'Enabled' ? 'green' : 'red' }}-400">
                     {{ $redirectEnabled === 'Enabled' ? 'Active' : 'Inactive' }}
                 </span>
             </div>
-            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-500 opacity-0 transition-opacity group-hover:opacity-100"></div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-amber-700 opacity-0 transition-opacity group-hover:opacity-100"></div>
         </div>
     </div>
 
