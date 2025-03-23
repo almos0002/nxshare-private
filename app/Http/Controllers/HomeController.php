@@ -80,20 +80,20 @@ class HomeController extends Controller
             ->get();
 
         // Start with SFW content query for recent posts
-        $recentPostsQuery = Wallpaper::select('title', 'slug', 'created_at', DB::raw("'w' as type"))
+        $recentPostsQuery = Wallpaper::select('title', 'slug', 'views', 'created_at', DB::raw("'w' as type"))
             ->unionAll(
-                Pfp::select('title', 'slug', 'created_at', DB::raw("'p' as type"))
+                Pfp::select('title', 'slug', 'views', 'created_at', DB::raw("'p' as type"))
             );
         
         // Add NSFW content if enabled
         if ($nsfwEnabled) {
-            $recentPostsQuery = Image::select('title', 'slug', 'created_at', DB::raw("'i' as type"))
+            $recentPostsQuery = Image::select('title', 'slug', 'views', 'created_at', DB::raw("'i' as type"))
                 ->unionAll(
-                    Nxleak::select('title', 'slug', 'created_at', DB::raw("'n' as type"))
+                    Nxleak::select('title', 'slug', 'views', 'created_at', DB::raw("'n' as type"))
                 )
                 ->unionAll($recentPostsQuery)
                 ->unionAll(
-                    Video::select('title', 'slug', 'created_at', DB::raw("'v' as type"))
+                    Video::select('title', 'slug', 'views', 'created_at', DB::raw("'v' as type"))
                 );
         }
         
