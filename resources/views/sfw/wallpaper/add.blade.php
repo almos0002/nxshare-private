@@ -15,7 +15,7 @@
                     </div>
                     <div>
                         <button onclick="createModal()"
-                            class="inline-flex items-center rounded-lg bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50">
+                            class="inline-flex items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-green-600 shadow-sm hover:bg-white/90 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all">
                             <i class="ri-add-line mr-2"></i>
                             Add New Wallpaper
                         </button>

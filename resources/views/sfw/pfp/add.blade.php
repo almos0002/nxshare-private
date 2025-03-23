@@ -16,15 +16,10 @@
                         <p class="mt-1 text-brand-100">Manage your profile pictures collection here.</p>
                     </div>
                     <div class="flex space-x-2">
-                        <a href="{{ route('dashboard') }}"
-                            class="inline-flex items-center rounded-lg bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50">
-                            <i class="ri-dashboard-line mr-2"></i>
-                            Dashboard
-                        </a>
                         <button onclick="createModal()"
-                            class="inline-flex items-center rounded-lg bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50">
+                            class="inline-flex items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-green-600 shadow-sm hover:bg-white/90 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all">
                             <i class="ri-add-line mr-2"></i>
-                            Add PFP
+                            Add New PFP
                         </button>
                     </div>
                 </div>
@@ -190,8 +185,7 @@
                                 <div>
                                     <label for="title"
                                         class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Title</label>
-                                    <input type="text" name="title" id="title" placeholder="Enter title"
-                                        required
+                                    <input type="text" name="title" id="title" placeholder="Enter title" required
                                         class="w-full rounded-lg bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-700 focus:border-brand-500 focus:ring focus:ring-brand-200 dark:focus:ring-brand-800 dark:focus:border-brand-500 py-2 px-3">
                                 </div>
 
