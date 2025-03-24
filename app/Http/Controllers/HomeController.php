@@ -36,17 +36,8 @@ class HomeController extends Controller
             $nsfwEnabled = true;
         }
 
-        // Calculate total posts
-        $totalPosts = Wallpaper::count() + Pfp::count();
-        if ($nsfwEnabled) {
-            $totalPosts += Image::count() + Nxleak::count() + Video::count();
-        }
-        
-        // Calculate total views
-        $totalViews = Wallpaper::sum('views') + Pfp::sum('views');
-        if ($nsfwEnabled) {
-            $totalViews += Image::sum('views') + Nxleak::sum('views') + Video::sum('views');
-        }
+        // Get dashboard data using the shared method
+        $dashboardData = $this->getDashboardData($nsfwEnabled);
         
         // Get logged in user name
         $userName = $user->name;
@@ -55,80 +46,14 @@ class HomeController extends Controller
         $redirectStatus = Settings::value('redirect_enabled') ?? false;
         $redirectEnabled = $redirectStatus ? 'Enabled' : 'Disabled';
 
-        // Start with SFW content query
-        $mostViewedQuery = Wallpaper::select('title', 'slug', 'views', 'created_at', DB::raw("'w' as type"))
-            ->unionAll(
-                Pfp::select('title', 'slug', 'views', 'created_at', DB::raw("'p' as type"))
-            );
-        
-        // Add NSFW content if enabled
-        if ($nsfwEnabled) {
-            $mostViewedQuery = $mostViewedQuery->unionAll(
-                Image::select('title', 'slug', 'views', 'created_at', DB::raw("'i' as type"))
-            )->unionAll(
-                Nxleak::select('title', 'slug', 'views', 'created_at', DB::raw("'n' as type"))
-            )->unionAll(
-                Video::select('title', 'slug', 'views', 'created_at', DB::raw("'v' as type"))
-            );
-        }
-        
-        // Get most viewed posts
-        $mostViewed = $mostViewedQuery
-            ->orderBy('views', 'desc')
-            ->take(5)
-            ->get();
-
-        // Start with SFW content query for recent posts
-        $recentPostsQuery = Wallpaper::select('title', 'slug', 'views', 'created_at', DB::raw("'w' as type"))
-            ->unionAll(
-                Pfp::select('title', 'slug', 'views', 'created_at', DB::raw("'p' as type"))
-            );
-        
-        // Add NSFW content if enabled
-        if ($nsfwEnabled) {
-            $recentPostsQuery = $recentPostsQuery->unionAll(
-                Image::select('title', 'slug', 'views', 'created_at', DB::raw("'i' as type"))
-            )->unionAll(
-                Nxleak::select('title', 'slug', 'views', 'created_at', DB::raw("'n' as type"))
-            )->unionAll(
-                Video::select('title', 'slug', 'views', 'created_at', DB::raw("'v' as type"))
-            );
-        }
-        
-        // Get recent posts
-        $recentPosts = $recentPostsQuery
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get();
-
-        // Get latest views by IP
-        $latestViews = $this->getLatestViews($nsfwEnabled);
-        
-        // Get view distribution by type
-        $viewDistribution = $this->getViewDistribution($nsfwEnabled);
-        
-        // Get growth statistics
-        $growthStats = $this->getGrowthStatistics($nsfwEnabled);
-
-        // Calculate post growth percentage
-        $postGrowth = $this->calculatePostGrowth($nsfwEnabled);
-        
-        // Calculate views growth percentage
-        $viewsGrowth = $this->calculateViewsGrowth($nsfwEnabled);
-
-        return view('dashboard', compact(
-            'totalPosts',
-            'totalViews',
-            'userName',
-            'redirectEnabled',
-            'mostViewed',
-            'recentPosts',
-            'nsfwEnabled',
-            'latestViews',
-            'viewDistribution',
-            'growthStats',
-            'postGrowth',
-            'viewsGrowth'
+        // Return view with all data
+        return view('dashboard', array_merge(
+            $dashboardData,
+            [
+                'userName' => $userName,
+                'redirectEnabled' => $redirectEnabled,
+                'nsfwEnabled' => $nsfwEnabled
+            ]
         ));
     }
 
@@ -137,6 +62,23 @@ class HomeController extends Controller
         // Check NSFW status from request
         $nsfwEnabled = $request->input('nsfw_enabled') === 'true' || $request->input('nsfw_enabled') === true;
         
+        // Get dashboard data using the shared method
+        $dashboardData = $this->getDashboardData($nsfwEnabled);
+        
+        return response()->json(array_merge(
+            ['success' => true],
+            $dashboardData
+        ));
+    }
+    
+    /**
+     * Get all dashboard data based on NSFW setting
+     *
+     * @param bool $nsfwEnabled Whether NSFW content is enabled
+     * @return array Dashboard data
+     */
+    private function getDashboardData($nsfwEnabled)
+    {
         // Calculate total posts
         $totalPosts = Wallpaper::count() + Pfp::count();
         if ($nsfwEnabled) {
@@ -205,8 +147,7 @@ class HomeController extends Controller
         // Calculate views growth percentage
         $viewsGrowth = $this->calculateViewsGrowth($nsfwEnabled);
 
-        return response()->json([
-            'success' => true,
+        return [
             'totalPosts' => $totalPosts,
             'totalViews' => $totalViews,
             'mostViewed' => $mostViewed,
@@ -216,7 +157,7 @@ class HomeController extends Controller
             'growthStats' => $growthStats,
             'postGrowth' => $postGrowth,
             'viewsGrowth' => $viewsGrowth
-        ]);
+        ];
     }
 
     /**
