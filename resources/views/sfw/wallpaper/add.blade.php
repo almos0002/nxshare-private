@@ -41,10 +41,22 @@
                     </div>
                 </div>
                 <div class="mt-4 flex items-center text-sm">
-                    <span class="flex items-center text-green-500 dark:text-green-400">
-                        <i class="ri-arrow-up-line mr-1"></i>
-                        12%
-                    </span>
+                    @if($postsGrowth > 0)
+                        <span class="flex items-center text-green-500 dark:text-green-400">
+                            <i class="ri-arrow-up-line mr-1"></i>
+                            {{ $postsGrowth }}%
+                        </span>
+                    @elseif($postsGrowth < 0)
+                        <span class="flex items-center text-red-500 dark:text-red-400">
+                            <i class="ri-arrow-down-line mr-1"></i>
+                            {{ abs($postsGrowth) }}%
+                        </span>
+                    @else
+                        <span class="flex items-center text-surface-500 dark:text-surface-400">
+                            <i class="ri-subtract-line mr-1"></i>
+                            0%
+                        </span>
+                    @endif
                     <span class="ml-2 text-surface-500 dark:text-surface-400">from last month</span>
                 </div>
                 <div
@@ -67,10 +79,22 @@
                     </div>
                 </div>
                 <div class="mt-4 flex items-center text-sm">
-                    <span class="flex items-center text-green-500 dark:text-green-400">
-                        <i class="ri-arrow-up-line mr-1"></i>
-                        24%
-                    </span>
+                    @if($viewsGrowth > 0)
+                        <span class="flex items-center text-green-500 dark:text-green-400">
+                            <i class="ri-arrow-up-line mr-1"></i>
+                            {{ $viewsGrowth }}%
+                        </span>
+                    @elseif($viewsGrowth < 0)
+                        <span class="flex items-center text-red-500 dark:text-red-400">
+                            <i class="ri-arrow-down-line mr-1"></i>
+                            {{ abs($viewsGrowth) }}%
+                        </span>
+                    @else
+                        <span class="flex items-center text-surface-500 dark:text-surface-400">
+                            <i class="ri-subtract-line mr-1"></i>
+                            0%
+                        </span>
+                    @endif
                     <span class="ml-2 text-surface-500 dark:text-surface-400">from last month</span>
                 </div>
                 <div

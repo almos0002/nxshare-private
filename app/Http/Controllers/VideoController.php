@@ -37,11 +37,55 @@ class VideoController extends Controller
         // Stats
         $totalPosts = Video::count();
         $totalViews = Video::sum('views');
-        $userName = auth()->user()->name;
+        
+        // Calculate growth percentages
+        $now = now();
+        $currentMonth = $now->format('m');
+        $currentYear = $now->format('Y');
+        $lastMonth = $now->subMonth()->format('m');
+        $lastMonthYear = $now->format('Y');
+        
+        // Posts growth
+        $currentMonthPosts = Video::whereMonth('created_at', $currentMonth)
+            ->whereYear('created_at', $currentYear)
+            ->count();
+            
+        $lastMonthPosts = Video::whereMonth('created_at', $lastMonth)
+            ->whereYear('created_at', $lastMonthYear)
+            ->count();
+            
+        $postsGrowth = 0;
+        if ($lastMonthPosts > 0) {
+            $postsGrowth = round((($currentMonthPosts - $lastMonthPosts) / $lastMonthPosts) * 100);
+        } elseif ($currentMonthPosts > 0) {
+            $postsGrowth = 100; // If there were no posts last month but there are this month
+        }
+        
+        // Views growth (based on views added this month vs last month)
+        $currentMonthViews = VideoView::whereMonth('created_at', $currentMonth)
+            ->whereYear('created_at', $currentYear)
+            ->count();
+            
+        $lastMonthViews = VideoView::whereMonth('created_at', $lastMonth)
+            ->whereYear('created_at', $lastMonthYear)
+            ->count();
+            
+        $viewsGrowth = 0;
+        if ($lastMonthViews > 0) {
+            $viewsGrowth = round((($currentMonthViews - $lastMonthViews) / $lastMonthViews) * 100);
+        } elseif ($currentMonthViews > 0) {
+            $viewsGrowth = 100; // If there were no views last month but there are this month
+        }
+        
+        $userName = \Illuminate\Support\Facades\Auth::user()->name;
         $redirectStatus = Settings::value('redirect_enabled') ?? false;
         $redirectEnabled = $redirectStatus ? 'Enabled' : 'Disabled';
 
-        return view('nsfw.video.add', compact('posts', 'sortColumn', 'sortDirection', 'search', 'totalPosts', 'totalViews', 'userName', 'redirectEnabled'));
+        return view('nsfw.video.add', compact(
+            'posts', 'sortColumn', 'sortDirection', 'search', 
+            'totalPosts', 'totalViews', 'userName', 'redirectEnabled',
+            'postsGrowth', 'viewsGrowth'
+        ));
     }
 
     // Create Video Post
