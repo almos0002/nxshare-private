@@ -79,8 +79,12 @@
 @section('footer_links')
     <div class="text-surface-600 dark:text-surface-400">
         Don't have an account?
-        <a href="{{ route('register') }}" class="font-medium text-brand-600 hover:text-brand-500 dark:text-brand-400 dark:hover:text-brand-300">
-            Sign up
-        </a>
+        @if (Route::has('register'))
+            <a href="{{ route('register') }}" class="font-medium text-brand-600 hover:text-brand-500 dark:text-brand-400 dark:hover:text-brand-300">
+                Sign up
+            </a>
+        @else
+            <span class="text-surface-400 dark:text-surface-600">Registration is currently disabled</span>
+        @endif
     </div>
 @endsection
