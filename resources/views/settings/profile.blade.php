@@ -75,7 +75,7 @@
                     <div>
                         <p class="text-sm font-medium text-surface-500 dark:text-surface-400">Last Login</p>
                         <h3 class="mt-1 text-xl font-bold text-surface-900 dark:text-white">
-                            {{ $user->last_login ? $user->last_login->format('M d, Y') : 'N/A' }}</h3>
+                            {{ $user->last_login ? $user->last_login->format('M d, Y') : now()->format('M d, Y') }}</h3>
                     </div>
                     <div
                         class="flex h-12 w-12 items-center justify-center rounded-full bg-purple-100 text-purple-600 dark:bg-purple-900/50 dark:text-purple-400">
@@ -85,7 +85,7 @@
                 <div class="mt-4 flex items-center text-sm">
                     <span class="flex items-center text-surface-500 dark:text-surface-400">
                         <i class="ri-time-line mr-1"></i>
-                        {{ $user->last_login ? $user->last_login->diffForHumans() : 'Never logged in' }}
+                        {{ $user->last_login ? $user->last_login->diffForHumans() : 'Just now' }}
                     </span>
                 </div>
                 <div
