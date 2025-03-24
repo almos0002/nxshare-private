@@ -767,8 +767,10 @@
             let containerId = '';
             if (sectionTitle === 'Top Viewed Posts') {
                 containerId = 'top-viewed-posts-container';
+                console.log('Updating top viewed posts container:', containerId);
             } else if (sectionTitle === 'Recent Posts') {
                 containerId = 'recent-posts-container';
+                console.log('Updating recent posts container:', containerId);
             } else {
                 console.error(`Unknown section title: ${sectionTitle}`);
                 return;
@@ -778,7 +780,22 @@
             const postsContainer = document.getElementById(containerId);
             if (!postsContainer) {
                 console.error(`Container with ID "${containerId}" not found`);
-                return;
+                // Try to find the container by alternative means
+                if (sectionTitle === 'Recent Posts') {
+                    const recentSection = document.getElementById('recent-posts-section');
+                    if (recentSection) {
+                        const possibleContainer = recentSection.querySelector('.divide-y');
+                        if (possibleContainer) {
+                            console.log('Found recent posts container via alternative method');
+                            postsContainer = possibleContainer;
+                        }
+                    }
+                }
+                
+                if (!postsContainer) {
+                    console.error('Could not find container even with alternative methods');
+                    return;
+                }
             }
             
             // Clear existing posts

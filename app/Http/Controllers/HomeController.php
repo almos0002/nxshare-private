@@ -116,14 +116,22 @@ class HomeController extends Controller
             ->take(5)
             ->get();
 
-        // For recent posts, same approach (always include PFP)
-        $recentPostsQuery = $wallpaperQuery->unionAll($pfpQuery);
+        // For recent posts, create fresh query instances to avoid any potential issues
+        $recentWallpaperQuery = Wallpaper::select('title', 'slug', 'views', 'created_at', DB::raw("'w' as type"));
+        $recentPfpQuery = Pfp::select('title', 'slug', 'views', 'created_at', DB::raw("'p' as type"));
+        
+        // Start with SFW content query for recent posts
+        $recentPostsQuery = $recentWallpaperQuery->unionAll($recentPfpQuery);
         
         // Add NSFW content if enabled
         if ($nsfwEnabled) {
-            $recentPostsQuery = $recentPostsQuery->unionAll($imageQuery)
-                                               ->unionAll($nxleakQuery)
-                                               ->unionAll($videoQuery);
+            $recentImageQuery = Image::select('title', 'slug', 'views', 'created_at', DB::raw("'i' as type"));
+            $recentNxleakQuery = Nxleak::select('title', 'slug', 'views', 'created_at', DB::raw("'n' as type"));
+            $recentVideoQuery = Video::select('title', 'slug', 'views', 'created_at', DB::raw("'v' as type"));
+            
+            $recentPostsQuery = $recentPostsQuery->unionAll($recentImageQuery)
+                                               ->unionAll($recentNxleakQuery)
+                                               ->unionAll($recentVideoQuery);
         }
         
         // Get recent posts
