@@ -187,6 +187,7 @@ class HomeController extends Controller
                     'wallpaper_views.ip_address',
                     'wallpaper_views.created_at',
                     'wallpaper.title',
+                    'wallpaper.slug',
                     DB::raw("'w' as type"),
                 )
                 ->orderBy('wallpaper_views.created_at', 'desc')
@@ -205,6 +206,7 @@ class HomeController extends Controller
                     'pfp_views.ip_address',
                     'pfp_views.created_at',
                     'pfp.title',
+                    'pfp.slug',
                     DB::raw("'p' as type"),
                 )
                 ->orderBy('pfp_views.created_at', 'desc')
@@ -225,6 +227,7 @@ class HomeController extends Controller
                         'image_views.ip_address',
                         'image_views.created_at',
                         'image.title',
+                        'image.slug',
                         DB::raw("'i' as type"),
                     )
                     ->orderBy('image_views.created_at', 'desc')
@@ -243,6 +246,7 @@ class HomeController extends Controller
                         'nxleak_views.ip_address',
                         'nxleak_views.created_at',
                         'nxleak.title',
+                        'nxleak.slug',
                         DB::raw("'n' as type"),
                     )
                     ->orderBy('nxleak_views.created_at', 'desc')
@@ -261,6 +265,7 @@ class HomeController extends Controller
                         'video_views.ip_address',
                         'video_views.created_at',
                         'video.title',
+                        'video.slug',
                         DB::raw("'v' as type"),
                     )
                     ->orderBy('video_views.created_at', 'desc')
@@ -630,5 +635,155 @@ class HomeController extends Controller
         }
         
         return $growthPercentage;
+    }
+
+    /**
+     * Display all views
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function allViews()
+    {
+        // Get current user
+        $user = Auth::user();
+        
+        // Check NSFW status
+        $nsfwEnabled = false;
+        if ($user->settings && $user->settings->nsfw === 'enabled') {
+            $nsfwEnabled = true;
+        }
+
+        // Get all views without the limit
+        $latestViews = $this->getAllViews($nsfwEnabled);
+        
+        return view('views.all', [
+            'latestViews' => $latestViews,
+            'nsfwEnabled' => $nsfwEnabled
+        ]);
+    }
+
+    /**
+     * Get all views by IP address with country information
+     *
+     * @param bool $nsfwEnabled Whether NSFW content is enabled
+     * @return \Illuminate\Support\Collection
+     */
+    private function getAllViews($nsfwEnabled)
+    {
+        // Get the latest views from all view tables
+        $latestViews = collect();
+        
+        // Add wallpaper views
+        try {
+            $wallpaperViews = DB::table('wallpaper_views')
+                ->join('wallpaper', 'wallpaper_views.post_id', '=', 'wallpaper.id')
+                ->select(
+                    'wallpaper_views.ip_address',
+                    'wallpaper_views.created_at',
+                    'wallpaper.title',
+                    'wallpaper.slug',
+                    DB::raw("'w' as type"),
+                )
+                ->orderBy('wallpaper_views.created_at', 'desc')
+                ->get();
+            $latestViews = $latestViews->concat($wallpaperViews);
+        } catch (\Exception $e) {
+            // Table might not exist or other DB error, continue silently
+        }
+        
+        // Add pfp views
+        try {
+            $pfpViews = DB::table('pfp_views')
+                ->join('pfp', 'pfp_views.post_id', '=', 'pfp.id')
+                ->select(
+                    'pfp_views.ip_address',
+                    'pfp_views.created_at',
+                    'pfp.title',
+                    'pfp.slug',
+                    DB::raw("'p' as type"),
+                )
+                ->orderBy('pfp_views.created_at', 'desc')
+                ->get();
+            $latestViews = $latestViews->concat($pfpViews);
+        } catch (\Exception $e) {
+            // Table might not exist or other DB error, continue silently
+        }
+        
+        // Add NSFW content if enabled
+        if ($nsfwEnabled) {
+            // Add image views
+            try {
+                $imageViews = DB::table('image_views')
+                    ->join('image', 'image_views.post_id', '=', 'image.id')
+                    ->select(
+                        'image_views.ip_address',
+                        'image_views.created_at',
+                        'image.title',
+                        'image.slug',
+                        DB::raw("'i' as type"),
+                    )
+                    ->orderBy('image_views.created_at', 'desc')
+                    ->get();
+                $latestViews = $latestViews->concat($imageViews);
+            } catch (\Exception $e) {
+                // Table might not exist or other DB error, continue silently
+            }
+            
+            // Add nxleak views
+            try {
+                $nxleakViews = DB::table('nxleak_views')
+                    ->join('nxleak', 'nxleak_views.post_id', '=', 'nxleak.id')
+                    ->select(
+                        'nxleak_views.ip_address',
+                        'nxleak_views.created_at',
+                        'nxleak.title',
+                        'nxleak.slug',
+                        DB::raw("'n' as type"),
+                    )
+                    ->orderBy('nxleak_views.created_at', 'desc')
+                    ->get();
+                $latestViews = $latestViews->concat($nxleakViews);
+            } catch (\Exception $e) {
+                // Table might not exist or other DB error, continue silently
+            }
+            
+            // Add video views
+            try {
+                $videoViews = DB::table('video_views')
+                    ->join('video', 'video_views.post_id', '=', 'video.id')
+                    ->select(
+                        'video_views.ip_address',
+                        'video_views.created_at',
+                        'video.title',
+                        'video.slug',
+                        DB::raw("'v' as type"),
+                    )
+                    ->orderBy('video_views.created_at', 'desc')
+                    ->get();
+                $latestViews = $latestViews->concat($videoViews);
+            } catch (\Exception $e) {
+                // Table might not exist or other DB error, continue silently
+            }
+        }
+        
+        // Sort by created_at
+        $latestViews = $latestViews->sortByDesc('created_at');
+        
+        // Set default values for IP addresses (no country lookup)
+        foreach ($latestViews as $view) {
+            // Mark local IPs
+            if (
+                $view->ip_address == '127.0.0.1' ||
+                $view->ip_address == 'localhost' ||
+                strpos($view->ip_address, '192.168.') === 0 ||
+                strpos($view->ip_address, '10.') === 0
+            ) {
+                $view->is_local = true;
+            } else {
+                $view->is_local = false;
+            }
+        }
+        
+        return $latestViews;
     }
 }

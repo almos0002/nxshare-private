@@ -367,11 +367,8 @@
 
             <!-- Latest Views by IP -->
             <div class="overflow-hidden rounded-xl bg-white shadow-sm dark:bg-surface-800">
-                <div class="border-b border-surface-200 px-6 py-4 dark:border-surface-700 flex items-center justify-between">
+                <div class="border-b border-surface-200 px-6 py-4 dark:border-surface-700">
                     <h2 class="text-lg font-semibold text-surface-900 dark:text-white">Latest Views by IP</h2>
-                    <div class="flex h-8 w-8 items-center justify-center rounded-lg text-surface-500 transition-colors hover:bg-surface-100 hover:text-brand-600 dark:text-surface-400 dark:hover:bg-surface-700 dark:hover:text-brand-400">
-                        <i class="ri-refresh-line text-lg"></i>
-                    </div>
                 </div>
                 <div id="latest-views-container" class="p-0">
                     <div class="overflow-hidden">
@@ -401,7 +398,8 @@
                                     <div class="flex items-center">
                                         <div class="flex items-center space-x-2">
                                             <span class="text-xs text-surface-500 dark:text-surface-400">{{ $view->ip_address }}</span>
-                                            <a href="#" class="flex h-8 w-8 items-center justify-center rounded-lg text-surface-500 transition-colors hover:bg-surface-100 hover:text-brand-600 dark:text-surface-400 dark:hover:bg-surface-700 dark:hover:text-brand-400">
+                                            <a href="/{{ $view->type == 'i' ? 'i' : ($view->type == 'n' ? 'n' : ($view->type == 'w' ? 'w' : ($view->type == 'p' ? 'p' : 'v'))) }}/{{ $view->slug }}"
+                                                class="flex h-8 w-8 items-center justify-center rounded-lg text-surface-500 transition-colors hover:bg-surface-100 hover:text-brand-600 dark:text-surface-400 dark:hover:bg-surface-700 dark:hover:text-brand-400">
                                                 <i class="ri-external-link-line text-lg"></i>
                                             </a>
                                         </div>
@@ -416,7 +414,7 @@
                     </div>
                 </div>
                 <div class="border-t border-surface-200 bg-surface-50 px-6 py-3 dark:border-surface-700 dark:bg-surface-800/80">
-                    <a href="#" class="text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300">
+                    <a href="/views/all" class="text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300">
                         View all views
                         <i class="ri-arrow-right-line ml-1"></i>
                     </a>
@@ -658,6 +656,17 @@
                             timeAgo = `${diffDay} day${diffDay !== 1 ? 's' : ''} ago`;
                         }
                         
+                        // Define typeColor variable before using it
+                        let typeColor = '';
+                        switch (view.type) {
+                            case 'w': typeColor = 'blue'; break;
+                            case 'p': typeColor = 'purple'; break;
+                            case 'i': typeColor = 'green'; break;
+                            case 'n': typeColor = 'red'; break;
+                            case 'v': typeColor = 'amber'; break;
+                            default: typeColor = 'blue';
+                        }
+                        
                         viewItem.innerHTML = `
                             <div class="flex items-center space-x-3">
                                 <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-100 font-bold text-${typeColor}-600 dark:bg-surface-700 dark:text-${typeColor}-400">
@@ -681,7 +690,8 @@
                             <div class="flex items-center">
                                 <div class="flex items-center space-x-2">
                                     <span class="text-xs text-surface-500 dark:text-surface-400">${view.ip_address}</span>
-                                    <a href="#" class="flex h-8 w-8 items-center justify-center rounded-lg text-surface-500 transition-colors hover:bg-surface-100 hover:text-brand-600 dark:text-surface-400 dark:hover:bg-surface-700 dark:hover:text-brand-400">
+                                    <a href="/${view.type == 'i' ? 'i' : (view.type == 'n' ? 'n' : (view.type == 'w' ? 'w' : (view.type == 'p' ? 'p' : 'v')))}/${view.slug}"
+                                        class="flex h-8 w-8 items-center justify-center rounded-lg text-surface-500 transition-colors hover:bg-surface-100 hover:text-brand-600 dark:text-surface-400 dark:hover:bg-surface-700 dark:hover:text-brand-400">
                                         <i class="ri-external-link-line text-lg"></i>
                                     </a>
                                 </div>
@@ -698,6 +708,9 @@
                 container.innerHTML = '';
                 container.appendChild(viewsContainer);
             }
+
+            // Add event listener for refresh latest views
+            // Removed the event listener for refresh latest views
         });
     </script>
 @endsection

@@ -38,6 +38,7 @@ Route::middleware(['auth'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/ajax', [App\Http\Controllers\HomeController::class, 'dashboardAjax'])->name('dashboard.ajax');
+    Route::get('/views/all', [App\Http\Controllers\HomeController::class, 'allViews'])->name('views.all');
 
     // NxLeak Routes
     Route::middleware(['nsfw.check'])->group(function () {
