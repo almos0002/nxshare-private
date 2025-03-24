@@ -63,14 +63,13 @@ class HomeController extends Controller
         
         // Add NSFW content if enabled
         if ($nsfwEnabled) {
-            $mostViewedQuery = Image::select('title', 'slug', 'views', 'created_at', DB::raw("'i' as type"))
-                ->unionAll(
-                    Nxleak::select('title', 'slug', 'views', 'created_at', DB::raw("'n' as type"))
-                )
-                ->unionAll($mostViewedQuery)
-                ->unionAll(
-                    Video::select('title', 'slug', 'views', 'created_at', DB::raw("'v' as type"))
-                );
+            $mostViewedQuery = $mostViewedQuery->unionAll(
+                Image::select('title', 'slug', 'views', 'created_at', DB::raw("'i' as type"))
+            )->unionAll(
+                Nxleak::select('title', 'slug', 'views', 'created_at', DB::raw("'n' as type"))
+            )->unionAll(
+                Video::select('title', 'slug', 'views', 'created_at', DB::raw("'v' as type"))
+            );
         }
         
         // Get most viewed posts
@@ -87,14 +86,13 @@ class HomeController extends Controller
         
         // Add NSFW content if enabled
         if ($nsfwEnabled) {
-            $recentPostsQuery = Image::select('title', 'slug', 'views', 'created_at', DB::raw("'i' as type"))
-                ->unionAll(
-                    Nxleak::select('title', 'slug', 'views', 'created_at', DB::raw("'n' as type"))
-                )
-                ->unionAll($recentPostsQuery)
-                ->unionAll(
-                    Video::select('title', 'slug', 'views', 'created_at', DB::raw("'v' as type"))
-                );
+            $recentPostsQuery = $recentPostsQuery->unionAll(
+                Image::select('title', 'slug', 'views', 'created_at', DB::raw("'i' as type"))
+            )->unionAll(
+                Nxleak::select('title', 'slug', 'views', 'created_at', DB::raw("'n' as type"))
+            )->unionAll(
+                Video::select('title', 'slug', 'views', 'created_at', DB::raw("'v' as type"))
+            );
         }
         
         // Get recent posts
