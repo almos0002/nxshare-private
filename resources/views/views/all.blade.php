@@ -82,12 +82,15 @@
             
             <div class="border-t border-surface-200 bg-surface-50 px-6 py-3 dark:border-surface-700 dark:bg-surface-800/80 flex justify-between items-center">
                 <span class="text-sm text-surface-500 dark:text-surface-400">
-                    Showing all recorded views
+                    Showing {{ $latestViews->firstItem() }} to {{ $latestViews->lastItem() }} of {{ $latestViews->total() }} views
                 </span>
-                <a href="{{ route('dashboard') }}" class="text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300">
-                    <i class="ri-arrow-left-line mr-1"></i>
-                    Back to Dashboard
-                </a>
+                <div class="flex items-center space-x-4">
+                    <a href="{{ route('dashboard') }}" class="text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300">
+                        <i class="ri-arrow-left-line mr-1"></i>
+                        Back to Dashboard
+                    </a>
+                    {{ $latestViews->onEachSide(1)->links('pagination.tailwind') }}
+                </div>
             </div>
         </div>
     </div>

@@ -654,10 +654,24 @@ class HomeController extends Controller
         }
 
         // Get all views without the limit
-        $latestViews = $this->getAllViews($nsfwEnabled);
+        $views = $this->getAllViews($nsfwEnabled);
+        
+        // Paginate the collection manually
+        $page = request()->get('page', 1);
+        $perPage = 50;
+        $offset = ($page - 1) * $perPage;
+        
+        $items = $views->slice($offset, $perPage);
+        $paginator = new \Illuminate\Pagination\LengthAwarePaginator(
+            $items, 
+            $views->count(), 
+            $perPage, 
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
         
         return view('views.all', [
-            'latestViews' => $latestViews,
+            'latestViews' => $paginator,
             'nsfwEnabled' => $nsfwEnabled
         ]);
     }
