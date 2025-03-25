@@ -467,9 +467,9 @@
         }
 
         function addLinkField(button) {
-            const linkContainer = button.closest('.form-group');
-            const linkFields = linkContainer.querySelectorAll('.link-group');
-            const linkCount = linkFields.length + 1;
+            const linkContainer = button.closest('.space-y-4, #linkFields, #updateLinkFields');
+            const linkGroups = linkContainer.querySelectorAll('.link-group');
+            const linkCount = linkGroups.length + 1;
 
             if (linkCount > 5) {
                 alert('You can add up to 5 links only.');
@@ -486,20 +486,31 @@
                 <input type="text" name="links[]" placeholder="Enter Link" required
                        class="w-full rounded-lg bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-700 focus:border-brand-500 focus:ring focus:ring-brand-200 dark:focus:ring-brand-800 dark:focus:border-brand-500 py-2 px-3">
             </div>
-            <button type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-800/50 transition-colors" onclick="removeLinkField(this)">
+            <button type="button" onclick="removeLinkField(this)" 
+                    class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-800/50 transition-colors">
                 <i class="ri-delete-bin-6-fill"></i>
             </button>
         `;
             linkContainer.appendChild(linkGroup);
+            renumberLinks(linkContainer);
         }
 
         function removeLinkField(button) {
-            const linkContainer = button.closest('.form-group');
-            const linkFields = linkContainer.querySelectorAll('.link-group');
+            const linkContainer = button.closest('.space-y-4, #linkFields, #updateLinkFields');
+            const linkGroups = linkContainer.querySelectorAll('.link-group');
 
-            if (linkFields.length > 1) {
-                button.parentElement.remove();
+            if (linkGroups.length > 1) {
+                button.closest('.link-group').remove();
+                renumberLinks(linkContainer);
             }
+        }
+
+        function renumberLinks(container) {
+            const linkGroups = container.querySelectorAll('.link-group');
+            linkGroups.forEach((group, index) => {
+                const label = group.querySelector('.w-20 span');
+                label.textContent = `Link ${index + 1}`;
+            });
         }
 
         function populateUpdateModal(button) {
