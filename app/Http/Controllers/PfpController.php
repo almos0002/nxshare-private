@@ -14,7 +14,7 @@ class PfpController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth')->except(['display']);
+        $this->middleware('auth')->except(['display', 'getLatestBatch']);
     }
 
     // Display All Posts
@@ -197,5 +197,27 @@ class PfpController extends Controller
             'postSlug' => $slug,
             'postId' => $post->id,
         ]);
+    }
+
+    // Get Latest Batch Number
+    public function getLatestBatch()
+    {
+        // Find the latest batch number by parsing titles that follow the "Batch #X" format
+        $latestBatch = 0;
+        
+        // Get all posts with titles that might contain "Batch #"
+        $batchPosts = Pfp::where('title', 'like', 'Batch #%')->get();
+        
+        foreach ($batchPosts as $post) {
+            // Extract the batch number from the title
+            if (preg_match('/Batch #(\d+)/', $post->title, $matches)) {
+                $batchNumber = (int) $matches[1];
+                if ($batchNumber > $latestBatch) {
+                    $latestBatch = $batchNumber;
+                }
+            }
+        }
+        
+        return response()->json(['latestBatch' => $latestBatch]);
     }
 }

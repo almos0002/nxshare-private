@@ -466,11 +466,31 @@
         function createModal() {
             const modal = document.getElementById("createmodal");
             modal.classList.toggle("hidden");
+            
+            // Auto-generate title when opening the create modal
+            if (!modal.classList.contains("hidden")) {
+                generateBatchTitle();
+            }
         }
 
         function updateModal() {
             const modal = document.getElementById("updatemodal");
             modal.classList.toggle("hidden");
+        }
+
+        function generateBatchTitle() {
+            fetch('/pfp/latest-batch')
+                .then(response => response.json())
+                .then(data => {
+                    const latestBatchNumber = data.latestBatch || 0;
+                    const newBatchNumber = latestBatchNumber + 1;
+                    document.getElementById("title").value = `Batch #${newBatchNumber}`;
+                })
+                .catch(error => {
+                    console.error('Error fetching latest batch number:', error);
+                    // Fallback to a default if fetch fails
+                    document.getElementById("title").value = "New Batch";
+                });
         }
 
         function addLinkField(button) {

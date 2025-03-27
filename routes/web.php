@@ -62,6 +62,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pfp/fetch/{id}', [PfpController::class, 'fetch'])->name('fetchpfp');
     Route::post('/pfp/update', [PfpController::class, 'update'])->name('updatepfp');
     Route::get('/pfp/delete/{slug}', [PfpController::class, 'delete'])->name('deletepfp');
+    Route::get('/pfp/latest-batch', [PfpController::class, 'getLatestBatch'])->name('pfp.latest-batch');
 
     // Images Routes
     Route::middleware(['nsfw.check'])->group(function () {
