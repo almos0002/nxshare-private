@@ -261,6 +261,12 @@
                                                 title="Edit">
                                                 <i class="ri-edit-fill"></i>
                                             </button>
+                                            <button data-title="{{ $post->title }}" data-slug="{{ $post->slug }}"
+                                                onclick="copyPromotionalText(this)"
+                                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-800/50 transition-colors"
+                                                title="Copy to Clipboard">
+                                                <i class="ri-clipboard-line"></i>
+                                            </button>
                                             <a href="{{ route('deletenx', $post->slug) }}"
                                                 onclick="return confirm('Are you sure you want to delete this post?')"
                                                 class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 hover:bg-rose-200 dark:hover:bg-rose-800/50 transition-colors"
@@ -441,6 +447,41 @@
                     console.error('Error:', error);
                     alert('Error loading post data');
                 });
+        }
+
+        function copyPromotionalText(button) {
+            const title = button.getAttribute('data-title');
+            const slug = button.getAttribute('data-slug');
+            const postUrl = `${window.location.origin}/n/${slug}`;
+            const text = `⚡ ${title}⚡
+
+⚠️ @LustFlixOfficial ⚠ 
+
+🔸Watch Online / Download🔸
+👉 ${postUrl}
+
+🔸 Click Link To Support Us🔸
+👉 https://kutt.it/supportus
+
+✅ Backup Channel
+@LustFlixOfficial`;
+            navigator.clipboard.writeText(text).then(() => {
+                // Create a temporary element to show success message
+                const successMessage = document.createElement('div');
+                successMessage.className =
+                    'fixed top-4 right-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-md z-50';
+                successMessage.innerHTML =
+                    '<div class="flex items-center"><i class="ri-checkbox-circle-line mr-2 text-xl"></i><span>Successfully Copied to Clipboard!</span></div>';
+                document.body.appendChild(successMessage);
+
+                // Remove the message after 2 seconds
+                setTimeout(() => {
+                    successMessage.remove();
+                }, 2000);
+            }).catch(error => {
+                console.error('Error:', error);
+                alert('Failed to copy to clipboard');
+            });
         }
     </script>
 @endsection

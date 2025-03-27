@@ -214,6 +214,12 @@
                                             class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-fuchsia-100 dark:bg-fuchsia-900/30 text-fuchsia-600 dark:text-fuchsia-400 hover:bg-fuchsia-200 dark:hover:bg-fuchsia-800/50 transition-colors" title="Edit">
                                         <i class="ri-edit-fill"></i>
                                     </button>
+                                    <button data-title="{{ $post->title }}" data-slug="{{ $post->slug }}"
+                                        onclick="copyPromotionalText(this)"
+                                        class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-800/50 transition-colors"
+                                        title="Copy to Clipboard">
+                                        <i class="ri-clipboard-line"></i>
+                                    </button>
                                     <a href="{{ route('deleteimg', $post->slug) }}" onclick="return confirm('Are you sure you want to delete this post?')" 
                                        class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 hover:bg-rose-200 dark:hover:bg-rose-800/50 transition-colors" title="Delete">
                                         <i class="ri-delete-bin-fill"></i>
@@ -526,6 +532,30 @@
          console.error('Error fetching post data:', error);
          alert('Failed to load post data. Please try again.');
        });
+   }
+   
+   // Copy promotional text to clipboard
+   function copyPromotionalText(button) {
+     const slug = button.getAttribute("data-slug");
+     const postUrl = `${window.location.origin}/i/${slug}`;
+     const text = `Download :- ${postUrl}`;
+     navigator.clipboard.writeText(text).then(() => {
+       // Create a temporary element to show success message
+       const successMessage = document.createElement('div');
+       successMessage.className =
+           'fixed top-4 right-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-md z-50';
+       successMessage.innerHTML =
+           '<div class="flex items-center"><i class="ri-checkbox-circle-line mr-2 text-xl"></i><span>Successfully Copied to Clipboard!</span></div>';
+       document.body.appendChild(successMessage);
+
+       // Remove the message after 2 seconds
+       setTimeout(() => {
+           successMessage.remove();
+       }, 2000);
+     }).catch(error => {
+       console.error('Error copying text to clipboard:', error);
+       alert('Failed to copy text to clipboard. Please try again.');
+     });
    }
    
    // Autofocus search input if there's a search query
