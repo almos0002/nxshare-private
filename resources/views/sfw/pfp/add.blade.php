@@ -43,7 +43,7 @@
                     </div>
                 </div>
                 <div class="mt-4 flex items-center text-sm">
-                    @if($postsGrowth > 0)
+                    @if ($postsGrowth > 0)
                         <span class="flex items-center text-green-500 dark:text-green-400">
                             <i class="ri-arrow-up-line mr-1"></i>
                             {{ $postsGrowth }}%
@@ -81,7 +81,7 @@
                     </div>
                 </div>
                 <div class="mt-4 flex items-center text-sm">
-                    @if($viewsGrowth > 0)
+                    @if ($viewsGrowth > 0)
                         <span class="flex items-center text-green-500 dark:text-green-400">
                             <i class="ri-arrow-up-line mr-1"></i>
                             {{ $viewsGrowth }}%
@@ -163,7 +163,7 @@
                         </span>
                         <input type="text" id="searchInput" placeholder="Search posts..." name="search"
                             value="{{ request('search') }}"
-                            class="py-2 pl-10 pr-4 w-full rounded-lg bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 focus:border-brand-500 focus:ring focus:ring-brand-200 dark:focus:ring-brand-800 dark:focus:border-brand-500">
+                            class="w-full rounded-lg bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 focus:border-brand-500 focus:ring focus:ring-brand-200 dark:focus:ring-brand-800 dark:focus:border-brand-500 py-2 px-3">
                     </div>
                     <button type="submit"
                         class="ml-2 inline-flex items-center justify-center px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium transition-colors">
@@ -209,7 +209,8 @@
                                 <div>
                                     <label for="title"
                                         class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Title</label>
-                                    <input type="text" name="title" id="title" placeholder="Enter title" required
+                                    <input type="text" name="title" id="title" placeholder="Enter title"
+                                        required
                                         class="w-full rounded-lg bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-700 focus:border-brand-500 focus:ring focus:ring-brand-200 dark:focus:ring-brand-800 dark:focus:border-brand-500 py-2 px-3">
                                 </div>
 
@@ -407,6 +408,12 @@
                                                 title="Edit">
                                                 <i class="ri-edit-fill"></i>
                                             </button>
+                                            <button data-title="{{ $post->title }}" data-slug="{{ $post->slug }}"
+                                                onclick="copyPromotionalText(this)"
+                                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-800/50 transition-colors"
+                                                title="Copy to Clipboard">
+                                                <i class="ri-clipboard-line"></i>
+                                            </button>
                                             <a href="{{ route('deletepfp', $post->slug) }}"
                                                 onclick="return confirm('Are you sure you want to delete this post?')"
                                                 class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-800/50 transition-colors"
@@ -551,6 +558,42 @@
                     alert('Error loading post data');
                 });
         }
+
+        function copyPromotionalText(button) {
+            const title = button.getAttribute("data-title");
+            const slug = button.getAttribute("data-slug");
+            const postUrl = `${window.location.origin}/p/${slug}`;
+            const text = `${title} ⚡️ 
+
+⚠️ @NxWall ⚠️ 
+
+🔸Download Matching PFP Now🔸
+👉 ${postUrl}
+
+🔸 Click Link To Support Us🔸
+👉 https://kutt.it/supportus
+
+✅ Backup Channel
+@NxWall`;
+            navigator.clipboard.writeText(text).then(() => {
+                // Create a temporary element to show success message
+                const successMessage = document.createElement('div');
+                successMessage.className =
+                    'fixed top-4 right-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-md z-50';
+                successMessage.innerHTML =
+                    '<div class="flex items-center"><i class="ri-checkbox-circle-line mr-2 text-xl"></i><span>Successfully Copied to Clipboard!</span></div>';
+                document.body.appendChild(successMessage);
+
+                // Remove the message after 2 seconds
+                setTimeout(() => {
+                    successMessage.remove();
+                }, 2000);
+            }).catch(error => {
+                console.error('Error:', error);
+                alert('Failed to copy to clipboard');
+            });
+        }
+
         // Autofocus search input if there's a search query
         document.addEventListener("DOMContentLoaded", () => {
             const searchInput = document.getElementById("searchInput");
