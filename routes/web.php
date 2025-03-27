@@ -55,6 +55,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/wallpapers/fetch/{id}', [WallpaperController::class, 'fetch'])->name('fetchwp');
     Route::post('/wallpapers/update', [WallpaperController::class, 'update'])->name('updatewp');
     Route::get('/wallpapers/delete/{slug}', [WallpaperController::class, 'delete'])->name('deletewp');
+    Route::get('/wallpapers/latest-batch', [WallpaperController::class, 'getLatestBatch'])->name('wallpapers.latest-batch');
 
     // PFP Routes
     Route::get('/pfp', [PfpController::class, 'add'])->name('addpfp');
