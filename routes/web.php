@@ -71,6 +71,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/images/fetch/{id}', [ImageController::class, 'fetch'])->name('fetchimg');
         Route::post('/images/update', [ImageController::class, 'update'])->name('updateimg');
         Route::get('/images/delete/{slug}', [ImageController::class, 'delete'])->name('deleteimg');
+        Route::get('/images/latest-number/{category}', [ImageController::class, 'getLatestImageNumber'])->name('images.latest-number');
     });
 
     // Videos Routes

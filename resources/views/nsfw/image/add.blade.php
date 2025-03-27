@@ -282,6 +282,29 @@
                                    class="w-full rounded-lg bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-700 focus:border-red-500 focus:ring focus:ring-red-200 dark:focus:ring-red-800 dark:focus:border-red-500 py-2 px-3">
                         </div>
                         
+                        <div>
+                            <label class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Category:</label>
+                            <div class="flex space-x-3 items-center">
+                                <label for="category-image" class="category-option cursor-pointer">
+                                    <input type="radio" id="category-image" name="category" value="image" checked
+                                           class="sr-only" onchange="handleCategoryChange('image')">
+                                    <div class="flex items-center justify-center px-3 py-1.5 rounded-md border border-transparent bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-800/30 transition-all duration-300 category-card">
+                                        <i class="ri-image-line text-sm text-green-600 dark:text-green-400 mr-1.5"></i>
+                                        <span class="font-medium text-xs text-green-700 dark:text-green-300">Image</span>
+                                    </div>
+                                </label>
+                                
+                                <label for="category-ai" class="category-option cursor-pointer">
+                                    <input type="radio" id="category-ai" name="category" value="ai"
+                                           class="sr-only" onchange="handleCategoryChange('ai')">
+                                    <div class="flex items-center justify-center px-3 py-1.5 rounded-md border border-transparent bg-purple-50 dark:bg-purple-900/20 hover:bg-purple-100 dark:hover:bg-purple-800/30 transition-all duration-300 category-card">
+                                        <i class="ri-cpu-line text-sm text-purple-600 dark:text-purple-400 mr-1.5"></i>
+                                        <span class="font-medium text-xs text-purple-700 dark:text-purple-300">AI</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        
                         <div id="linkFields">
                             <div class="flex items-center justify-between mb-2">
                                 <label class="block text-sm font-medium text-surface-700 dark:text-surface-300">Links</label>
@@ -348,6 +371,29 @@
                                    class="w-full rounded-lg bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-700 focus:border-red-500 focus:ring focus:ring-red-200 dark:focus:ring-red-800 dark:focus:border-red-500 py-2 px-3">
                         </div>
                         
+                        <div>
+                            <label class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Category:</label>
+                            <div class="flex space-x-3 items-center">
+                                <label for="update-category-image" class="category-option cursor-pointer">
+                                    <input type="radio" id="update-category-image" name="category" value="image"
+                                           class="sr-only" onchange="handleUpdateCategoryChange('image')">
+                                    <div class="flex items-center justify-center px-3 py-1.5 rounded-md border border-transparent bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-800/30 transition-all duration-300 category-card">
+                                        <i class="ri-image-line text-sm text-green-600 dark:text-green-400 mr-1.5"></i>
+                                        <span class="font-medium text-xs text-green-700 dark:text-green-300">Image</span>
+                                    </div>
+                                </label>
+                                
+                                <label for="update-category-ai" class="category-option cursor-pointer">
+                                    <input type="radio" id="update-category-ai" name="category" value="ai"
+                                           class="sr-only" onchange="handleUpdateCategoryChange('ai')">
+                                    <div class="flex items-center justify-center px-3 py-1.5 rounded-md border border-transparent bg-purple-50 dark:bg-purple-900/20 hover:bg-purple-100 dark:hover:bg-purple-800/30 transition-all duration-300 category-card">
+                                        <i class="ri-cpu-line text-sm text-purple-600 dark:text-purple-400 mr-1.5"></i>
+                                        <span class="font-medium text-xs text-purple-700 dark:text-purple-300">AI</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        
                         <div id="updateLinkFields">
                             <div class="flex items-center justify-between mb-2">
                                 <label class="block text-sm font-medium text-surface-700 dark:text-surface-300">Links</label>
@@ -390,6 +436,54 @@
     </div>
 </div>
 
+<style>
+    /* Category selection styling */
+    .category-option input:checked + .category-card {
+        border-color: currentColor;
+        box-shadow: 0 0 0 1px currentColor;
+        transform: translateY(-1px);
+    }
+    
+    /* Image category specific */
+    #category-image:checked + .category-card {
+        color: #22c55e; /* green-500 */
+        background-color: rgba(34, 197, 94, 0.15);
+    }
+    
+    /* AI category specific */
+    #category-ai:checked + .category-card {
+        color: #a855f7; /* purple-500 */
+        background-color: rgba(168, 85, 247, 0.15);
+    }
+    
+    /* Update modal - Image category */
+    #update-category-image:checked + .category-card {
+        color: #22c55e; /* green-500 */
+        background-color: rgba(34, 197, 94, 0.15);
+    }
+    
+    /* Update modal - AI category */
+    #update-category-ai:checked + .category-card {
+        color: #a855f7; /* purple-500 */
+        background-color: rgba(168, 85, 247, 0.15);
+    }
+    
+    /* Dark mode adjustments */
+    .dark .category-option input:checked + .category-card {
+        box-shadow: 0 0 0 1px currentColor;
+    }
+    
+    .dark #category-image:checked + .category-card,
+    .dark #update-category-image:checked + .category-card {
+        background-color: rgba(34, 197, 94, 0.25);
+    }
+    
+    .dark #category-ai:checked + .category-card,
+    .dark #update-category-ai:checked + .category-card {
+        background-color: rgba(168, 85, 247, 0.25);
+    }
+</style>
+
 <!-- Script -->
 @endsection
 @section('updatescript') 
@@ -398,12 +492,58 @@
    function createModal() {
      const modal = document.getElementById("createmodal");
      modal.classList.toggle("hidden");
+     
+     // When opening the modal, set a default title based on the selected category
+     if (!modal.classList.contains("hidden")) {
+       const selectedCategory = document.querySelector('input[name="category"]:checked').value;
+       fetchLatestImageNumber(selectedCategory);
+     }
    }
    
    // Toggle update modal visibility
    function updateModal() {
      const modal = document.getElementById("updatemodal");
      modal.classList.toggle("hidden");
+   }
+   
+   // Handle category change in create modal
+   function handleCategoryChange(category) {
+     fetchLatestImageNumber(category);
+   }
+   
+   // Handle category change in update modal
+   function handleUpdateCategoryChange(category) {
+     // Only update title if it follows the auto-generated pattern
+     const titleField = document.getElementById("oldtitle");
+     const titleValue = titleField.value;
+     
+     if (titleValue.match(/^(Image|AI) #\d+$/)) {
+       fetchLatestImageNumber(category, true);
+     }
+   }
+   
+   // Fetch the latest image number for the selected category
+   function fetchLatestImageNumber(category, isUpdate = false) {
+     fetch(`/images/latest-number/${category}`)
+       .then(response => {
+         if (!response.ok) {
+           throw new Error('Network response was not ok');
+         }
+         return response.json();
+       })
+       .then(data => {
+         const newNumber = data.latestNumber + 1;
+         const newTitle = category === 'image' ? `Image #${newNumber}` : `AI #${newNumber}`;
+         
+         if (isUpdate) {
+           document.getElementById("oldtitle").value = newTitle;
+         } else {
+           document.getElementById("title").value = newTitle;
+         }
+       })
+       .catch(error => {
+         console.error('Error fetching latest image number:', error);
+       });
    }
    
    // Add a new link field to either create or update modal
@@ -500,29 +640,40 @@
          return response.json();
        })
        .then(data => {
-         // Populate title and ID
-         titleField.value = data.title;
+         // Set the post ID and title
          idField.value = postId;
+         titleField.value = data.title;
          
-         // Populate link fields
-         if (data.links && Array.isArray(data.links)) {
-           data.links.forEach((link, index) => {
-             if (index === 0) {
-               // Set first link field
-               const firstInput = linkContainer.querySelector('input[name="links[]"]');
-               if (firstInput) firstInput.value = link;
-             } else {
-               // Add new link field and set its value
-               const addButton = linkContainer.querySelector('button[onclick^="addLinkField"]');
-               if (addButton) {
-                 addLinkField(addButton);
-                 const inputs = linkContainer.querySelectorAll('input[name="links[]"]');
-                 if (inputs.length > index) {
-                   inputs[index].value = link;
-                 }
-               }
+         // Set the category radio button
+         const categoryImage = document.getElementById('update-category-image');
+         const categoryAI = document.getElementById('update-category-ai');
+         
+         if (data.category === 'image') {
+           categoryImage.checked = true;
+         } else if (data.category === 'ai') {
+           categoryAI.checked = true;
+         }
+         
+         // Handle links
+         const links = data.links || [];
+         
+         // Set the first link if it exists
+         if (links.length > 0 && firstInput) {
+           firstInput.value = links[0];
+         }
+         
+         // Add additional link fields for any remaining links
+         for (let i = 1; i < links.length; i++) {
+           const button = linkContainer.querySelector('button[onclick="addLinkField(this)"]');
+           if (button) {
+             addLinkField(button);
+             
+             // Set the value of the newly added link field
+             const newLinkField = linkContainer.querySelectorAll('.link-group')[i].querySelector('input[name="links[]"]');
+             if (newLinkField) {
+               newLinkField.value = links[i];
              }
-           });
+           }
          }
          
          // Show the modal

@@ -94,6 +94,7 @@ class ImageController extends Controller
         // dd($request->all());
         $request->validate([
             'title' => 'required|max:50',
+            'category' => 'required|in:image,ai',
             'links' => 'required|array',
             'links.*' => 'url|max:255',
         ]);
@@ -104,6 +105,7 @@ class ImageController extends Controller
 
         Image::create([
             'title' => $request->title,
+            'category' => $request->category,
             'links' => json_encode($request->links), // Save links as JSON
             'slug' => $slug,
             'views' => 0,
@@ -118,6 +120,7 @@ class ImageController extends Controller
         $post = Image::findOrFail($id);
         return response()->json([
             'title' => $post->title,
+            'category' => $post->category,
             'links' => json_decode($post->links, true)
         ]);
     }
@@ -127,6 +130,7 @@ class ImageController extends Controller
     {
         $request->validate([
             'title' => 'required|max:50',
+            'category' => 'required|in:image,ai',
             'links' => 'required|array',
             'links.*' => 'url|max:255',
         ]);
@@ -134,6 +138,7 @@ class ImageController extends Controller
         $post = Image::find($request->id);
         if ($post) {
             $post->title = $request->title;
+            $post->category = $request->category;
             $post->links = json_encode($request->links); // Update links as JSON
             $post->save();
 
@@ -197,5 +202,33 @@ class ImageController extends Controller
             'postSlug' => $slug,
             'postId' => $post->id,
         ]);
+    }
+
+    // Get Latest Image Number by Category
+    public function getLatestImageNumber($category)
+    {
+        if (!in_array($category, ['image', 'ai'])) {
+            return response()->json(['error' => 'Invalid category'], 400);
+        }
+        
+        // Find the latest image number by parsing titles that follow the "[Category] #X" format
+        $latestNumber = 0;
+        
+        // Get all posts with titles that might contain the pattern
+        $pattern = $category === 'image' ? 'Image #%' : 'AI #%';
+        $posts = Image::where('title', 'like', $pattern)->get();
+        
+        foreach ($posts as $post) {
+            // Extract the number from the title
+            $regex = $category === 'image' ? '/Image #(\d+)/' : '/AI #(\d+)/';
+            if (preg_match($regex, $post->title, $matches)) {
+                $number = (int) $matches[1];
+                if ($number > $latestNumber) {
+                    $latestNumber = $number;
+                }
+            }
+        }
+        
+        return response()->json(['latestNumber' => $latestNumber]);
     }
 }

@@ -9,7 +9,7 @@ class Image extends Model
     protected $table = "images";
 
     // Fillable Columns
-    protected $fillable = ['title', 'links', 'slug', 'views'];
+    protected $fillable = ['title', 'category', 'links', 'slug', 'views'];
 
     protected $casts = [
         'links' => 'array',
